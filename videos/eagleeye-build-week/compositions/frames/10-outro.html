@@ -1,0 +1,817 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EagleEye outro</title>
+  </head>
+  <body>
+    <template>
+      <style>
+        #root {
+          position: relative;
+          width: 1920px;
+          height: 1080px;
+          overflow: hidden;
+          container-type: size;
+          color: #081019;
+          font-family: serif;
+        }
+
+        #root,
+        #root * {
+          box-sizing: border-box;
+        }
+
+        [class~="10-outro-ground"] {
+          position: absolute;
+          inset: 0;
+          z-index: 0;
+          background-color: #eff8f8;
+        }
+
+        [class~="10-outro-scene"] {
+          position: absolute;
+          inset: 0;
+          z-index: 1;
+          overflow: hidden;
+        }
+
+        [class~="10-outro-stage"] {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 1920px;
+          height: 900px;
+          overflow: hidden;
+        }
+
+        [class~="10-outro-frame-line"] {
+          position: absolute;
+          top: 62px;
+          left: 72px;
+          width: 1776px;
+          height: 774px;
+          z-index: 1;
+          border: 1px solid rgba(8, 16, 25, 0.12);
+          border-radius: 12px;
+          pointer-events: none;
+        }
+
+        [class~="10-outro-index"] {
+          position: absolute;
+          top: 38px;
+          left: 86px;
+          width: 260px;
+          height: 34px;
+          z-index: 7;
+          font-family: monospace;
+          font-size: 22px;
+          font-weight: 500;
+          line-height: 1;
+          letter-spacing: 0.16em;
+          color: rgba(8, 16, 25, 0.68);
+        }
+
+        [class~="10-outro-dashboard-ghost"] {
+          position: absolute;
+          top: 92px;
+          left: 260px;
+          width: 1400px;
+          height: 650px;
+          z-index: 1;
+          overflow: hidden;
+          border: 1px solid rgba(8, 16, 25, 0.12);
+          border-radius: 12px;
+          opacity: 0.065;
+        }
+
+        [class~="10-outro-dashboard-ghost"] img,
+        [class~="10-outro-dashboard-image"] {
+          display: block;
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          object-position: center top;
+        }
+
+        [class~="10-outro-card"] {
+          position: absolute;
+          top: 130px;
+          width: 500px;
+          height: 326px;
+          z-index: 3;
+          padding: 10px;
+          overflow: hidden;
+          border: 1px solid rgba(8, 16, 25, 0.12);
+          border-radius: 12px;
+          background-color: #e2e7eb;
+          box-shadow: 0 1px 3px rgba(8, 16, 25, 0.08), 0 4px 16px rgba(8, 16, 25, 0.04);
+          transform-origin: center center;
+        }
+
+        [class~="10-outro-card-observe"] {
+          left: 90px;
+        }
+
+        [class~="10-outro-card-generate"] {
+          left: 710px;
+        }
+
+        [class~="10-outro-card-explain"] {
+          left: 1330px;
+        }
+
+        [class~="10-outro-card-media"] {
+          display: block;
+          width: 480px;
+          height: 306px;
+          object-fit: cover;
+          object-position: left top;
+          border-radius: 8px;
+        }
+
+        [class~="10-outro-card-label"] {
+          position: absolute;
+          top: 478px;
+          width: 500px;
+          height: 36px;
+          z-index: 4;
+          font-family: monospace;
+          font-size: 22px;
+          font-weight: 500;
+          line-height: 36px;
+          letter-spacing: 0.14em;
+          text-align: center;
+          color: rgba(8, 16, 25, 0.78);
+        }
+
+        [class~="10-outro-label-observe"] {
+          left: 90px;
+        }
+
+        [class~="10-outro-label-generate"] {
+          left: 710px;
+        }
+
+        [class~="10-outro-label-explain"] {
+          left: 1330px;
+        }
+
+        [class~="10-outro-connectors"] {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 1920px;
+          height: 900px;
+          z-index: 2;
+          overflow: visible;
+          pointer-events: none;
+        }
+
+        [class~="10-outro-connector-path"] {
+          fill: none;
+          stroke: rgba(8, 16, 25, 0.35);
+          stroke-width: 1.5;
+          stroke-linecap: round;
+          stroke-linejoin: round;
+        }
+
+        [class~="10-outro-hub"] {
+          position: absolute;
+          top: 586px;
+          left: 952px;
+          width: 16px;
+          height: 16px;
+          z-index: 4;
+          border: 1px solid rgba(8, 16, 25, 0.45);
+          border-radius: 9999px;
+          background-color: #eff8f8;
+          transform-origin: center center;
+        }
+
+        [class~="10-outro-phrase-stage"] {
+          position: absolute;
+          top: 626px;
+          left: 160px;
+          width: 1600px;
+          height: 100px;
+          z-index: 5;
+        }
+
+        [class~="10-outro-phrase-line"] {
+          position: absolute;
+          inset: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 28px;
+          width: 1600px;
+          height: 100px;
+          font-size: 78px;
+          font-weight: 400;
+          line-height: 1;
+          letter-spacing: -0.018em;
+          text-align: center;
+          white-space: nowrap;
+        }
+
+        [class~="10-outro-phrase-word"] {
+          display: inline-block;
+          height: 92px;
+          line-height: 92px;
+          transform-origin: center center;
+        }
+
+        [id="10-outro-phrase-observe-word-1"] {
+          width: 330px;
+        }
+
+        [id="10-outro-phrase-observe-word-2"] {
+          width: 270px;
+        }
+
+        [id="10-outro-phrase-generate-word-1"] {
+          width: 380px;
+        }
+
+        [id="10-outro-phrase-generate-word-2"] {
+          width: 370px;
+        }
+
+        [id="10-outro-phrase-replay-word-1"] {
+          width: 290px;
+        }
+
+        [id="10-outro-phrase-replay-word-2"] {
+          width: 240px;
+        }
+
+        [class~="10-outro-dashboard-panel"] {
+          position: absolute;
+          top: 80px;
+          left: 250px;
+          width: 1420px;
+          height: 610px;
+          z-index: 4;
+          padding: 10px;
+          overflow: hidden;
+          border: 1px solid rgba(8, 16, 25, 0.2);
+          border-radius: 12px;
+          background-color: #e2e7eb;
+          box-shadow: 0 1px 3px rgba(8, 16, 25, 0.08), 0 4px 16px rgba(8, 16, 25, 0.04);
+          transform-origin: center center;
+        }
+
+        [class~="10-outro-dashboard-image"] {
+          width: 1400px;
+          height: 590px;
+          border-radius: 8px;
+        }
+
+        [class~="10-outro-lockup"] {
+          position: absolute;
+          top: 700px;
+          left: 560px;
+          width: 800px;
+          height: 116px;
+          z-index: 6;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 26px;
+          transform-origin: center center;
+        }
+
+        [class~="10-outro-spike"] {
+          display: block;
+          width: 70px;
+          height: 100px;
+          font-size: 88px;
+          font-weight: 400;
+          line-height: 100px;
+          text-align: center;
+          color: #34d6b4;
+          transform-origin: center center;
+        }
+
+        [class~="10-outro-wordmark"] {
+          display: block;
+          width: 610px;
+          height: 116px;
+          font-size: 108px;
+          font-weight: 400;
+          line-height: 1;
+          letter-spacing: -0.025em;
+          text-align: center;
+          white-space: nowrap;
+        }
+
+        [class~="10-outro-category"] {
+          position: absolute;
+          top: 818px;
+          left: 350px;
+          width: 1220px;
+          height: 58px;
+          z-index: 6;
+          font-size: 46px;
+          font-weight: 400;
+          line-height: 58px;
+          letter-spacing: -0.012em;
+          text-align: center;
+          white-space: nowrap;
+        }
+
+        [class~="10-outro-value-row"] {
+          position: absolute;
+          top: 824px;
+          left: 470px;
+          width: 980px;
+          height: 42px;
+          z-index: 6;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 34px;
+        }
+
+        [class~="10-outro-value-word"] {
+          display: inline-block;
+          width: 220px;
+          height: 34px;
+          font-family: monospace;
+          font-size: 26px;
+          font-weight: 500;
+          line-height: 34px;
+          letter-spacing: 0.16em;
+          text-align: center;
+          color: rgba(8, 16, 25, 0.78);
+          transform-origin: center center;
+        }
+      </style>
+
+      <div
+        id="root"
+        data-composition-id="10-outro"
+        data-width="1920"
+        data-height="1080"
+        data-duration="25"
+      >
+        <div
+          id="10-outro-ground"
+          class="clip 10-outro-ground"
+          data-start="0"
+          data-duration="25"
+          data-track-index="0"
+        ></div>
+
+        <div
+          id="10-outro-scene"
+          class="clip 10-outro-scene"
+          data-start="0"
+          data-duration="25"
+          data-track-index="1"
+        >
+          <div class="10-outro-stage">
+            <div id="10-outro-frame-line" class="10-outro-frame-line" aria-hidden="true"></div>
+            <div id="10-outro-index" class="10-outro-index">10 / OUTRO</div>
+
+            <div id="10-outro-dashboard-ghost" class="10-outro-dashboard-ghost" aria-hidden="true">
+              <img
+                id="10-outro-dashboard-ghost-image"
+                src="assets/screenshots/dashboard.png"
+                alt=""
+              />
+            </div>
+
+            <div id="10-outro-card-observe" class="10-outro-card 10-outro-card-observe">
+              <img
+                id="10-outro-card-observe-image"
+                class="10-outro-card-media"
+                src="assets/screenshots/extension-recording.png"
+                alt="EagleEye extension recording screen"
+              />
+            </div>
+            <div id="10-outro-card-generate" class="10-outro-card 10-outro-card-generate">
+              <img
+                id="10-outro-card-generate-image"
+                class="10-outro-card-media"
+                src="assets/screenshots/replay-result.png"
+                alt="EagleEye generated test and replay result"
+              />
+            </div>
+            <div id="10-outro-card-explain" class="10-outro-card 10-outro-card-explain">
+              <img
+                id="10-outro-card-explain-image"
+                class="10-outro-card-media"
+                src="assets/screenshots/report.png"
+                alt="EagleEye evidence report"
+              />
+            </div>
+
+            <div id="10-outro-label-observe" class="10-outro-card-label 10-outro-label-observe">
+              OBSERVE
+            </div>
+            <div id="10-outro-label-generate" class="10-outro-card-label 10-outro-label-generate">
+              GENERATE / REPLAY
+            </div>
+            <div id="10-outro-label-explain" class="10-outro-card-label 10-outro-label-explain">
+              EXPLAIN / SHARE
+            </div>
+
+            <svg
+              id="10-outro-connectors"
+              class="10-outro-connectors"
+              viewBox="0 0 1920 900"
+              xmlns="http://www.w3.org/2000/svg"
+              aria-hidden="true"
+            >
+              <path
+                id="10-outro-connector-observe"
+                class="10-outro-connector-path"
+                d="M 340 456 C 340 526 720 530 960 594"
+              />
+              <path
+                id="10-outro-connector-generate"
+                class="10-outro-connector-path"
+                d="M 960 456 C 960 504 960 546 960 594"
+              />
+              <path
+                id="10-outro-connector-explain"
+                class="10-outro-connector-path"
+                d="M 1580 456 C 1580 526 1200 530 960 594"
+              />
+            </svg>
+            <div id="10-outro-hub" class="10-outro-hub" aria-hidden="true"></div>
+
+            <div id="10-outro-phrase-stage" class="10-outro-phrase-stage" aria-label="EagleEye value sequence">
+              <div id="10-outro-phrase-observe" class="10-outro-phrase-line">
+                <span id="10-outro-phrase-observe-word-1" class="10-outro-phrase-word">Observe</span>
+                <span id="10-outro-phrase-observe-word-2" class="10-outro-phrase-word">reality.</span>
+              </div>
+              <div id="10-outro-phrase-generate" class="10-outro-phrase-line">
+                <span id="10-outro-phrase-generate-word-1" class="10-outro-phrase-word">Generate</span>
+                <span id="10-outro-phrase-generate-word-2" class="10-outro-phrase-word">coverage.</span>
+              </div>
+              <div id="10-outro-phrase-replay" class="10-outro-phrase-line">
+                <span id="10-outro-phrase-replay-word-1" class="10-outro-phrase-word">Replay</span>
+                <span id="10-outro-phrase-replay-word-2" class="10-outro-phrase-word">proof.</span>
+              </div>
+            </div>
+
+            <div id="10-outro-dashboard-panel" class="10-outro-dashboard-panel">
+              <img
+                id="10-outro-dashboard-image"
+                class="10-outro-dashboard-image"
+                src="assets/screenshots/dashboard.png"
+                alt="EagleEye dashboard showing the five-stage QA workflow"
+              />
+            </div>
+
+            <div id="10-outro-lockup" class="10-outro-lockup">
+              <div id="10-outro-spike" class="10-outro-spike" aria-hidden="true">✱</div>
+              <div id="10-outro-wordmark" class="10-outro-wordmark">EagleEye</div>
+            </div>
+
+            <div id="10-outro-category" class="10-outro-category">Browser-native AI QA agent</div>
+
+            <div id="10-outro-value-row" class="10-outro-value-row" aria-label="Observe Generate Replay">
+              <span id="10-outro-value-observe" class="10-outro-value-word">OBSERVE</span>
+              <span id="10-outro-value-generate" class="10-outro-value-word">GENERATE</span>
+              <span id="10-outro-value-replay" class="10-outro-value-word">REPLAY</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+      <script>
+        (() => {
+          window.__timelines = window.__timelines || {};
+
+          const byId = (id) => document.getElementById(id);
+          const cards = [
+            byId("10-outro-card-observe"),
+            byId("10-outro-card-generate"),
+            byId("10-outro-card-explain"),
+          ];
+          const cardMedia = [
+            byId("10-outro-card-observe-image"),
+            byId("10-outro-card-generate-image"),
+            byId("10-outro-card-explain-image"),
+          ];
+          const labels = [
+            byId("10-outro-label-observe"),
+            byId("10-outro-label-generate"),
+            byId("10-outro-label-explain"),
+          ];
+          const connectorPaths = [
+            byId("10-outro-connector-observe"),
+            byId("10-outro-connector-generate"),
+            byId("10-outro-connector-explain"),
+          ];
+          const connectors = byId("10-outro-connectors");
+          const hub = byId("10-outro-hub");
+          const dashboardGhost = byId("10-outro-dashboard-ghost");
+          const dashboardPanel = byId("10-outro-dashboard-panel");
+          const lockup = byId("10-outro-lockup");
+          const spike = byId("10-outro-spike");
+          const wordmark = byId("10-outro-wordmark");
+          const category = byId("10-outro-category");
+          const frameLine = byId("10-outro-frame-line");
+          const index = byId("10-outro-index");
+          const valueWords = [
+            byId("10-outro-value-observe"),
+            byId("10-outro-value-generate"),
+            byId("10-outro-value-replay"),
+          ];
+
+          connectorPaths.forEach((path) => {
+            const length = path.getTotalLength();
+            path.style.strokeDasharray = String(length);
+            path.style.strokeDashoffset = String(length);
+          });
+
+          wordmark.textContent = "";
+
+          const tl = gsap.timeline({ paused: true });
+
+          const phraseContent = [
+            {
+              text: "Observe reality.",
+              hold: 0.55,
+              speedFactor: 1,
+              words: [
+                byId("10-outro-phrase-observe-word-1"),
+                byId("10-outro-phrase-observe-word-2"),
+              ],
+            },
+            {
+              text: "Generate coverage.",
+              hold: 0.55,
+              speedFactor: 1,
+              words: [
+                byId("10-outro-phrase-generate-word-1"),
+                byId("10-outro-phrase-generate-word-2"),
+              ],
+            },
+            {
+              text: "Replay proof.",
+              hold: 0.85,
+              speedFactor: 1,
+              words: [
+                byId("10-outro-phrase-replay-word-1"),
+                byId("10-outro-phrase-replay-word-2"),
+              ],
+            },
+          ];
+          const allPhraseWords = phraseContent.flatMap((entry) => entry.words);
+
+          tl.set(allPhraseWords, { opacity: 0, x: 230 }, 0);
+          tl.set(valueWords, { opacity: 0, x: 230 }, 0);
+
+          tl.fromTo(
+            cards[0],
+            { opacity: 0, x: -46, y: 28, scale: 0.96 },
+            {
+              opacity: 1,
+              x: 0,
+              y: 0,
+              scale: 1,
+              duration: 0.78,
+              ease: "power3.out",
+              immediateRender: true,
+            },
+            0.14,
+          );
+          tl.fromTo(
+            labels[0],
+            { opacity: 0, y: 18 },
+            { opacity: 1, y: 0, duration: 0.5, ease: "power2.out", immediateRender: true },
+            0.82,
+          );
+          tl.fromTo(
+            cards[1],
+            { opacity: 0, x: 0, y: -42, scale: 0.96 },
+            {
+              opacity: 1,
+              x: 0,
+              y: 0,
+              scale: 1,
+              duration: 0.78,
+              ease: "power3.out",
+              immediateRender: true,
+            },
+            1.34,
+          );
+          tl.fromTo(
+            labels[1],
+            { opacity: 0, y: 18 },
+            { opacity: 1, y: 0, duration: 0.5, ease: "power2.out", immediateRender: true },
+            2.02,
+          );
+          tl.fromTo(
+            cards[2],
+            { opacity: 0, x: 46, y: 28, scale: 0.96 },
+            {
+              opacity: 1,
+              x: 0,
+              y: 0,
+              scale: 1,
+              duration: 0.78,
+              ease: "power3.out",
+              immediateRender: true,
+            },
+            2.54,
+          );
+          tl.fromTo(
+            labels[2],
+            { opacity: 0, y: 18 },
+            { opacity: 1, y: 0, duration: 0.5, ease: "power2.out", immediateRender: true },
+            3.22,
+          );
+          tl.to(dashboardGhost, { opacity: 0.11, duration: 0.8, ease: "power1.out" }, 4.0);
+          tl.fromTo(
+            hub,
+            { opacity: 0, scale: 0.72 },
+            { opacity: 1, scale: 1, duration: 0.6, ease: "power2.out", immediateRender: true },
+            4.12,
+          );
+
+          connectorPaths.forEach((path, index) => {
+            tl.to(
+              path,
+              { strokeDashoffset: 0, duration: 0.72, ease: "power2.out" },
+              5.0 + index * 0.36,
+            );
+          });
+
+          const PHRASE_START = 5.0;
+          const PHRASE_DURATION = 5.8;
+          const BASE_DURATION = 0.65;
+          const SEC_PER_CHAR = 0.035;
+          const rawDurations = phraseContent.map(
+            (entry) =>
+              (BASE_DURATION + entry.text.length * SEC_PER_CHAR + entry.hold) / entry.speedFactor,
+          );
+          const rawTotal = rawDurations.reduce((sum, duration) => sum + duration, 0);
+          const phraseScale = PHRASE_DURATION / rawTotal;
+          let phraseCursor = PHRASE_START;
+          const phraseTimeline = phraseContent.map((entry, index) => {
+            const duration = rawDurations[index] * phraseScale;
+            const start = phraseCursor;
+            phraseCursor += duration;
+            return { ...entry, start, end: phraseCursor };
+          });
+
+          phraseTimeline.forEach((entry, entryIndex) => {
+            let entryGap = 0;
+            entry.words.forEach((word, wordIndex) => {
+              if (wordIndex > 0) entryGap += 0.05 * Math.pow(0.84, wordIndex - 1);
+              const firstLine = entryIndex === 0;
+              tl.fromTo(
+                word,
+                { opacity: firstLine ? 0 : 0.35, x: firstLine ? 80 : 230 },
+                {
+                  opacity: 1,
+                  x: 0,
+                  duration: firstLine ? 0.46 : 0.3,
+                  ease: firstLine ? "power3.out" : "power4.out",
+                  immediateRender: false,
+                },
+                entry.start + entryGap,
+              );
+            });
+
+            entry.words.forEach((word, wordIndex) => {
+              const readingOrderLead = (entry.words.length - 1 - wordIndex) * 0.022;
+              tl.to(
+                word,
+                { x: -230, duration: 0.34, ease: "power4.in" },
+                entry.end - 0.34 - readingOrderLead,
+              );
+              tl.to(
+                word,
+                { opacity: 0, duration: 0.18, ease: "power1.in" },
+                entry.end - 0.18 - readingOrderLead,
+              );
+            });
+          });
+
+          const MORPH_START = 10.8;
+          const MORPH_DURATION = 2.15;
+          const convergeX = [620, 0, -620];
+
+          cards.forEach((card, index) => {
+            tl.to(
+              card,
+              {
+                x: convergeX[index],
+                y: 87,
+                scale: 0.22,
+                duration: MORPH_DURATION,
+                ease: "power2.inOut",
+              },
+              MORPH_START,
+            );
+          });
+          tl.to(cardMedia, { opacity: 0, duration: 0.86, ease: "power1.in" }, MORPH_START);
+          tl.to(labels, { opacity: 0, y: -12, duration: 0.56, ease: "power1.in" }, MORPH_START);
+          tl.to(connectors, { opacity: 0, duration: 0.64, ease: "power1.in" }, MORPH_START);
+          tl.to(hub, { opacity: 0, scale: 0.8, duration: 0.42, ease: "power1.in" }, MORPH_START + 0.1);
+          tl.to(dashboardGhost, { opacity: 0, duration: 0.62, ease: "power1.in" }, MORPH_START);
+          tl.to(cards, { opacity: 0, duration: 0.78, ease: "power1.in" }, MORPH_START + 1.28);
+          tl.fromTo(
+            dashboardPanel,
+            { opacity: 0, x: 90, scale: 0.9 },
+            {
+              opacity: 1,
+              x: 0,
+              scale: 1,
+              duration: 1.3,
+              ease: "power2.out",
+              immediateRender: true,
+            },
+            MORPH_START + 1.15,
+          );
+
+          const WORDMARK_DURATION = 3.25;
+          const wordmarkStates = [
+            { t: 0, text: "" },
+            { t: 0.22, text: "E" },
+            { t: 0.62, text: "Eag" },
+            { t: 1.05, text: "Eagle" },
+            { t: 1.55, text: "EagleE" },
+            { t: 2.15, text: "EagleEye" },
+          ];
+          const wordmarkAt = (time) => {
+            for (let index = wordmarkStates.length - 1; index >= 0; index -= 1) {
+              if (time >= wordmarkStates[index].t) return wordmarkStates[index].text;
+            }
+            return "";
+          };
+          const wordmarkDriver = { t: 0 };
+
+          tl.fromTo(
+            lockup,
+            { opacity: 0, y: 22 },
+            { opacity: 1, y: 0, duration: 0.52, ease: "power2.out", immediateRender: true },
+            13.1,
+          );
+          tl.to(
+            wordmarkDriver,
+            {
+              t: WORDMARK_DURATION,
+              duration: WORDMARK_DURATION,
+              ease: "none",
+              onUpdate: () => {
+                wordmark.textContent = wordmarkAt(wordmarkDriver.t);
+              },
+            },
+            13.2,
+          );
+
+          tl.fromTo(
+            category,
+            { opacity: 0, y: 24 },
+            { opacity: 1, y: 0, duration: 0.75, ease: "power2.out", immediateRender: true },
+            16.8,
+          );
+          tl.fromTo(
+            spike,
+            { opacity: 0, scale: 0.92 },
+            { opacity: 1, scale: 1, duration: 0.65, ease: "power2.out", immediateRender: true },
+            17.15,
+          );
+
+          tl.to(
+            [dashboardPanel, frameLine, index],
+            { opacity: 0, duration: 1.2, ease: "power1.inOut" },
+            22.0,
+          );
+          tl.to(category, { x: -230, duration: 0.34, ease: "power4.in" }, 22.0);
+          tl.to(category, { opacity: 0, duration: 0.3, ease: "power1.in" }, 22.04);
+
+          let valueGap = 0;
+          valueWords.forEach((word, index) => {
+            if (index > 0) valueGap += 0.05 * Math.pow(0.84, index - 1);
+            tl.fromTo(
+              word,
+              { opacity: 0.35, x: 230 },
+              {
+                opacity: 1,
+                x: 0,
+                duration: 0.42,
+                ease: "power4.out",
+                immediateRender: false,
+              },
+              22.34 + valueGap,
+            );
+          });
+
+          window.__timelines["10-outro"] = tl;
+        })();
+      </script>
+    </template>
+  </body>
+</html>

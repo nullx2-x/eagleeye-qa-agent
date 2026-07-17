@@ -1,0 +1,645 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>09-shareable-report</title>
+  </head>
+  <body>
+    <template>
+      <style>
+        #root {
+          position: absolute;
+          inset: 0;
+          width: 1920px;
+          height: 1080px;
+          overflow: hidden;
+          container-type: size;
+          color: #081019;
+        }
+
+        #root,
+        #root * {
+          box-sizing: border-box;
+        }
+
+        .clip {
+          position: absolute;
+          inset: 0;
+          width: 100%;
+          height: 100%;
+        }
+
+        [id="09-shareable-report-ground"] {
+          overflow: hidden;
+          background: #eff8f8;
+        }
+
+        [id="09-shareable-report-ground-rail"] {
+          position: absolute;
+          inset: 0 auto auto 0;
+          width: 220px;
+          height: 900px;
+          background: #e2e7eb;
+          border-right: 1px solid rgba(8, 16, 25, 0.12);
+        }
+
+        [id="09-shareable-report-ground-rule"] {
+          position: absolute;
+          top: 898px;
+          left: 80px;
+          right: 80px;
+          height: 1px;
+          background: rgba(8, 16, 25, 0.12);
+        }
+
+        [id="09-shareable-report-content"] {
+          overflow: hidden;
+          font-family: sans-serif;
+        }
+
+        [id="09-shareable-report-section-label"] {
+          position: absolute;
+          top: 24px;
+          left: 246px;
+          margin: 0;
+          color: rgba(8, 16, 25, 0.62);
+          font-family: monospace;
+          font-size: 18px;
+          font-weight: 500;
+          line-height: 1;
+          letter-spacing: 0.16em;
+          text-transform: uppercase;
+        }
+
+        [id="09-shareable-report-title"] {
+          position: absolute;
+          top: 54px;
+          left: 246px;
+          width: 980px;
+          margin: 0;
+          color: #081019;
+          font-family: serif;
+          font-size: 72px;
+          font-weight: 400;
+          line-height: 1.02;
+          letter-spacing: -0.022em;
+          will-change: transform, opacity;
+        }
+
+        [id="09-shareable-report-index-window"] {
+          position: absolute;
+          top: 226px;
+          left: 52px;
+          width: 166px;
+          height: 116px;
+          overflow: hidden;
+          border-bottom: 1px solid rgba(8, 16, 25, 0.2);
+        }
+
+        [id="09-shareable-report-index-label"] {
+          display: block;
+          color: rgba(8, 16, 25, 0.72);
+          font-family: monospace;
+          font-size: 14px;
+          font-weight: 500;
+          line-height: 1;
+          letter-spacing: 0.18em;
+          text-transform: uppercase;
+        }
+
+        [id="09-shareable-report-index-state"] {
+          display: block;
+          width: 160px;
+          margin-top: 18px;
+          color: #081019;
+          font-family: monospace;
+          font-size: 20px;
+          font-weight: 500;
+          line-height: 1.18;
+          letter-spacing: 0.02em;
+          text-transform: uppercase;
+          white-space: nowrap;
+          will-change: transform, opacity;
+        }
+
+        [id="09-shareable-report-stage"] {
+          position: absolute;
+          top: 160px;
+          left: 246px;
+          width: 1460px;
+          height: 664px;
+          will-change: transform, opacity;
+        }
+
+        [id="09-shareable-report-camera-outer"],
+        [id="09-shareable-report-camera-inner"] {
+          position: absolute;
+          inset: 0;
+          width: 100%;
+          height: 100%;
+          will-change: transform;
+        }
+
+        [id="09-shareable-report-camera-outer"] {
+          transform-origin: 50% 50%;
+        }
+
+        [id="09-shareable-report-surface"] {
+          position: absolute;
+          inset: 0;
+          overflow: hidden;
+          background: #151817;
+          border: 1px solid rgba(8, 16, 25, 0.2);
+          border-radius: 12px;
+          box-shadow:
+            0 1px 3px rgba(8, 16, 25, 0.08),
+            0 4px 16px rgba(8, 16, 25, 0.04);
+        }
+
+        [id="09-shareable-report-world"] {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          min-height: 2190px;
+          will-change: transform;
+        }
+
+        [id="09-shareable-report-image"] {
+          display: block;
+          width: 100%;
+          height: auto;
+          user-select: none;
+          filter: saturate(0.28) brightness(0.98) contrast(1.02);
+        }
+
+        [data-f09-role="surface-marker"] {
+          position: absolute;
+          display: flex;
+          align-items: center;
+          min-height: 46px;
+          padding: 0 14px;
+          overflow: hidden;
+          color: #eff8f8;
+          background: rgba(21, 24, 23, 0.92);
+          border: 1px solid rgba(239, 248, 248, 0.22);
+          border-radius: 6px;
+          font-family: monospace;
+          font-size: 15px;
+          font-weight: 500;
+          line-height: 1;
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+          white-space: nowrap;
+          will-change: transform, opacity;
+        }
+
+        [data-f09-role="surface-marker"]::before {
+          width: 30px;
+          height: 1px;
+          margin-right: 12px;
+          background: rgba(239, 248, 248, 0.55);
+          content: "";
+        }
+
+        [id="09-shareable-report-intent-marker"] {
+          top: 174px;
+          right: 38px;
+          width: 520px;
+        }
+
+        [id="09-shareable-report-cases-marker"] {
+          top: 640px;
+          left: 42px;
+          width: 426px;
+        }
+
+        [id="09-shareable-report-replay-marker"] {
+          top: 890px;
+          left: 42px;
+          width: 246px;
+        }
+
+        [id="09-shareable-report-fix-marker"] {
+          top: 1032px;
+          right: 38px;
+          width: 314px;
+        }
+
+        [id="09-shareable-report-evidence-rail"] {
+          position: absolute;
+          top: 1460px;
+          right: 38px;
+          width: 540px;
+          height: 156px;
+          display: grid;
+          grid-template-rows: 44px 1fr;
+          overflow: hidden;
+          color: #eff8f8;
+          background: rgba(21, 24, 23, 0.96);
+          border: 1px solid rgba(239, 248, 248, 0.22);
+          border-radius: 8px;
+          will-change: transform, opacity;
+        }
+
+        [id="09-shareable-report-evidence-kicker"] {
+          display: flex;
+          align-items: center;
+          padding: 0 16px;
+          border-bottom: 1px solid rgba(239, 248, 248, 0.14);
+          font-family: monospace;
+          font-size: 14px;
+          font-weight: 500;
+          line-height: 1;
+          letter-spacing: 0.16em;
+          text-transform: uppercase;
+        }
+
+        [id="09-shareable-report-evidence-fields"] {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          min-height: 0;
+        }
+
+        [data-f09-role="evidence-field"] {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          min-width: 0;
+          border-left: 1px solid rgba(239, 248, 248, 0.14);
+          font-family: monospace;
+          font-size: 16px;
+          font-weight: 500;
+          line-height: 1;
+          letter-spacing: 0.04em;
+          white-space: nowrap;
+        }
+
+        [data-f09-role="evidence-field"]:first-child {
+          border-left: 0;
+        }
+
+        [id="09-shareable-report-cta"] {
+          position: absolute;
+          top: 52px;
+          right: 78px;
+          display: block;
+          padding: 16px 24px;
+          color: #eff8f8;
+          background: #34d6b4;
+          border: 1px solid rgba(8, 16, 25, 0.12);
+          border-radius: 8px;
+          font-family: sans-serif;
+          font-size: 22px;
+          font-weight: 500;
+          line-height: 1;
+          letter-spacing: -0.005em;
+          white-space: nowrap;
+          will-change: transform, opacity;
+        }
+
+        [id="09-shareable-report-signoff"] {
+          position: absolute;
+          top: 842px;
+          right: 78px;
+          margin: 0;
+          color: #081019;
+          font-family: serif;
+          font-size: 34px;
+          font-style: italic;
+          font-weight: 400;
+          line-height: 1.1;
+          letter-spacing: -0.012em;
+          white-space: nowrap;
+          will-change: transform, opacity;
+        }
+      </style>
+
+      <div
+        id="root"
+        data-composition-id="09-shareable-report"
+        data-width="1920"
+        data-height="1080"
+        data-duration="25.4"
+      >
+        <div
+          id="09-shareable-report-ground"
+          class="clip"
+          data-start="0"
+          data-duration="25.4"
+          data-track-index="0"
+        >
+          <div id="09-shareable-report-ground-rail"></div>
+          <div id="09-shareable-report-ground-rule"></div>
+        </div>
+
+        <div
+          id="09-shareable-report-content"
+          class="clip"
+          data-start="0"
+          data-duration="25.4"
+          data-track-index="1"
+        >
+          <p id="09-shareable-report-section-label">Report / 09</p>
+          <h1 id="09-shareable-report-title">One shareable report</h1>
+
+          <div id="09-shareable-report-index-window">
+            <span id="09-shareable-report-index-label">Index</span>
+            <span id="09-shareable-report-index-state">01 Intent</span>
+          </div>
+
+          <div id="09-shareable-report-stage" data-layout-allow-overflow>
+            <div id="09-shareable-report-camera-outer" data-layout-allow-overflow>
+              <div id="09-shareable-report-camera-inner" data-layout-allow-overflow>
+                <div id="09-shareable-report-surface">
+                  <div
+                    id="09-shareable-report-world"
+                    data-layout-allow-overflow
+                  >
+                    <img
+                      id="09-shareable-report-image"
+                      src="assets/screenshots/report.png"
+                      alt="EagleEye QA report"
+                      draggable="false"
+                    />
+
+                    <div
+                      id="09-shareable-report-intent-marker"
+                      data-f09-role="surface-marker"
+                    >
+                      01 Intent · Provider / Model / Live
+                    </div>
+
+                    <div
+                      id="09-shareable-report-cases-marker"
+                      data-f09-role="surface-marker"
+                    >
+                      Recorded case / AI generated cases
+                    </div>
+
+                    <div
+                      id="09-shareable-report-replay-marker"
+                      data-f09-role="surface-marker"
+                    >
+                      Replay / PASS
+                    </div>
+
+                    <div
+                      id="09-shareable-report-fix-marker"
+                      data-f09-role="surface-marker"
+                    >
+                      Fix suggestions
+                    </div>
+
+                    <div id="09-shareable-report-evidence-rail">
+                      <div id="09-shareable-report-evidence-kicker">
+                        Evidence receipt
+                      </div>
+                      <div id="09-shareable-report-evidence-fields">
+                        <span data-f09-role="evidence-field">Bytes</span>
+                        <span data-f09-role="evidence-field">Timestamp</span>
+                        <span data-f09-role="evidence-field">SHA-256</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id="09-shareable-report-cta">Markdown bug report</div>
+          <p id="09-shareable-report-signoff">Straight to engineering</p>
+        </div>
+      </div>
+
+      <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+      <script>
+        (() => {
+          window.__timelines = window.__timelines || {};
+
+          const root = document.querySelector(
+            '#root[data-composition-id="09-shareable-report"]',
+          );
+          const byId = (id) => document.getElementById(id);
+
+          const title = byId("09-shareable-report-title");
+          const sectionLabel = byId("09-shareable-report-section-label");
+          const indexWindow = byId("09-shareable-report-index-window");
+          const indexState = byId("09-shareable-report-index-state");
+          const stage = byId("09-shareable-report-stage");
+          const cameraOuter = byId("09-shareable-report-camera-outer");
+          const cameraInner = byId("09-shareable-report-camera-inner");
+          const surface = byId("09-shareable-report-surface");
+          const reportWorld = byId("09-shareable-report-world");
+          const intentMarker = byId("09-shareable-report-intent-marker");
+          const casesMarker = byId("09-shareable-report-cases-marker");
+          const replayMarker = byId("09-shareable-report-replay-marker");
+          const fixMarker = byId("09-shareable-report-fix-marker");
+          const evidenceRail = byId("09-shareable-report-evidence-rail");
+          const cta = byId("09-shareable-report-cta");
+          const signoff = byId("09-shareable-report-signoff");
+
+          const evidenceScrollY = -1210;
+          const surfaceRect = surface.getBoundingClientRect();
+          const evidenceRect = evidenceRail.getBoundingClientRect();
+          const targetOffsetX =
+            evidenceRect.left +
+            evidenceRect.width / 2 -
+            (surfaceRect.left + surfaceRect.width / 2);
+          const targetOffsetY =
+            evidenceRect.top +
+            evidenceRect.height / 2 -
+            (surfaceRect.top + surfaceRect.height / 2) +
+            evidenceScrollY;
+          const counterX = -targetOffsetX;
+          const counterY = -targetOffsetY;
+
+          const indexStates = [
+            { t: 0, text: "01 Intent" },
+            { t: 5.53, text: "02 Cases" },
+            { t: 16.93, text: "03 Evidence" },
+          ];
+          const indexAt = (time) => {
+            for (let i = indexStates.length - 1; i >= 0; i -= 1) {
+              if (time >= indexStates[i].t) return indexStates[i].text;
+            }
+            return indexStates[0].text;
+          };
+
+          const tl = gsap.timeline({ paused: true });
+
+          // Scene 1 — establish the persistent report surface from the edge.
+          tl.fromTo(
+            stage,
+            { x: 168, opacity: 0.72 },
+            { x: 0, opacity: 1, duration: 1.15, ease: "power3.out" },
+            0,
+          );
+          tl.fromTo(
+            title,
+            { y: -18, opacity: 0 },
+            { y: 0, opacity: 1, duration: 0.78, ease: "power3.out" },
+            0.08,
+          );
+          tl.fromTo(
+            sectionLabel,
+            { opacity: 0, y: -8 },
+            { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" },
+            0.2,
+          );
+          tl.fromTo(
+            indexWindow,
+            { opacity: 0, y: 16 },
+            { opacity: 1, y: 0, duration: 0.64, ease: "power3.out" },
+            0.34,
+          );
+          tl.fromTo(
+            intentMarker,
+            { opacity: 0, y: 12 },
+            { opacity: 1, y: 0, duration: 0.62, ease: "power3.out" },
+            0.72,
+          );
+
+          // Discrete mono index, with cut-the-curve seams at the state swaps.
+          const indexDriver = { t: 0 };
+          tl.to(
+            indexDriver,
+            {
+              t: 25,
+              duration: 25,
+              ease: "none",
+              onUpdate: () => {
+                indexState.textContent = indexAt(indexDriver.t);
+              },
+            },
+            0,
+          );
+          tl.to(
+            indexState,
+            { x: -72, opacity: 0, duration: 0.28, ease: "power4.in" },
+            5.25,
+          );
+          tl.set(indexState, { x: 72, opacity: 0.35 }, 5.53);
+          tl.to(
+            indexState,
+            { x: 0, opacity: 1, duration: 0.32, ease: "power4.out" },
+            5.53,
+          );
+          tl.to(
+            indexState,
+            { x: -72, opacity: 0, duration: 0.28, ease: "power4.in" },
+            16.65,
+          );
+          tl.set(indexState, { x: 72, opacity: 0.35 }, 16.93);
+          tl.to(
+            indexState,
+            { x: 0, opacity: 1, duration: 0.32, ease: "power4.out" },
+            16.93,
+          );
+
+          // Scene 2 — two measured scroll landings for recorded and generated cases.
+          tl.to(
+            reportWorld,
+            { y: -320, duration: 1.45, ease: "power3.out" },
+            5.1,
+          );
+          tl.fromTo(
+            casesMarker,
+            { opacity: 0, y: 16 },
+            { opacity: 1, y: 0, duration: 0.58, ease: "power3.out" },
+            6.05,
+          );
+          tl.to(
+            reportWorld,
+            { y: -560, duration: 1.35, ease: "power3.out" },
+            8.35,
+          );
+
+          // Scene 3 — replay and improvement headings arrive on separate beats.
+          tl.to(
+            reportWorld,
+            { y: -850, duration: 1.5, ease: "power3.out" },
+            11.05,
+          );
+          tl.fromTo(
+            replayMarker,
+            { opacity: 0, y: 14 },
+            { opacity: 1, y: 0, duration: 0.55, ease: "power3.out" },
+            11.9,
+          );
+          tl.fromTo(
+            fixMarker,
+            { opacity: 0, y: 14 },
+            { opacity: 1, y: 0, duration: 0.55, ease: "power3.out" },
+            13.45,
+          );
+          tl.to(
+            reportWorld,
+            { y: -1010, duration: 1.3, ease: "power3.out" },
+            14.1,
+          );
+
+          // Scene 4 — evidence scroll, then nested scale/counter-translate target zoom.
+          tl.to(
+            reportWorld,
+            { y: evidenceScrollY, duration: 1.55, ease: "power3.out" },
+            16.85,
+          );
+          tl.fromTo(
+            evidenceRail,
+            { opacity: 0, y: 18 },
+            { opacity: 1, y: 0, duration: 0.65, ease: "power3.out" },
+            17.72,
+          );
+          tl.to(
+            cameraOuter,
+            { scale: 1.14, duration: 1.35, ease: "power3.inOut" },
+            18.95,
+          );
+          tl.to(
+            cameraInner,
+            {
+              x: counterX,
+              y: counterY,
+              duration: 1.35,
+              ease: "power3.inOut",
+            },
+            18.95,
+          );
+
+          // Scene 5 — reframe the whole surface, land the single coral voltage, hold.
+          tl.to(
+            cameraOuter,
+            { scale: 1, duration: 0.88, ease: "power3.inOut" },
+            21.6,
+          );
+          tl.to(
+            cameraInner,
+            { x: 0, y: 0, duration: 0.88, ease: "power3.inOut" },
+            21.6,
+          );
+          tl.to(
+            reportWorld,
+            { y: -1160, duration: 0.88, ease: "power3.out" },
+            21.6,
+          );
+          tl.fromTo(
+            cta,
+            { opacity: 0, scale: 0.94, y: -10 },
+            { opacity: 1, scale: 1, y: 0, duration: 0.64, ease: "power3.out" },
+            22.18,
+          );
+          tl.fromTo(
+            signoff,
+            { opacity: 0, y: 14 },
+            { opacity: 1, y: 0, duration: 0.62, ease: "power3.out" },
+            22.54,
+          );
+
+          window.__timelines["09-shareable-report"] = tl;
+        })();
+      </script>
+    </template>
+  </body>
+</html>

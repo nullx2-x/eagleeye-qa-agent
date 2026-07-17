@@ -1,0 +1,25 @@
+version: "1.0"
+projects:
+  - id: eagleeye-qa-agent
+    root: ..
+    enabled: true
+    allowedEnvironments:
+      - local
+    verification:
+      - name: ruff
+        argv:
+          - uv
+          - run
+          - ruff
+          - check
+          - app
+          - tests
+          - scripts
+        timeoutSeconds: 300
+      - name: pytest
+        argv:
+          - uv
+          - run
+          - pytest
+          - -q
+        timeoutSeconds: 900

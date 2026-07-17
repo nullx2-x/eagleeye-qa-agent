@@ -1,0 +1,18 @@
+{
+  "browser": {
+    "browserName": "chromium",
+    "launchOptions": {
+      "channel": "chrome",
+      "headless": true,
+      "args": [
+        "--disable-extensions-except=chrome-extension",
+        "--load-extension=chrome-extension"
+      ]
+    }
+  },
+  "outputMode": "stdout",
+  "timeouts": {
+    "action": 10000,
+    "navigation": 30000
+  }
+}

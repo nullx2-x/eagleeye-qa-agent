@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>EagleEye Browser QA</title>
+    <link rel="stylesheet" href="popup.css">
+    <script src="popup.js" defer></script>
+  </head>
+  <body>
+    <main>
+      <header class="hero">
+        <div>
+          <p class="eyebrow">EAGLEEYE · SAFE BROWSER QA</p>
+          <h1>操作からテストをつくる</h1>
+        </div>
+        <span id="status-badge" class="badge" aria-live="polite">未開始</span>
+      </header>
+
+      <section class="panel" aria-labelledby="setup-heading">
+        <h2 id="setup-heading">記録設定</h2>
+        <label for="session-name">セッション名</label>
+        <input id="session-name" type="text" maxlength="160" autocomplete="off"
+               placeholder="例: 公開ページの主要導線">
+
+        <label for="session-goal">確認したいこと</label>
+        <textarea id="session-goal" maxlength="800" rows="3"
+                  placeholder="例: 記事一覧から詳細ページへ移動できる"></textarea>
+
+        <label class="check-row" for="capture-screenshot">
+          <input id="capture-screenshot" type="checkbox">
+          <span>可視画面のスクリーンショットも送る（任意）</span>
+        </label>
+        <div class="privacy-disclosure" aria-labelledby="privacy-heading">
+          <strong id="privacy-heading">記録前のプライバシー確認</strong>
+          <p>Webフォームの入力値は取得しません。一方、URL、操作種別、ページタイトル、見出し、コントロール名をローカルEagleEyeへ送ります。表示名などが画面に含まれる場合は要約へ入ることがあります。</p>
+          <p>「AI生成」を実行すると、安全化したDOM要約と操作種別が設定中のAIプロバイダーへ送られます。スクリーンショットはAIへ送りません。</p>
+          <a href="privacy.html" target="_blank" rel="noreferrer">収集項目・保存先・削除方法を確認</a>
+        </div>
+        <label class="check-row consent-row" for="privacy-consent">
+          <input id="privacy-consent" type="checkbox">
+          <span>対象サイトの許可を得ており、上記の記録内容に同意します</span>
+        </label>
+      </section>
+
+      <section class="actions" aria-label="EagleEye 操作">
+        <button id="start-button" class="primary" type="button">開始</button>
+        <button id="stop-button" type="button">停止</button>
+        <button id="generate-button" type="button">AI生成</button>
+        <button id="replay-button" type="button">Replay</button>
+        <button id="report-button" class="wide" type="button">レポート表示</button>
+        <button id="delete-button" class="wide danger" type="button">このセッションを端末から削除</button>
+      </section>
+
+      <p id="operation-status" class="operation" role="status" aria-live="polite"></p>
+      <section id="error-panel" class="error" role="alert" hidden>
+        <strong>処理できませんでした</strong>
+        <p id="error-message"></p>
+      </section>
+
+      <section class="panel result" aria-labelledby="result-heading">
+        <div class="section-title">
+          <h2 id="result-heading">セッション</h2>
+          <span id="session-id" class="mono">—</span>
+        </div>
+        <dl id="metrics" class="metrics"></dl>
+        <h3>生成ケース</h3>
+        <ul id="case-list" class="case-list">
+          <li class="muted">まだ生成されていません。</li>
+        </ul>
+      </section>
+
+      <footer>
+        API: <code>127.0.0.1:8766</code> · 同一オリジン内のみ記録
+      </footer>
+    </main>
+  </body>
+</html>

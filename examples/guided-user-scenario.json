@@ -1,0 +1,50 @@
+{
+  "schemaVersion": "1.0",
+  "id": "generic-preferences-user-check",
+  "projectId": "generic-sample",
+  "title": "設定変更のユーザーテスト（汎用サンプル）",
+  "description": "テキストと画面マーカーでユーザーを誘導し、本人または任意の観察者が結果を記録する最小サンプルです。",
+  "version": "1.0.0",
+  "targetSource": "任意の設定画面またはUIモック",
+  "safetyNotice": "個人情報や本番データを入力せず、取り消せるテスト用設定だけを変更してください。",
+  "privacyNotice": "EagleEyeは回答、構造化イベント、監査ログを保存します。画面画像そのものはこのシナリオでは収集しません。",
+  "requirements": [
+    {
+      "id": "REQ-PREF-001",
+      "text": "ユーザーが案内を見ながら設定を変更し、保存結果を確認できること。"
+    }
+  ],
+  "steps": [
+    {
+      "id": "open-preferences",
+      "kind": "manual",
+      "title": "設定ボタンを見つける",
+      "guidance": {
+        "text": "テスト対象の画面で『設定』または歯車アイコンを探し、1回選択してください。",
+        "hint": "下の丸いマーカーは注目位置の例です。実画面では同じ意味の項目を選んでください。",
+        "markers": [
+          {
+            "shape": "circle",
+            "x": 0.78,
+            "y": 0.08,
+            "width": 0.12,
+            "height": 0.2,
+            "label": "設定の例",
+            "color": "#38d7c4"
+          }
+        ]
+      },
+      "preparation": "テスト対象のトップ画面を表示してください。",
+      "expected": "設定画面が開き、操作に迷ったかどうかを本人または観察者が報告できる。",
+      "requirementIds": ["REQ-PREF-001"],
+      "testType": "guided-user-manual",
+      "severity": "medium",
+      "criticalFlow": false,
+      "timeoutMs": 60000,
+      "countdownSeconds": 3,
+      "requiredConditions": ["テスト用の画面を表示した"],
+      "verdictAuthority": "either"
+    }
+  ],
+  "gateMode": "standard"
+}

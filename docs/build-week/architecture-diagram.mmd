@@ -1,0 +1,48 @@
+---
+config:
+  theme: base
+  themeVariables:
+    primaryColor: '#e7fbf5'
+    primaryTextColor: '#0d1720'
+    primaryBorderColor: '#1fbf9f'
+    lineColor: '#52616b'
+    secondaryColor: '#f1f5f7'
+    tertiaryColor: '#ffffff'
+    fontFamily: 'Arial, sans-serif'
+---
+flowchart TB
+    subgraph B["Browser consent boundary"]
+        direction LR
+        U["User<br/>normal operation"] --> X["Chrome extension<br/><b>explicit ON</b>"]
+        X --> O["Safe observation<br/>DOM summary · screen · actions"]
+        O -.-> N["No typed values<br/>No secrets stored"]
+    end
+
+    subgraph L["Local EagleEye runtime"]
+        direction LR
+        O --> S["Privacy sanitizer<br/>same-origin · bounded payload"]
+        S --> R["Recorded critical path<br/><b>always retained</b>"]
+        S --> C["Codex App Server<br/>read-only structured turn"]
+        C --> A["AI test ideas<br/>schema validated"]
+        R --> Q["Deterministic<br/>quality checker"]
+        A --> Q
+        Q --> P["Playwright Replay<br/><b>test runner is the oracle</b>"]
+        P --> E["Evidence<br/>result · screenshot · WebM · SHA-256"]
+        E --> F["Fix suggestion<br/>HTML + Markdown report"]
+        F --> H["Human decision boundary<br/>apply · release · share"]
+    end
+
+    C -. "bounded context" .-> AI["OpenAI / Codex"]
+    AI -. "test proposals" .-> C
+
+    classDef user fill:#ffffff,stroke:#0d1720,stroke-width:2px,color:#0d1720;
+    classDef trust fill:#e7fbf5,stroke:#1fbf9f,stroke-width:2px,color:#0d1720;
+    classDef engine fill:#0d1720,stroke:#0d1720,stroke-width:2px,color:#ffffff;
+    classDef evidence fill:#fff5cc,stroke:#d19b00,stroke-width:2px,color:#0d1720;
+    classDef authority fill:#f7e9ff,stroke:#8b4cb8,stroke-width:2px,color:#0d1720;
+
+    class U,X user;
+    class O,N,S,R,A,Q trust;
+    class C,P,AI engine;
+    class E,F evidence;
+    class H authority;

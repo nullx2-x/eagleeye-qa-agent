@@ -1,0 +1,84 @@
+{
+  "result": "PASS",
+  "sessionId": "[redacted-session-id]",
+  "extensionIdentity": "fixed public manifest identity; value omitted from report",
+  "extensionOffSessionDelta": 0,
+  "target": "http://127.0.0.1:8888/",
+  "observations": 4,
+  "generatedCases": 5,
+  "ai": {
+    "provider": "codex-agent",
+    "model": "gpt-5.6-terra",
+    "available": true,
+    "fallbackUsed": false,
+    "message": "Codex App Server produced schema-validated browser tests."
+  },
+  "caseQuality": {
+    "decision": "PASS",
+    "score": 100
+  },
+  "replay": {
+    "status": "passed",
+    "durationMs": 2799,
+    "evidence": [
+      {
+        "kind": "screenshot",
+        "path": "artifacts/runs/[redacted-run-id]/final.png",
+        "mime_type": "image/png",
+        "byte_size": 103299,
+        "sha256": "cb2b110403422d6f989121bf95e35050dc91711b54371af4569187508039bb90",
+        "created_at": "2026-07-17T03:03:27.420704+00:00",
+        "capture_source": "playwright.page.screenshot"
+      },
+      {
+        "kind": "video",
+        "path": "artifacts/runs/[redacted-run-id]/video/[redacted-video-name].webm",
+        "mime_type": "video/webm",
+        "byte_size": 118603,
+        "sha256": "94d6cc1fe04065e645d2977f28b500ecf84e3b4f20af47664ffdedeee4f42939",
+        "created_at": "2026-07-17T03:03:27.422270+00:00",
+        "capture_source": "playwright.context.video"
+      }
+    ],
+    "qualityGate": "PASS"
+  },
+  "screenshotAvailable": true,
+  "screenshots": [
+    {
+      "path": "docs/build-week/screenshots/01-dashboard.png",
+      "sha256": "59fdaa43727bb46d36ca2068777d95d9c2c1b625a48299e0c8dc5333524a0d66",
+      "bytes": 249946
+    },
+    {
+      "path": "docs/build-week/screenshots/02-extension-recording.png",
+      "sha256": "d324efe07c0ba3a87a98ff3a9a256f105944368d42b05a50331626bc20c9c603",
+      "bytes": 146571
+    },
+    {
+      "path": "docs/build-week/screenshots/03-wordpress-observed.png",
+      "sha256": "e4d3e7a4822bc76a19dab039a985d23dc6ced2c87b434e9c0274cdb6c69a40bd",
+      "bytes": 138779
+    },
+    {
+      "path": "docs/build-week/screenshots/04-replay-result.png",
+      "sha256": "b060c6d85ac43f45e3b0e84add097c9410570fe5471a50321ad7180f3874581c",
+      "bytes": 173291
+    },
+    {
+      "path": "docs/build-week/screenshots/05-test-list.png",
+      "sha256": "f6df1b99bf4f8345c92390722cad84914893f694bd2f315c9c700b1708408d9a",
+      "bytes": 147023
+    },
+    {
+      "path": "docs/build-week/screenshots/06-report.png",
+      "sha256": "2845bbede3c58b0424753a7e70349e7ba0d4265539146a815eff463a0480e38a",
+      "bytes": 428114
+    },
+    {
+      "path": "docs/build-week/screenshots/architecture-flow.png",
+      "sha256": "7acadbdf94a2dd7dc10d2cf2939b546184231e8c9e3215dc77ccbba654c3776e",
+      "bytes": 43181
+    }
+  ],
+  "elapsedSeconds": 80.6
+}

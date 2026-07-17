@@ -1,0 +1,1026 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+  </head>
+  <body>
+    <template>
+      <style>
+        #root {
+          position: absolute;
+          inset: 0;
+          width: 1920px;
+          height: 1080px;
+          overflow: hidden;
+          isolation: isolate;
+          container-type: size;
+          color: #081019;
+        }
+
+        #root,
+        #root * {
+          box-sizing: border-box;
+        }
+
+        [class~="07-evidence-proof-ground"] {
+          position: absolute;
+          inset: 0;
+          width: 1920px;
+          height: 1080px;
+          background: #eff8f8;
+        }
+
+        [class~="07-evidence-proof-stage"] {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 1920px;
+          height: 900px;
+          overflow: hidden;
+          font-family: sans-serif;
+        }
+
+        [class~="07-evidence-proof-field"] {
+          position: absolute;
+          top: 54px;
+          left: 72px;
+          width: 1776px;
+          height: 790px;
+          overflow: hidden;
+          background: #151817;
+          border: 1px solid rgba(239, 248, 248, 0.14);
+          border-radius: 12px;
+        }
+
+        [class~="07-evidence-proof-camera"] {
+          position: absolute;
+          inset: 0;
+          overflow: hidden;
+          transform-origin: 50% 50%;
+          will-change: transform;
+        }
+
+        [class~="07-evidence-proof-scene-one"],
+        [class~="07-evidence-proof-scene-two"],
+        [class~="07-evidence-proof-scene-three"],
+        [class~="07-evidence-proof-scene-four"] {
+          position: absolute;
+          inset: 0;
+          width: 100%;
+          height: 100%;
+          overflow: hidden;
+          transform-origin: 50% 50%;
+          will-change: transform, opacity, filter;
+        }
+
+        [class~="07-evidence-proof-scene-one"] {
+          z-index: 8;
+          filter: blur(0px);
+        }
+
+        [class~="07-evidence-proof-scene-two"] {
+          z-index: 9;
+          filter: blur(0px);
+        }
+
+        [class~="07-evidence-proof-scene-three"] {
+          z-index: 10;
+        }
+
+        [class~="07-evidence-proof-scene-four"] {
+          z-index: 30;
+          pointer-events: none;
+        }
+
+        [class~="07-evidence-proof-index-label"] {
+          position: absolute;
+          top: 82px;
+          left: 0;
+          width: 100%;
+          margin: 0;
+          color: rgba(239, 248, 248, 0.68);
+          font-family: monospace;
+          font-size: 26px;
+          font-weight: 500;
+          line-height: 1;
+          letter-spacing: 0.16em;
+          text-align: center;
+        }
+
+        [class~="07-evidence-proof-ring-svg"] {
+          position: absolute;
+          top: 72px;
+          left: 628px;
+          width: 520px;
+          height: 520px;
+          overflow: visible;
+        }
+
+        [class~="07-evidence-proof-ring-track"],
+        [class~="07-evidence-proof-ring-progress"] {
+          fill: none;
+          stroke-width: 12;
+        }
+
+        [class~="07-evidence-proof-ring-track"] {
+          stroke: rgba(239, 248, 248, 0.12);
+        }
+
+        [class~="07-evidence-proof-ring-progress"] {
+          stroke: #eff8f8;
+          stroke-linecap: round;
+          transform: rotate(-90deg);
+          transform-origin: 260px 260px;
+        }
+
+        [class~="07-evidence-proof-counter-wrap"] {
+          position: absolute;
+          top: 236px;
+          left: 448px;
+          width: 880px;
+          height: 210px;
+          display: flex;
+          align-items: baseline;
+          justify-content: center;
+          gap: 18px;
+          color: #eff8f8;
+          text-align: center;
+        }
+
+        [class~="07-evidence-proof-counter"] {
+          display: inline-block;
+          width: 560px;
+          color: #eff8f8;
+          font-family: sans-serif;
+          font-size: 9cqw;
+          font-weight: 400;
+          font-variant-numeric: tabular-nums;
+          line-height: 0.95;
+          letter-spacing: -0.025em;
+          text-align: right;
+          transform-origin: 100% 50%;
+          will-change: transform;
+        }
+
+        [class~="07-evidence-proof-counter-unit"] {
+          display: inline-block;
+          width: 110px;
+          color: rgba(239, 248, 248, 0.72);
+          font-family: monospace;
+          font-size: 40px;
+          font-weight: 500;
+          line-height: 1;
+          letter-spacing: 0.04em;
+          text-align: left;
+        }
+
+        [class~="07-evidence-proof-replay-label"] {
+          position: absolute;
+          top: 478px;
+          left: 0;
+          width: 100%;
+          margin: 0;
+          color: rgba(239, 248, 248, 0.62);
+          font-family: monospace;
+          font-size: 25px;
+          font-weight: 500;
+          line-height: 1;
+          letter-spacing: 0.18em;
+          text-align: center;
+        }
+
+        [class~="07-evidence-proof-pass-status"] {
+          position: absolute;
+          top: 345px;
+          left: 310px;
+          z-index: 45;
+          width: 180px;
+          height: 70px;
+          display: grid;
+          place-items: center;
+          background: #34d6b4;
+          border: 1px solid rgba(239, 248, 248, 0.28);
+          border-radius: 8px;
+          color: #eff8f8;
+          font-family: monospace;
+          font-size: 30px;
+          font-weight: 700;
+          line-height: 1;
+          letter-spacing: 0.12em;
+          will-change: transform, opacity;
+        }
+
+        [class~="07-evidence-proof-report-shell"] {
+          position: absolute;
+          top: 70px;
+          left: 64px;
+          width: 1030px;
+          height: 650px;
+          overflow: hidden;
+          background: #202524;
+          border: 1px solid rgba(239, 248, 248, 0.14);
+          border-radius: 8px;
+        }
+
+        [class~="07-evidence-proof-report-chrome"],
+        [class~="07-evidence-proof-wordpress-chrome"] {
+          height: 52px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 0 22px;
+          background: #202524;
+          border-bottom: 1px solid rgba(239, 248, 248, 0.14);
+          color: rgba(239, 248, 248, 0.72);
+          font-family: monospace;
+          font-size: 20px;
+          font-weight: 500;
+          line-height: 1;
+          letter-spacing: 0.08em;
+        }
+
+        [class~="07-evidence-proof-report-image"] {
+          display: block;
+          width: 100%;
+          height: 598px;
+          object-fit: cover;
+          object-position: top center;
+        }
+
+        [class~="07-evidence-proof-instrument-card"] {
+          position: absolute;
+          left: 1135px;
+          width: 570px;
+          height: 190px;
+          padding: 28px 32px;
+          background: #eff8f8;
+          border: 1px solid rgba(8, 16, 25, 0.12);
+          border-radius: 12px;
+          color: #081019;
+          will-change: transform, opacity;
+        }
+
+        [class~="07-evidence-proof-instrument-screenshot"] {
+          top: 150px;
+        }
+
+        [class~="07-evidence-proof-instrument-video"] {
+          top: 420px;
+        }
+
+        [class~="07-evidence-proof-instrument-topline"] {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          color: rgba(8, 16, 25, 0.66);
+          font-family: monospace;
+          font-size: 20px;
+          font-weight: 500;
+          line-height: 1;
+          letter-spacing: 0.1em;
+        }
+
+        [class~="07-evidence-proof-instrument-value"] {
+          margin-top: 24px;
+          font-size: 3.7cqw;
+          font-weight: 400;
+          font-variant-numeric: tabular-nums;
+          line-height: 0.94;
+          letter-spacing: -0.022em;
+        }
+
+        [class~="07-evidence-proof-instrument-unit"] {
+          margin-left: 12px;
+          color: rgba(8, 16, 25, 0.62);
+          font-family: monospace;
+          font-size: 23px;
+          font-weight: 500;
+          letter-spacing: 0.04em;
+        }
+
+        [class~="07-evidence-proof-wordpress-shell"] {
+          position: absolute;
+          top: 96px;
+          left: 70px;
+          width: 680px;
+          height: 594px;
+          overflow: hidden;
+          background: #202524;
+          border: 1px solid rgba(239, 248, 248, 0.14);
+          border-radius: 8px;
+          will-change: transform, opacity;
+        }
+
+        [class~="07-evidence-proof-wordpress-image"] {
+          display: block;
+          width: 100%;
+          height: 542px;
+          object-fit: cover;
+          object-position: top center;
+        }
+
+        [class~="07-evidence-proof-integrity-rail"] {
+          position: absolute;
+          top: 72px;
+          left: 810px;
+          width: 895px;
+          height: 646px;
+          padding: 34px 38px;
+          background: #1b1f1e;
+          border: 1px solid rgba(239, 248, 248, 0.14);
+          border-radius: 8px;
+        }
+
+        [class~="07-evidence-proof-rail-title"] {
+          margin: 0;
+          color: #eff8f8;
+          font-family: monospace;
+          font-size: 25px;
+          font-weight: 500;
+          line-height: 1;
+          letter-spacing: 0.14em;
+          will-change: transform, opacity;
+        }
+
+        [class~="07-evidence-proof-rail-rule"] {
+          display: block;
+          width: 100%;
+          height: 1px;
+          margin-top: 24px;
+          background: rgba(239, 248, 248, 0.14);
+          transform-origin: left center;
+          will-change: transform;
+        }
+
+        [class~="07-evidence-proof-receipt"] {
+          position: absolute;
+          left: 38px;
+          width: 817px;
+          height: 224px;
+          padding: 24px 28px;
+          background: #202524;
+          border: 1px solid rgba(239, 248, 248, 0.14);
+          border-radius: 8px;
+          color: #eff8f8;
+          will-change: transform, opacity;
+        }
+
+        [class~="07-evidence-proof-receipt-png"] {
+          top: 112px;
+        }
+
+        [class~="07-evidence-proof-receipt-webm"] {
+          top: 376px;
+        }
+
+        [class~="07-evidence-proof-receipt-type"] {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          color: #eff8f8;
+          font-family: monospace;
+          font-size: 21px;
+          font-weight: 500;
+          line-height: 1;
+          letter-spacing: 0.1em;
+          will-change: transform, opacity;
+        }
+
+        [class~="07-evidence-proof-receipt-line"] {
+          display: grid;
+          grid-template-columns: 142px 1fr;
+          gap: 18px;
+          align-items: baseline;
+          margin-top: 27px;
+          font-family: monospace;
+          font-size: 20px;
+          font-weight: 400;
+          line-height: 1.3;
+          letter-spacing: 0.02em;
+          will-change: transform, opacity;
+        }
+
+        [class~="07-evidence-proof-receipt-key"] {
+          color: rgba(239, 248, 248, 0.52);
+          letter-spacing: 0.1em;
+        }
+
+        [class~="07-evidence-proof-receipt-value"] {
+          color: #eff8f8;
+          font-variant-numeric: tabular-nums;
+          white-space: nowrap;
+        }
+
+        [class~="07-evidence-proof-proof-card"] {
+          position: absolute;
+          top: 150px;
+          left: 190px;
+          z-index: 34;
+          width: 1396px;
+          height: 530px;
+          background: #eff8f8;
+          border: 1px solid rgba(8, 16, 25, 0.12);
+          border-radius: 12px;
+          color: #081019;
+          will-change: transform, opacity;
+        }
+
+        [class~="07-evidence-proof-proof-kicker"] {
+          position: absolute;
+          top: 68px;
+          left: 92px;
+          margin: 0;
+          color: rgba(8, 16, 25, 0.62);
+          font-family: monospace;
+          font-size: 26px;
+          font-weight: 500;
+          line-height: 1;
+          letter-spacing: 0.16em;
+        }
+
+        [class~="07-evidence-proof-proof-operator"] {
+          position: absolute;
+          top: 232px;
+          display: grid;
+          place-items: center;
+          width: 64px;
+          height: 96px;
+          font-size: 3.4cqw;
+          font-weight: 400;
+          line-height: 1;
+          will-change: transform, opacity;
+        }
+
+        [class~="07-evidence-proof-proof-equals"] {
+          left: 340px;
+        }
+
+        [class~="07-evidence-proof-proof-plus-one"] {
+          left: 670px;
+        }
+
+        [class~="07-evidence-proof-proof-plus-two"] {
+          left: 1020px;
+        }
+
+        [class~="07-evidence-proof-proof-term"] {
+          position: absolute;
+          top: 210px;
+          width: 220px;
+          height: 160px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          gap: 18px;
+          background: #e2e7eb;
+          border: 1px solid rgba(8, 16, 25, 0.12);
+          border-radius: 8px;
+          will-change: transform, opacity;
+        }
+
+        [class~="07-evidence-proof-proof-result"] {
+          left: 430px;
+        }
+
+        [class~="07-evidence-proof-proof-evidence"] {
+          left: 750px;
+          width: 250px;
+        }
+
+        [class~="07-evidence-proof-proof-integrity"] {
+          left: 1100px;
+        }
+
+        [class~="07-evidence-proof-proof-term-title"] {
+          font-size: 1.6cqw;
+          font-weight: 500;
+          line-height: 1;
+          letter-spacing: -0.005em;
+        }
+
+        [class~="07-evidence-proof-proof-term-meta"] {
+          color: rgba(8, 16, 25, 0.56);
+          font-family: monospace;
+          font-size: 18px;
+          font-weight: 500;
+          line-height: 1;
+          letter-spacing: 0.1em;
+        }
+
+        [class~="07-evidence-proof-proof-rule"] {
+          position: absolute;
+          bottom: 84px;
+          left: 92px;
+          width: 1212px;
+          height: 1px;
+          background: rgba(8, 16, 25, 0.12);
+          transform-origin: left center;
+          will-change: transform;
+        }
+
+        [class~="07-evidence-proof-proof-footer"] {
+          position: absolute;
+          right: 92px;
+          bottom: 46px;
+          color: rgba(8, 16, 25, 0.58);
+          font-family: monospace;
+          font-size: 18px;
+          font-weight: 500;
+          line-height: 1;
+          letter-spacing: 0.12em;
+          will-change: transform, opacity;
+        }
+      </style>
+
+      <div
+        id="root"
+        data-composition-id="07-evidence-proof"
+        data-start="0"
+        data-duration="18.4"
+        data-width="1920"
+        data-height="1080"
+      >
+        <div
+          id="07-evidence-proof-ground"
+          class="clip 07-evidence-proof-ground"
+          data-start="0"
+          data-duration="18.4"
+          data-track-index="0"
+        ></div>
+
+        <div
+          id="07-evidence-proof-stage"
+          class="clip 07-evidence-proof-stage"
+          data-start="0"
+          data-duration="18.4"
+          data-track-index="1"
+        >
+          <div id="07-evidence-proof-field" class="07-evidence-proof-field">
+            <div id="07-evidence-proof-camera" class="07-evidence-proof-camera">
+              <section id="07-evidence-proof-scene-one" class="07-evidence-proof-scene-one">
+                <p class="07-evidence-proof-index-label">REPLAY / MEASURED</p>
+                <svg
+                  id="07-evidence-proof-ring-svg"
+                  class="07-evidence-proof-ring-svg"
+                  viewBox="0 0 520 520"
+                  aria-hidden="true"
+                >
+                  <circle
+                    id="07-evidence-proof-ring-track"
+                    class="07-evidence-proof-ring-track"
+                    cx="260"
+                    cy="260"
+                    r="218"
+                  ></circle>
+                  <circle
+                    id="07-evidence-proof-ring-progress"
+                    class="07-evidence-proof-ring-progress"
+                    cx="260"
+                    cy="260"
+                    r="218"
+                  ></circle>
+                </svg>
+                <div id="07-evidence-proof-counter-wrap" class="07-evidence-proof-counter-wrap">
+                  <span id="07-evidence-proof-counter" class="07-evidence-proof-counter">0</span>
+                  <span class="07-evidence-proof-counter-unit">ms</span>
+                </div>
+                <p class="07-evidence-proof-replay-label">WORDPRESS REPLAY</p>
+              </section>
+
+              <section id="07-evidence-proof-scene-two" class="07-evidence-proof-scene-two">
+                <div id="07-evidence-proof-report-shell" class="07-evidence-proof-report-shell">
+                  <div class="07-evidence-proof-report-chrome">
+                    <span>REPORT / REPLAY</span>
+                    <span>OBSERVED</span>
+                  </div>
+                  <img
+                    id="07-evidence-proof-report-image"
+                    class="07-evidence-proof-report-image"
+                    src="assets/screenshots/report.png"
+                    alt="EagleEye measured replay report"
+                  />
+                </div>
+
+                <article
+                  id="07-evidence-proof-instrument-screenshot"
+                  class="07-evidence-proof-instrument-card 07-evidence-proof-instrument-screenshot"
+                >
+                  <div class="07-evidence-proof-instrument-topline">
+                    <span>SCREENSHOT</span>
+                    <span>PNG</span>
+                  </div>
+                  <div class="07-evidence-proof-instrument-value">
+                    103,299<span class="07-evidence-proof-instrument-unit">bytes</span>
+                  </div>
+                </article>
+
+                <article
+                  id="07-evidence-proof-instrument-video"
+                  class="07-evidence-proof-instrument-card 07-evidence-proof-instrument-video"
+                >
+                  <div class="07-evidence-proof-instrument-topline">
+                    <span>VIDEO</span>
+                    <span>WEBM</span>
+                  </div>
+                  <div class="07-evidence-proof-instrument-value">
+                    112,935<span class="07-evidence-proof-instrument-unit">bytes</span>
+                  </div>
+                </article>
+              </section>
+
+              <section id="07-evidence-proof-scene-three" class="07-evidence-proof-scene-three">
+                <div id="07-evidence-proof-wordpress-shell" class="07-evidence-proof-wordpress-shell">
+                  <div class="07-evidence-proof-wordpress-chrome">
+                    <span>WORDPRESS</span>
+                    <span>FINAL FRAME</span>
+                  </div>
+                  <img
+                    id="07-evidence-proof-wordpress-image"
+                    class="07-evidence-proof-wordpress-image"
+                    src="assets/screenshots/wordpress-observed.png"
+                    alt="Observed WordPress final page"
+                  />
+                </div>
+
+                <div id="07-evidence-proof-integrity-rail" class="07-evidence-proof-integrity-rail">
+                  <h2 id="07-evidence-proof-rail-title" class="07-evidence-proof-rail-title">
+                    INTEGRITY RECEIPTS
+                  </h2>
+                  <span id="07-evidence-proof-rail-rule" class="07-evidence-proof-rail-rule"></span>
+
+                  <article
+                    id="07-evidence-proof-receipt-png"
+                    class="07-evidence-proof-receipt 07-evidence-proof-receipt-png"
+                  >
+                    <div id="07-evidence-proof-png-type" class="07-evidence-proof-receipt-type">
+                      <span>PNG / FINAL</span>
+                      <span>103,299 B</span>
+                    </div>
+                    <div id="07-evidence-proof-png-time" class="07-evidence-proof-receipt-line">
+                      <span class="07-evidence-proof-receipt-key">TIMESTAMP</span>
+                      <span class="07-evidence-proof-receipt-value">2026-07-16 22:07:21Z</span>
+                    </div>
+                    <div id="07-evidence-proof-png-hash" class="07-evidence-proof-receipt-line">
+                      <span class="07-evidence-proof-receipt-key">SHA-256</span>
+                      <span class="07-evidence-proof-receipt-value">cb2b11040342...8039bb90</span>
+                    </div>
+                  </article>
+
+                  <article
+                    id="07-evidence-proof-receipt-webm"
+                    class="07-evidence-proof-receipt 07-evidence-proof-receipt-webm"
+                  >
+                    <div id="07-evidence-proof-webm-type" class="07-evidence-proof-receipt-type">
+                      <span>WEBM / REPLAY</span>
+                      <span>112,935 B</span>
+                    </div>
+                    <div id="07-evidence-proof-webm-time" class="07-evidence-proof-receipt-line">
+                      <span class="07-evidence-proof-receipt-key">TIMESTAMP</span>
+                      <span class="07-evidence-proof-receipt-value">2026-07-16 22:07:21Z</span>
+                    </div>
+                    <div id="07-evidence-proof-webm-hash" class="07-evidence-proof-receipt-line">
+                      <span class="07-evidence-proof-receipt-key">SHA-256</span>
+                      <span class="07-evidence-proof-receipt-value">afbea50b70f6...b7b44fb3</span>
+                    </div>
+                  </article>
+                </div>
+              </section>
+
+              <section id="07-evidence-proof-scene-four" class="07-evidence-proof-scene-four">
+                <div id="07-evidence-proof-proof-card" class="07-evidence-proof-proof-card">
+                  <p class="07-evidence-proof-proof-kicker">EVIDENCE STANDARD</p>
+                  <span
+                    id="07-evidence-proof-proof-equals"
+                    class="07-evidence-proof-proof-operator 07-evidence-proof-proof-equals"
+                  >
+                    =
+                  </span>
+                  <div
+                    id="07-evidence-proof-proof-result"
+                    class="07-evidence-proof-proof-term 07-evidence-proof-proof-result"
+                  >
+                    <span class="07-evidence-proof-proof-term-title">RESULT</span>
+                    <span class="07-evidence-proof-proof-term-meta">MEASURED</span>
+                  </div>
+                  <span
+                    id="07-evidence-proof-proof-plus-one"
+                    class="07-evidence-proof-proof-operator 07-evidence-proof-proof-plus-one"
+                  >
+                    +
+                  </span>
+                  <div
+                    id="07-evidence-proof-proof-evidence"
+                    class="07-evidence-proof-proof-term 07-evidence-proof-proof-evidence"
+                  >
+                    <span class="07-evidence-proof-proof-term-title">EVIDENCE</span>
+                    <span class="07-evidence-proof-proof-term-meta">RECORDED</span>
+                  </div>
+                  <span
+                    id="07-evidence-proof-proof-plus-two"
+                    class="07-evidence-proof-proof-operator 07-evidence-proof-proof-plus-two"
+                  >
+                    +
+                  </span>
+                  <div
+                    id="07-evidence-proof-proof-integrity"
+                    class="07-evidence-proof-proof-term 07-evidence-proof-proof-integrity"
+                  >
+                    <span class="07-evidence-proof-proof-term-title">INTEGRITY</span>
+                    <span class="07-evidence-proof-proof-term-meta">HASHED</span>
+                  </div>
+                  <span id="07-evidence-proof-proof-rule" class="07-evidence-proof-proof-rule"></span>
+                  <span id="07-evidence-proof-proof-footer" class="07-evidence-proof-proof-footer">
+                    RESULT + EVIDENCE + INTEGRITY
+                  </span>
+                </div>
+              </section>
+
+              <div id="07-evidence-proof-pass-status" class="07-evidence-proof-pass-status">PASS</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+      <script>
+        (() => {
+          window.__timelines = window.__timelines || {};
+
+          const byId = (suffix) => document.getElementById(`07-evidence-proof-${suffix}`);
+          const tl = gsap.timeline({ paused: true });
+
+          const camera = byId("camera");
+          const sceneOne = byId("scene-one");
+          const sceneTwo = byId("scene-two");
+          const sceneThree = byId("scene-three");
+          const proofCard = byId("proof-card");
+          const counter = byId("counter");
+          const ringProgress = byId("ring-progress");
+          const passStatus = byId("pass-status");
+          const instrumentScreenshot = byId("instrument-screenshot");
+          const instrumentVideo = byId("instrument-video");
+          const wordpressShell = byId("wordpress-shell");
+          const railTitle = byId("rail-title");
+          const railRule = byId("rail-rule");
+          const receiptPng = byId("receipt-png");
+          const receiptWebm = byId("receipt-webm");
+          const pngType = byId("png-type");
+          const pngTime = byId("png-time");
+          const pngHash = byId("png-hash");
+          const webmType = byId("webm-type");
+          const webmTime = byId("webm-time");
+          const webmHash = byId("webm-hash");
+          const proofEquals = byId("proof-equals");
+          const proofResult = byId("proof-result");
+          const proofPlusOne = byId("proof-plus-one");
+          const proofEvidence = byId("proof-evidence");
+          const proofPlusTwo = byId("proof-plus-two");
+          const proofIntegrity = byId("proof-integrity");
+          const proofRule = byId("proof-rule");
+          const proofFooter = byId("proof-footer");
+
+          const ringLength = ringProgress.getTotalLength();
+          ringProgress.style.strokeDasharray = `${ringLength}`;
+          ringProgress.style.strokeDashoffset = `${ringLength}`;
+
+          const counterState = { value: 0 };
+
+          tl.set([sceneTwo, sceneThree, proofCard], { opacity: 0 }, 0);
+          tl.set([instrumentScreenshot, instrumentVideo], { opacity: 0, y: 24 }, 0);
+          tl.set(wordpressShell, { opacity: 0, y: 22 }, 0);
+          tl.set(railTitle, { opacity: 0, x: 24 }, 0);
+          tl.set(railRule, { scaleX: 0 }, 0);
+          tl.set([receiptPng, receiptWebm], { opacity: 0, y: 18 }, 0);
+          tl.set([pngType, pngTime, pngHash, webmType, webmTime, webmHash], { opacity: 0, x: 24 }, 0);
+          tl.set(
+            [proofEquals, proofResult, proofPlusOne, proofEvidence, proofPlusTwo, proofIntegrity, proofFooter],
+            { opacity: 0, y: 18 },
+            0,
+          );
+          tl.set(proofRule, { scaleX: 0 }, 0);
+          tl.set(passStatus, { x: 488, y: 300, opacity: 0, scale: 0.92 }, 0);
+
+          tl.fromTo(
+            camera,
+            { scale: 0.97, x: 0, y: 0 },
+            { scale: 1.02, x: 0, y: 0, duration: 4.4, ease: "power2.inOut" },
+            0,
+          );
+          tl.fromTo(
+            sceneOne,
+            { opacity: 0, y: 12 },
+            { opacity: 1, y: 0, duration: 0.42, ease: "power2.out" },
+            0,
+          );
+          tl.to(
+            counterState,
+            {
+              value: 1745,
+              duration: 3.2,
+              ease: "power3.out",
+              onUpdate: () => {
+                counter.textContent = Math.round(counterState.value).toLocaleString("en-US");
+              },
+            },
+            0.2,
+          );
+          tl.fromTo(
+            counter,
+            { scale: 0.48 },
+            { scale: 1, duration: 3.2, ease: "power3.out" },
+            0.2,
+          );
+          tl.fromTo(
+            ringProgress,
+            { strokeDashoffset: ringLength },
+            { strokeDashoffset: 0, duration: 3.2, ease: "power3.out" },
+            0.2,
+          );
+          tl.fromTo(
+            passStatus,
+            { x: 488, y: 316, opacity: 0, scale: 0.92 },
+            { x: 488, y: 300, opacity: 1, scale: 1, duration: 0.55, ease: "power3.out" },
+            3.45,
+          );
+
+          // Scene 1 -> Scene 2: full-surface zoom-through at matched blur and opacity.
+          tl.to(sceneOne, { scale: 1.2, filter: "blur(20px)", duration: 0.2, ease: "power3.in" }, 4.6);
+          tl.to(sceneOne, { opacity: 0.15, duration: 0.2, ease: "none" }, 4.6);
+          tl.to(passStatus, { opacity: 0, duration: 0.18, ease: "none" }, 4.62);
+          tl.set(sceneOne, { opacity: 0 }, 4.8);
+          tl.fromTo(
+            sceneTwo,
+            { opacity: 0.15, scale: 0.75, filter: "blur(20px)" },
+            {
+              opacity: 1,
+              scale: 1,
+              filter: "blur(0px)",
+              duration: 0.5,
+              ease: "expo.out",
+              immediateRender: false,
+            },
+            4.8,
+          );
+          tl.to(camera, { scale: 1.08, x: -28, y: -10, duration: 0.45, ease: "power3.in" }, 4.55);
+          tl.to(camera, { scale: 1.025, x: -14, y: 0, duration: 0.75, ease: "expo.out" }, 5.0);
+          tl.fromTo(
+            instrumentScreenshot,
+            { opacity: 0, y: 24 },
+            { opacity: 1, y: 0, duration: 0.65, ease: "power3.out", immediateRender: false },
+            5.6,
+          );
+          tl.fromTo(
+            instrumentVideo,
+            { opacity: 0, y: 24 },
+            { opacity: 1, y: 0, duration: 0.65, ease: "power3.out", immediateRender: false },
+            7.8,
+          );
+
+          // Scene 2 -> Scene 3: matched leftward cut-the-curve.
+          tl.to(sceneTwo, { x: -230, duration: 0.3, ease: "power4.in" }, 10.3);
+          tl.to(sceneTwo, { opacity: 0, duration: 0.26, ease: "power1.in" }, 10.34);
+          tl.fromTo(
+            sceneThree,
+            { x: 230, opacity: 0.35 },
+            { x: 0, opacity: 1, duration: 0.34, ease: "power4.out", immediateRender: false },
+            10.6,
+          );
+          tl.to(camera, { scale: 1.03, x: 36, y: -6, duration: 0.9, ease: "power2.inOut" }, 10.45);
+          tl.fromTo(
+            wordpressShell,
+            { opacity: 0, y: 22 },
+            { opacity: 1, y: 0, duration: 0.58, ease: "power3.out", immediateRender: false },
+            10.75,
+          );
+          tl.fromTo(
+            railTitle,
+            { opacity: 0, x: 24 },
+            { opacity: 1, x: 0, duration: 0.48, ease: "power2.out", immediateRender: false },
+            10.95,
+          );
+          tl.fromTo(
+            railRule,
+            { scaleX: 0 },
+            { scaleX: 1, duration: 0.55, ease: "power2.out", immediateRender: false },
+            11.05,
+          );
+          tl.fromTo(
+            receiptPng,
+            { opacity: 0, y: 18 },
+            { opacity: 1, y: 0, duration: 0.42, ease: "power2.out", immediateRender: false },
+            11.2,
+          );
+          tl.fromTo(
+            pngType,
+            { opacity: 0, x: 24 },
+            { opacity: 1, x: 0, duration: 0.38, ease: "power2.out", immediateRender: false },
+            11.42,
+          );
+          tl.fromTo(
+            pngTime,
+            { opacity: 0, x: 24 },
+            { opacity: 1, x: 0, duration: 0.4, ease: "power2.out", immediateRender: false },
+            11.82,
+          );
+          tl.fromTo(
+            pngHash,
+            { opacity: 0, x: 24 },
+            { opacity: 1, x: 0, duration: 0.42, ease: "power2.out", immediateRender: false },
+            12.22,
+          );
+          tl.fromTo(
+            receiptWebm,
+            { opacity: 0, y: 18 },
+            { opacity: 1, y: 0, duration: 0.42, ease: "power2.out", immediateRender: false },
+            12.52,
+          );
+          tl.fromTo(
+            webmType,
+            { opacity: 0, x: 24 },
+            { opacity: 1, x: 0, duration: 0.38, ease: "power2.out", immediateRender: false },
+            12.72,
+          );
+          tl.fromTo(
+            webmTime,
+            { opacity: 0, x: 24 },
+            { opacity: 1, x: 0, duration: 0.4, ease: "power2.out", immediateRender: false },
+            13.02,
+          );
+          tl.fromTo(
+            webmHash,
+            { opacity: 0, x: 24 },
+            { opacity: 1, x: 0, duration: 0.45, ease: "power2.out", immediateRender: false },
+            13.34,
+          );
+
+          // Scene 4: settle without drift, dim the instruments, and hold the proof formula.
+          tl.to(sceneThree, { opacity: 0.12, scale: 0.985, duration: 0.8, ease: "power2.out" }, 14.4);
+          tl.to(camera, { scale: 1, x: 0, y: 0, duration: 0.8, ease: "power2.inOut" }, 14.4);
+          tl.fromTo(
+            proofCard,
+            { opacity: 0, y: 30, scale: 0.97 },
+            { opacity: 1, y: 0, scale: 1, duration: 0.75, ease: "power3.out", immediateRender: false },
+            14.4,
+          );
+          tl.fromTo(
+            passStatus,
+            { x: 0, y: 16, opacity: 0, scale: 0.94 },
+            { x: 0, y: 0, opacity: 1, scale: 1, duration: 0.5, ease: "power3.out", immediateRender: false },
+            14.65,
+          );
+          tl.fromTo(
+            proofEquals,
+            { opacity: 0, y: 18 },
+            { opacity: 1, y: 0, duration: 0.3, ease: "power2.out", immediateRender: false },
+            14.85,
+          );
+          tl.fromTo(
+            proofResult,
+            { opacity: 0, y: 18 },
+            { opacity: 1, y: 0, duration: 0.45, ease: "power3.out", immediateRender: false },
+            14.95,
+          );
+          tl.fromTo(
+            proofPlusOne,
+            { opacity: 0, y: 18 },
+            { opacity: 1, y: 0, duration: 0.3, ease: "power2.out", immediateRender: false },
+            15.05,
+          );
+          tl.fromTo(
+            proofEvidence,
+            { opacity: 0, y: 18 },
+            { opacity: 1, y: 0, duration: 0.45, ease: "power3.out", immediateRender: false },
+            15.1,
+          );
+          tl.fromTo(
+            proofPlusTwo,
+            { opacity: 0, y: 18 },
+            { opacity: 1, y: 0, duration: 0.3, ease: "power2.out", immediateRender: false },
+            15.2,
+          );
+          tl.fromTo(
+            proofIntegrity,
+            { opacity: 0, y: 18 },
+            { opacity: 1, y: 0, duration: 0.45, ease: "power3.out", immediateRender: false },
+            15.25,
+          );
+          tl.fromTo(
+            proofRule,
+            { scaleX: 0 },
+            { scaleX: 1, duration: 0.55, ease: "power2.out", immediateRender: false },
+            15.22,
+          );
+          tl.fromTo(
+            proofFooter,
+            { opacity: 0, y: 18 },
+            { opacity: 1, y: 0, duration: 0.45, ease: "power2.out", immediateRender: false },
+            15.38,
+          );
+
+          window.__timelines["07-evidence-proof"] = tl;
+        })();
+      </script>
+    </template>
+  </body>
+</html>
