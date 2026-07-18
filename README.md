@@ -12,6 +12,8 @@ AI can propose coverage and fixes. It cannot overwrite the recorded critical pat
 
 ![EagleEye end-to-end demo flow](docs/build-week/screenshots/eagleeye-demo-flow.gif)
 
+▶ [Watch the 2:55 English demo with burned-in captions](https://youtu.be/zLSLiG7QYr4)
+
 The 12-second preview above follows the same sequence verified against a real local WordPress environment. See the full [dashboard screenshot](docs/build-week/screenshots/01-dashboard.png) or the machine-readable [WordPress E2E evidence](docs/build-week/evidence/extension-wordpress-e2e.json).
 
 ## Why EagleEye

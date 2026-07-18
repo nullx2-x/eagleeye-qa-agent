@@ -4,7 +4,7 @@
 
 総合ステータス: **PARTIAL**
 
-EagleEye本体、提出用privateリポジトリ、英語音声・字幕付きデモ動画、Devpost本文は提出可能な状態まで完成しています。最終提出は、公開YouTube URLとDevpostの居住国入力を待っているため未実施です。
+EagleEye本体、提出用privateリポジトリ、英語音声・字幕付き公開デモ動画、Devpost本文は提出可能な状態まで完成しています。最終提出はDevpostの居住国入力を待っているため未実施です。
 
 ## 完了した成果
 
@@ -21,8 +21,9 @@ EagleEye本体、提出用privateリポジトリ、英語音声・字幕付き�
 | 動画用Node依存 | PASS | `adm-zip 0.6.0`へoverrideし、`npm audit`既知脆弱性0。HyperFrames check PASS |
 | 提出動画 | PASS | 2:55、英語音声、72字幕cue、GPT-5.6 / Codex App Serverを明示、全編decode PASS |
 | Devpost下書き | PASS | <https://devpost.com/software/eagleeye-browser-native-ai-qa-agent>、説明・技術・画像・private repo URLを設定済み |
-| YouTube初回アップロード | REPLACE_REQUIRED | 公開・2:55・1080pだが、字幕なしmaster版であることをremote frame比較で確認 |
-| Devpost最終送信 | BLOCKED | 字幕付きYouTube URLと居住国の入力待ち |
+| YouTube提出版 | PASS | 公開・2:55・1080p・age limit 0。remote 60秒frameでGPT-5.6 / Codex焼込み字幕を確認 |
+| Devpost動画URL | PASS | `https://youtu.be/zLSLiG7QYr4`をproject version 4へ設定済み |
+| Devpost最終送信 | BLOCKED | 居住国の本人入力待ち |
 
 ## 提出動画
 
@@ -34,14 +35,13 @@ EagleEye本体、提出用privateリポジトリ、英語音声・字幕付き�
 - 要件反映: `GPT-5.6 through Codex App Server` を音声と焼込み字幕の両方で確認
 - 映像ソース検証: Runtime / Layout / Motion error 0、Contrast warning 2、総合check PASS
 
-## YouTubeアップロード確認
+## YouTube提出版確認
 
-- 確認URL: <https://youtu.be/bYC5OidwvJM>
+- 確認URL: <https://youtu.be/zLSLiG7QYr4>
 - YouTubeメタデータ: public、2:55、1920x1080、age limit 0
-- YouTube上の60秒フレームには焼込み字幕がない
-- ローカル最終版の同時刻には `GPT-5.6 through Codex App Server expands the recorded` の焼込み字幕がある
-- 判定: **REPLACE_REQUIRED**。`eagleeye-build-week-master-en.mp4`ではなく、`eagleeye-build-week-submission-en-captioned.mp4`を新規アップロードする
-- 誤登録防止のため、当該URLはDevpostのvideo URLへ設定していない
+- YouTube配信データの60秒フレームに `GPT-5.6 through Codex App Server expands the recorded` の焼込み字幕を確認
+- 判定: **PASS**。字幕付き提出版と一致
+- Devpost project version 4のvideo URLへ設定済み
 
 ## セキュリティ・プライバシー判定
 
@@ -53,9 +53,7 @@ EagleEye本体、提出用privateリポジトリ、英語音声・字幕付き�
 
 ## 残作業
 
-1. 字幕付き最終MP4をYouTubeへ**Public**で新規アップロードし、公開URLをDevpostへ設定する。
-2. GitHubのManage access画面で、2件目が `build-week-event@openai.com` 宛の読取専用招待であることを確認する。
-3. Devpost必須項目のCountry of Residenceを本人回答で設定する。
-4. Devpostの最終Submitを実行し、提出状態とURLを再確認する。
+1. Devpost必須項目のCountry of Residenceを本人回答で設定する。
+2. Devpostの最終Submitを実行し、提出状態とURLを再確認する。
 
 締切: 2026-07-22 09:00 JST。現在は締切前で、提出物本体は完成済みです。

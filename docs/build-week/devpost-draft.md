@@ -1,6 +1,6 @@
 # Devpost draft - EagleEye
 
-> **Draft status:** The product path, six submission screenshots, Architecture image, private judge-review repository, and final 2:55 captioned video are verified. Public video upload and Devpost submission remain the only external release actions.
+> **Draft status:** The product path, six submission screenshots, Architecture image, private judge-review repository, and public 2:55 captioned video are verified. Final Devpost submission remains release-gated.
 
 ## Title
 
@@ -86,7 +86,8 @@ Official reference: [Codex App Server documentation](https://learn.chatgpt.com/d
 | Windows/Linux CI workflow definition | Implemented; remote run evidence TBD |
 | Six submission screenshots | Captured from the verified flow |
 | Private judge-review repository | Security-reviewed single-snapshot release |
-| Public video URL and final Devpost submit | Release-gated |
+| Public video URL | Verified: <https://youtu.be/zLSLiG7QYr4> |
+| Final Devpost submit | Release-gated |
 
 ## Challenges we ran into
 
@@ -113,7 +114,7 @@ The submission repository is private and uses a security-reviewed single-snapsho
 
 ## Demo video
 
-**TBD - public URL for the verified local final video**
+<https://youtu.be/zLSLiG7QYr4>
 
 Verified duration: **2:55** (175.018667 seconds), 1920x1080 at 30fps. The local final candidate uses an AI-generated English voice created on-device with Kokoro-82M (`af_nova`), contains no background music, and includes 72 burned-in English subtitle cues plus SRT/VTT sidecars. Script: `docs/build-week/demo-script.md`.
 
@@ -145,7 +146,7 @@ Optional hero: **[Five-stage dashboard](screenshots/01-dashboard.png)**.
 - Team members: **nullx2-x (individual)**
 - Build Week category or track: **Developer Tools**
 - Repository: **https://github.com/nullx2-x/eagleeye-qa-agent (private judge-review repository)**
-- Video: **local final candidate verified; public URL TBD**
+- Video: **public 2:55 English demo with burned-in captions verified**
 - Public URL: **not supplied; repository Quick Start is the evaluation path**
 - Screenshots: **6 local assets ready; upload URLs are release-gated**
 - License: MIT

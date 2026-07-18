@@ -12,6 +12,8 @@ AIは候補を提案しますが、記録されたcritical path、実行結果�
 
 ![EagleEye end-to-end demo flow](docs/build-week/screenshots/eagleeye-demo-flow.gif)
 
+▶ [英語音声・焼込み字幕付き2分55秒デモ](https://youtu.be/zLSLiG7QYr4)
+
 12秒のプレビューは、実WordPressで検証した順序をそのまま示します。静止画で確認する場合は[Dashboard](docs/build-week/screenshots/01-dashboard.png)を開いてください。
 
 ## 5分で分かる勝ち筋
