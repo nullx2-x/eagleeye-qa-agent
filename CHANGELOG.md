@@ -12,6 +12,7 @@
 - Replayのredirect/subresourceを含むnetwork境界、既定API docs無効化、CSP/no-store headerを追加。
 - Privacy、Security、Compliance、third-party notice、CodeQL、Dependabot、extension CIを公開Release gateへ追加。
 - Guided assetを安全なcatalog lookupへ変更し、SVGを拒否。route IDのHTML埋め込みとReDoS対象regexを除去し、patched MCPだけへ解決されるPython範囲を固定。
+- bounded self-repairへ証拠本文の制限付き秘匿化入力、明示的な修復辞退、confidence下限、プロジェクト単位排他制御を追加。
 
 ## 0.8.0 - 2026-07-16
 
