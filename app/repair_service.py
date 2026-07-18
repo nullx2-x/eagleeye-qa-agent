@@ -272,19 +272,14 @@ class RepairService:
                 reasons=[_bounded_message(exc)],
             )
 
-        eligible = (
-            decision.eligible
-            and decision.risk == "low"
-            and decision.classification == "source_defect"
-        )
+        eligible = decision.eligible and decision.risk == "low" and decision.classification == "source_defect"
         evidence_sha = _canonical_sha({"input": input_document, "decision": decision.model_dump()})
         if not eligible:
             return RepairEvaluationResponse(
                 eligible=False,
                 effectiveMode="proposal_only",
                 classification=decision.classification,
-                reasons=decision.reasons
-                or ["Evaluator did not certify this failure for automatic repair."],
+                reasons=decision.reasons or ["Evaluator did not certify this failure for automatic repair."],
                 evaluationSha256=evidence_sha,
             )
 
@@ -386,8 +381,7 @@ class RepairService:
             raise ValueError("Planner returned no repair plan")
         if plan.confidence < _MIN_AUTO_APPLY_CONFIDENCE:
             raise ValueError(
-                f"Planner confidence {plan.confidence:.2f} is below "
-                f"{_MIN_AUTO_APPLY_CONFIDENCE:.2f}"
+                f"Planner confidence {plan.confidence:.2f} is below {_MIN_AUTO_APPLY_CONFIDENCE:.2f}"
             )
         return plan
 
