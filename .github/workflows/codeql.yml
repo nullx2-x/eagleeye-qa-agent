@@ -37,6 +37,7 @@ jobs:
         uses: github/codeql-action/analyze@7188fc363630916deb702c7fdcf4e481b751f97a # v4
         with:
           category: /language:${{ matrix.language }}
+          output: codeql-results
           # GitHub Code Scanning upload is unavailable for this user-owned
           # private repository. Keep the analysis enabled and restore automatic
           # upload if the repository becomes public.
@@ -47,6 +48,6 @@ jobs:
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: codeql-sarif-${{ matrix.language }}-${{ github.sha }}
-          path: ../results/*.sarif
+          path: codeql-results/*.sarif
           if-no-files-found: error
           retention-days: 14
