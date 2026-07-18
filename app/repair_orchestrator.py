@@ -160,9 +160,7 @@ class RepairOrchestrator:
             except Exception as exc:  # noqa: BLE001 - planner boundary is intentionally contained
                 failure = f"Planner failed: {_safe_message(exc)}"
                 previous_failures.append(failure)
-                attempts.append(
-                    RepairAttemptRecord(attempt=attempt_number, status="FAILED", reason=failure)
-                )
+                attempts.append(RepairAttemptRecord(attempt=attempt_number, status="FAILED", reason=failure))
                 if attempt_number == limits.maxAttempts:
                     reasons.append("Planner failed within the bounded attempt budget")
                 continue
@@ -195,12 +193,8 @@ class RepairOrchestrator:
                     )
                     self._apply(execution_root, prepared)
                     postimages = self._verify_postimages(prepared)
-                    verification = self._run_verification(
-                        execution_root, authorization.project.verification
-                    )
-                    failed_commands = [
-                        item for item in verification if item.timedOut or item.returnCode != 0
-                    ]
+                    verification = self._run_verification(execution_root, authorization.project.verification)
+                    failed_commands = [item for item in verification if item.timedOut or item.returnCode != 0]
                     if failed_commands:
                         failure = "Verification command failed"
                     else:
@@ -241,9 +235,7 @@ class RepairOrchestrator:
                 failure = _safe_message(exc)
 
             if prepared is None or checkpoint_path is None:
-                attempts.append(
-                    RepairAttemptRecord(attempt=attempt_number, status="FAILED", reason=failure)
-                )
+                attempts.append(RepairAttemptRecord(attempt=attempt_number, status="FAILED", reason=failure))
                 previous_failures.append(failure or "Disposable repair worktree failed")
                 continue
 
