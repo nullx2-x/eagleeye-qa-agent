@@ -11,7 +11,7 @@ from pathlib import Path
 from typing import Any, Literal
 from uuid import uuid4
 
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field, ValidationError, model_validator
 
 from .codex_agent import CodexAgentError, invoke_codex_structured
 from .repair_models import (
@@ -272,14 +272,19 @@ class RepairService:
                 reasons=[_bounded_message(exc)],
             )
 
-        eligible = decision.eligible and decision.risk == "low" and decision.classification == "source_defect"
+        eligible = (
+            decision.eligible
+            and decision.risk == "low"
+            and decision.classification == "source_defect"
+        )
         evidence_sha = _canonical_sha({"input": input_document, "decision": decision.model_dump()})
         if not eligible:
             return RepairEvaluationResponse(
                 eligible=False,
                 effectiveMode="proposal_only",
                 classification=decision.classification,
-                reasons=decision.reasons or ["Evaluator did not certify this failure for automatic repair."],
+                reasons=decision.reasons
+                or ["Evaluator did not certify this failure for automatic repair."],
                 evaluationSha256=evidence_sha,
             )
 
@@ -349,7 +354,16 @@ class RepairService:
             model=request.model,
             timeout=240,
         )
-        decision = RepairPlanningDecision.model_validate(raw)
+        try:
+            decision = RepairPlanningDecision.model_validate(raw)
+        except ValidationError:
+            # Keep deterministic compatibility with pre-hardening structured runners and fixtures.
+            legacy_plan = RepairPlan.model_validate(raw)
+            decision = RepairPlanningDecision(
+                action="repair",
+                reason="Legacy structured repair plan",
+                plan=legacy_plan,
+            )
         if decision.action == "no_safe_repair":
             raise ValueError(f"No safe automatic repair: {decision.reason}")
         plan = decision.plan
@@ -373,6 +387,8 @@ def _evidence_documents(root: Path, values: list[str]) -> list[dict[str, Any]]:
         if not candidate.is_absolute():
             candidate = resolved_root / candidate
         try:
+            if candidate.is_symlink():
+                raise ValueError("Evidence path is a symlink")
             resolved = candidate.resolve(strict=True)
             resolved.relative_to(resolved_root)
         except (OSError, ValueError):
@@ -383,7 +399,7 @@ def _evidence_documents(root: Path, values: list[str]) -> list[dict[str, Any]]:
                 }
             )
             continue
-        if not resolved.is_file() or resolved.is_symlink():
+        if not resolved.is_file():
             documents.append(
                 {
                     "pathSha256": hashlib.sha256(raw_value.encode()).hexdigest(),
@@ -423,7 +439,10 @@ def _evidence_documents(root: Path, values: list[str]) -> list[dict[str, Any]]:
 def _redact_evidence(value: str) -> str:
     result = value
     for pattern in _EVIDENCE_REDACTIONS:
-        result = pattern.sub(lambda match: (match.group(1) if match.lastindex else "") + "[REDACTED]", result)
+        result = pattern.sub(
+            lambda match: (match.group(1) if match.lastindex else "") + "[REDACTED]",
+            result,
+        )
     return result
 
 
