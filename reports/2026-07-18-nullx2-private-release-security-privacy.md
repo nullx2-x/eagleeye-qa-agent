@@ -17,7 +17,7 @@
 | Chrome拡張 invariant / ESLint | PASS | Manifest V3、最小permission、入力値非保持、明示同意、削除UIを検証 |
 | Bandit | PASS_WITH_NOTE | High/Medium 0、Low 17。固定argvの`subprocess`とOAuth endpoint文字列のみ |
 | Python依存 | PASS | 公式PyPIの固定version APIで57依存、既知脆弱性0、取得失敗0 |
-| 動画用Node依存 | PASS_WITH_WARNING | High 3。HyperFramesの開発専用`adm-zip` / `onnxruntime-node`経路、修正版なし、EagleEye実行環境には非同梱 |
+| 動画用Node依存 | PASS | `adm-zip`を修正版`0.6.0`へoverride。`npm audit`既知脆弱性0、HyperFrames check PASS |
 | 秘密・個人情報・固有path | PASS | 追跡対象から旧owner名、実ユーザーpath、実Workspace path、個人email、秘密鍵形式0件 |
 | Gitleaks | PASS | release snapshotを`.gitleaks.toml`付きで検査。Chrome manifestの公開SPKI鍵だけを狭くallowlist |
 | 動画 | PASS | 2:55、1920x1080、30fps、H.264/AAC、全編decode成功、英語音声と72字幕cue |
@@ -79,7 +79,7 @@ Chromeは、website content、閲覧活動、スクリーンショットをuser 
 2. remote Report HubにはTLS、強い認証、期限付きsession、rate limit、監査log、backup暗号化、削除手順を追加する。
 3. 記録前に対象サイトの所有または明示許可を確認し、production書込み、決済、本人確認、法的同意、公開操作は人間承認に残す。
 4. 共有・商用運用では保存期限を定め、自動削除jobと外部複製先の削除手順を実装する。
-5. HyperFramesの開発依存3件は修正版公開後に更新する。未信頼ZIPを動画制作環境へ入力しない。
+5. HyperFramesの依存範囲をoverrideして`adm-zip 0.6.0`へ更新済み。将来のHyperFrames更新時にも`npm audit`と映像checkを再実行する。
 
 ## 結論
 

@@ -10,5 +10,8 @@
   },
   "devDependencies": {
     "hyperframes": "0.7.61"
+  },
+  "overrides": {
+    "adm-zip": "0.6.0"
   }
 }

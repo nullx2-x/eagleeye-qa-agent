@@ -18,7 +18,7 @@ EagleEye本体、提出用privateリポジトリ、英語音声・字幕付き�
 | Python QA | PASS | `142 passed`、Ruff lint/format PASS |
 | Chrome拡張 QA | PASS | Manifest V3、最小権限、同意、redaction、削除導線、ESLint PASS |
 | Python依存監査 | PASS | 固定version 57依存、公式PyPI既知脆弱性0 |
-| 動画用Node依存 | WARNING | 開発専用HyperFrames経路にHigh 3。修正版なし、EagleEye runtime非同梱、未信頼ZIPを入力しない |
+| 動画用Node依存 | PASS | `adm-zip 0.6.0`へoverrideし、`npm audit`既知脆弱性0。HyperFrames check PASS |
 | 提出動画 | PASS | 2:55、英語音声、72字幕cue、GPT-5.6 / Codex App Serverを明示、全編decode PASS |
 | Devpost下書き | PASS | <https://devpost.com/software/eagleeye-browser-native-ai-qa-agent>、説明・技術・画像・private repo URLを設定済み |
 | Devpost最終送信 | BLOCKED | 公開YouTube URLと居住国の入力待ち |
@@ -31,6 +31,7 @@ EagleEye本体、提出用privateリポジトリ、英語音声・字幕付き�
 - 長さ: 175.018667秒（3分未満）
 - SHA-256: `68DEC5780B95F20CD9F0E97DC51B18693B48AF8D152F1419480FF270A66EF6F1`
 - 要件反映: `GPT-5.6 through Codex App Server` を音声と焼込み字幕の両方で確認
+- 映像ソース検証: Runtime / Layout / Motion error 0、Contrast warning 2、総合check PASS
 
 ## セキュリティ・プライバシー判定
 
