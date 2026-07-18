@@ -21,7 +21,8 @@ EagleEye本体、提出用privateリポジトリ、英語音声・字幕付き�
 | 動画用Node依存 | PASS | `adm-zip 0.6.0`へoverrideし、`npm audit`既知脆弱性0。HyperFrames check PASS |
 | 提出動画 | PASS | 2:55、英語音声、72字幕cue、GPT-5.6 / Codex App Serverを明示、全編decode PASS |
 | Devpost下書き | PASS | <https://devpost.com/software/eagleeye-browser-native-ai-qa-agent>、説明・技術・画像・private repo URLを設定済み |
-| Devpost最終送信 | BLOCKED | 公開YouTube URLと居住国の入力待ち |
+| YouTube初回アップロード | REPLACE_REQUIRED | 公開・2:55・1080pだが、字幕なしmaster版であることをremote frame比較で確認 |
+| Devpost最終送信 | BLOCKED | 字幕付きYouTube URLと居住国の入力待ち |
 
 ## 提出動画
 
@@ -33,6 +34,15 @@ EagleEye本体、提出用privateリポジトリ、英語音声・字幕付き�
 - 要件反映: `GPT-5.6 through Codex App Server` を音声と焼込み字幕の両方で確認
 - 映像ソース検証: Runtime / Layout / Motion error 0、Contrast warning 2、総合check PASS
 
+## YouTubeアップロード確認
+
+- 確認URL: <https://youtu.be/bYC5OidwvJM>
+- YouTubeメタデータ: public、2:55、1920x1080、age limit 0
+- YouTube上の60秒フレームには焼込み字幕がない
+- ローカル最終版の同時刻には `GPT-5.6 through Codex App Server expands the recorded` の焼込み字幕がある
+- 判定: **REPLACE_REQUIRED**。`eagleeye-build-week-master-en.mp4`ではなく、`eagleeye-build-week-submission-en-captioned.mp4`を新規アップロードする
+- 誤登録防止のため、当該URLはDevpostのvideo URLへ設定していない
+
 ## セキュリティ・プライバシー判定
 
 技術監査は**条件付きPASS**です。EagleEyeはlocal-first、明示同意、入力値・Cookie・認証header・OTP・決済情報の非保持、URL redaction、任意スクリーンショット、端末内削除を実装しています。
@@ -43,7 +53,7 @@ EagleEye本体、提出用privateリポジトリ、英語音声・字幕付き�
 
 ## 残作業
 
-1. 最終MP4をYouTubeへ**Public**でアップロードし、公開URLをDevpostへ設定する。
+1. 字幕付き最終MP4をYouTubeへ**Public**で新規アップロードし、公開URLをDevpostへ設定する。
 2. GitHubのManage access画面で、2件目が `build-week-event@openai.com` 宛の読取専用招待であることを確認する。
 3. Devpost必須項目のCountry of Residenceを本人回答で設定する。
 4. Devpostの最終Submitを実行し、提出状態とURLを再確認する。
