@@ -37,3 +37,8 @@ jobs:
         uses: github/codeql-action/analyze@7188fc363630916deb702c7fdcf4e481b751f97a # v4
         with:
           category: /language:${{ matrix.language }}
+          # Private repositories without GitHub Code Scanning can still run the
+          # analysis, but GitHub rejects SARIF uploads. Upload automatically once
+          # the repository is public (or this condition is removed after enabling
+          # Code Scanning for the private repository).
+          upload: ${{ github.event.repository.private && 'never' || 'always' }}
