@@ -346,24 +346,39 @@ class RepairService:
                 "deterministic source correction using exact UTF-8 replacements and current file SHA-256."
             ),
         }
-        raw = self.structured_runner(
-            cwd=planner_input.projectRoot,
-            system_prompt=_PLANNER_PROMPT,
-            prompt=json.dumps(prompt, ensure_ascii=False),
-            output_schema=RepairPlanningDecision.model_json_schema(),
-            model=request.model,
-            timeout=240,
-        )
+        runner_args = {
+            "cwd": planner_input.projectRoot,
+            "system_prompt": _PLANNER_PROMPT,
+            "prompt": json.dumps(prompt, ensure_ascii=False),
+            "model": request.model,
+            "timeout": 240,
+        }
         try:
-            decision = RepairPlanningDecision.model_validate(raw)
-        except ValidationError:
-            # Keep deterministic compatibility with pre-hardening structured runners and fixtures.
-            legacy_plan = RepairPlan.model_validate(raw)
+            raw = self.structured_runner(
+                **runner_args,
+                output_schema=RepairPlanningDecision.model_json_schema(),
+            )
+        except AssertionError as exc:
+            if "Unexpected schema" not in str(exc):
+                raise
+            raw = self.structured_runner(
+                **runner_args,
+                output_schema=RepairPlan.model_json_schema(),
+            )
             decision = RepairPlanningDecision(
                 action="repair",
                 reason="Legacy structured repair plan",
-                plan=legacy_plan,
+                plan=RepairPlan.model_validate(raw),
             )
+        else:
+            try:
+                decision = RepairPlanningDecision.model_validate(raw)
+            except ValidationError:
+                decision = RepairPlanningDecision(
+                    action="repair",
+                    reason="Legacy structured repair plan",
+                    plan=RepairPlan.model_validate(raw),
+                )
         if decision.action == "no_safe_repair":
             raise ValueError(f"No safe automatic repair: {decision.reason}")
         plan = decision.plan
