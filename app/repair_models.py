@@ -20,6 +20,7 @@ class FreshEvalAttestation(BaseModel):
     projectId: str = Field(min_length=1, max_length=120)
     failureFingerprint: str = Field(pattern=SHA256_PATTERN)
     evidenceSha256: str = Field(pattern=SHA256_PATTERN)
+    evidenceContentSha256: str | None = Field(default=None, pattern=SHA256_PATTERN)
     decision: Literal["eligible_for_repair"]
     issuedAt: datetime
     expiresAt: datetime
@@ -48,6 +49,7 @@ class RepairRequest(BaseModel):
     failureFingerprint: str = Field(pattern=SHA256_PATTERN)
     failureSummary: str = Field(min_length=1, max_length=4_000)
     evidencePaths: list[str] = Field(default_factory=list, max_length=50)
+    evidenceContentSha256: str | None = Field(default=None, pattern=SHA256_PATTERN, exclude=True)
     attestation: FreshEvalAttestation | None = None
 
     @field_validator("evidencePaths")
@@ -86,9 +88,18 @@ class RepairPlan(BaseModel):
 
     model_config = ConfigDict(extra="forbid")
 
+    action: Literal["repair", "no_safe_repair"] = "repair"
     summary: str = Field(min_length=1, max_length=2_000)
     confidence: float = Field(ge=0, le=1)
-    files: list[FileRepair] = Field(min_length=1, max_length=5)
+    files: list[FileRepair] = Field(default_factory=list, max_length=5)
+
+    @model_validator(mode="after")
+    def action_matches_files(self) -> RepairPlan:
+        if self.action == "repair" and not self.files:
+            raise ValueError("A repair action requires at least one file")
+        if self.action == "no_safe_repair" and self.files:
+            raise ValueError("A no-safe-repair decision may not contain file edits")
+        return self
 
     @field_validator("files")
     @classmethod
@@ -136,6 +147,7 @@ class RepairAttemptRecord(BaseModel):
     attempt: int
     status: Literal[
         "PLAN_REJECTED",
+        "NO_SAFE_REPAIR",
         "PROPOSED",
         "VERIFICATION_FAILED",
         "ROLLED_BACK",
@@ -160,7 +172,14 @@ class RepairResponse(BaseModel):
     projectId: str
     requestedMode: Literal["proposal_only", "apply"]
     effectiveMode: Literal["proposal_only", "apply", "denied"]
-    status: Literal["DENIED", "PROPOSED", "APPLIED", "FAILED", "ROLLED_BACK"]
+    status: Literal[
+        "DENIED",
+        "NO_SAFE_REPAIR",
+        "PROPOSED",
+        "APPLIED",
+        "FAILED",
+        "ROLLED_BACK",
+    ]
     reasons: list[str] = Field(default_factory=list)
     plan: RepairPlan | None = None
     attempts: list[RepairAttemptRecord] = Field(default_factory=list)

@@ -104,9 +104,12 @@ PROTECTED_REPAIR_PATHS = {
     "app/model_recommendations.py",
     "app/providers.py",
     "app/repair_models.py",
+    "app/repair_evidence.py",
+    "app/repair_lock.py",
     "app/repair_orchestrator.py",
     "app/repair_policy.py",
     "app/repair_service.py",
+    "app/repair_worktree.py",
     "app/runner.py",
     "app/security.py",
     "app/storage.py",
@@ -244,9 +247,7 @@ class RepairPolicy:
         if capability is None or not capability.proposalAllowed:
             raise RepairPolicyError("Provider and model are not on the exact repair allowlist")
 
-        project = next((item for item in self.projects.projects if item.id == request.projectId), None)
-        if project is None or not project.enabled:
-            raise RepairPolicyError("Project is not on the enabled repair root allowlist")
+        project = self.resolve_project(request.projectId)
         if request.environment not in project.allowedEnvironments:
             raise RepairPolicyError("Project policy does not allow repair in this environment")
 
@@ -265,6 +266,8 @@ class RepairPolicy:
         return RepairAuthorization(root, project, capability, effective_mode, tuple(reasons))
 
     def prepare_plan(self, root: Path, plan: RepairPlan) -> PreparedPlan:
+        if plan.action != "repair":
+            raise RepairPolicyError("Only a repair action can be prepared for writing")
         limits = self.capabilities.limits
         if len(plan.files) > limits.maxFiles:
             raise RepairPolicyError(f"Repair plan exceeds the {limits.maxFiles}-file limit")
@@ -323,6 +326,18 @@ class RepairPolicy:
         if total_bytes > limits.maxTotalBytes:
             raise RepairPolicyError(f"Repair plan exceeds the {limits.maxTotalBytes}-byte limit")
         return PreparedPlan(tuple(prepared), total_lines, total_bytes)
+
+    def resolve_project(self, project_id: str) -> RepairProject:
+        project = next((item for item in self.projects.projects if item.id == project_id), None)
+        if project is None or not project.enabled:
+            raise RepairPolicyError("Project is not on the enabled repair root allowlist")
+        return project
+
+    def resolve_project_root(self, project_id: str) -> Path:
+        return self._validate_root(self.resolve_project(project_id).root)
+
+    def require_clean_git(self, root: Path) -> None:
+        self._require_clean_git(root)
 
     def git_changed_paths(self, root: Path) -> set[str]:
         tracked = _git_bytes(root, ["diff", "--name-only", "-z", "HEAD", "--"])

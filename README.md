@@ -138,7 +138,7 @@ Local sessions can be deleted through the extension UI or API. Remote or multi-u
 - Flaky-test separation from ordinary failures
 - HTML and Markdown reports
 - One-click Markdown bug report generation
-- Human-bounded repair proposals and rollback-safe local self-repair gates
+- Human-bounded repair with redacted evidence, per-project locking, disposable-worktree verification, and explicit no-safe-repair results
 - Streamable HTTP MCP integration and Codex skills
 - Separate guided human QA sessions with runner-bound attestation
 - Local-provider fallback with Ollama or LM Studio
@@ -182,7 +182,7 @@ Credentials are never returned in API responses. Supported credentials are store
 - Fixed desktop-target registry; no arbitrary command or path execution
 - `shell=False`, minimal subprocess environment, root confinement, and process-tree timeout termination
 - Secret redaction for bearer tokens, API keys, JWTs, GitHub tokens, AWS access keys, and URL credentials
-- Fail-closed self-repair requiring a local non-production target, clean Git state, fresh one-use attestation, strict file/line limits, fixed verification, and rollback
+- Fail-closed self-repair requiring a local non-production target, clean Git state, fresh one-use content-bound attestation, strict file/line limits, a per-project process/OS lock, and fixed verification in a disposable Git worktree
 - Explicit human approval for repair application, destructive actions, and release decisions
 
 See [SECURITY.md](SECURITY.md) for reporting and operational details.

@@ -115,6 +115,9 @@ EagleEye is designed to fail visibly:
 - If a case is ambiguous or unsafe, the quality checker reports the defect before Replay.
 - If Replay fails, the runner stores the error and evidence, then the analyzer produces a categorized recommendation.
 - If bounded repair eligibility, a clean repository, fresh attestation, or an explicit apply request is missing, automatic modification is refused.
+- Repair evidence is limited to redacted UTF-8 excerpts from trusted run artifacts; screenshots, video, oversized files, and unknown binaries are metadata-only.
+- Apply-mode verification runs in a disposable detached Git worktree under a project-scoped process/OS lock. Only a verified planned postimage is published to the original clean worktree.
+- The planner can return `no_safe_repair` with zero edits as a successful fail-closed decision.
 - If the Chrome extension or browser-agent routes are not integrated, the Build Week demo gate fails; the submission must not simulate that path.
 
 ## Deployment boundary

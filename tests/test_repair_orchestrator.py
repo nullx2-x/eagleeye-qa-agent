@@ -6,8 +6,10 @@ import os
 import shutil
 import subprocess
 import sys
+from concurrent.futures import ThreadPoolExecutor
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
+from threading import Event
 
 import pytest
 
@@ -92,8 +94,9 @@ def _policy(
     *,
     expected: str = "VALUE = 2\n",
     verifier=lambda *_: True,
+    verification: VerificationCommand | None = None,
 ) -> RepairPolicy:
-    verification = VerificationCommand(
+    verification = verification or VerificationCommand(
         name="content-check",
         argv=[
             sys.executable,
@@ -241,6 +244,94 @@ def test_apply_requires_clean_allowlisted_git_and_writes_hashed_audit(monkeypatc
     audit = _assert_audit(response)
     assert audit["request"]["evidencePathHashes"] != ["artifacts/result.json"]
     assert "old" not in json.dumps(audit["plan"])
+
+
+def test_no_safe_repair_is_a_normal_zero_write_result(monkeypatch, tmp_path: Path) -> None:
+    monkeypatch.setenv("EAGLEEYE_SELF_REPAIR_ENABLED", "1")
+    root = _repository(tmp_path)
+    orchestrator = RepairOrchestrator(
+        lambda _: RepairPlan(
+            action="no_safe_repair",
+            summary="Evidence is insufficient for a bounded eligible edit.",
+            confidence=0.15,
+            files=[],
+        ),
+        _policy(root),
+        artifact_root=tmp_path / "artifacts",
+    )
+
+    response = orchestrator.execute(_request(attestation=_attestation()))
+
+    assert response.status == "NO_SAFE_REPAIR"
+    assert response.effectiveMode == "proposal_only"
+    assert response.attempts[0].status == "NO_SAFE_REPAIR"
+    assert response.plan is not None and response.plan.files == []
+    assert (root / "target.txt").read_text() == "VALUE = 1\n"
+
+
+def test_project_lock_rejects_a_concurrent_repair(monkeypatch, tmp_path: Path) -> None:
+    monkeypatch.setenv("EAGLEEYE_SELF_REPAIR_ENABLED", "1")
+    root = _repository(tmp_path)
+    started = Event()
+    release = Event()
+
+    def blocking_planner(_):
+        started.set()
+        assert release.wait(timeout=10)
+        return _plan(root, "VALUE = 2")
+
+    first = RepairOrchestrator(
+        blocking_planner,
+        _policy(root),
+        artifact_root=tmp_path / "artifacts",
+    )
+    second = RepairOrchestrator(
+        lambda _: _plan(root, "VALUE = 2"),
+        _policy(root),
+        artifact_root=tmp_path / "artifacts",
+    )
+    request = _request(mode="proposal_only")
+
+    with ThreadPoolExecutor(max_workers=1) as executor:
+        future = executor.submit(first.execute, request)
+        assert started.wait(timeout=10)
+        blocked = second.execute(request)
+        release.set()
+        completed = future.result(timeout=10)
+
+    assert blocked.status == "DENIED"
+    assert "already active" in " ".join(blocked.reasons)
+    assert completed.status == "PROPOSED"
+
+
+def test_verification_side_effects_stay_in_disposable_worktree(monkeypatch, tmp_path: Path) -> None:
+    monkeypatch.setenv("EAGLEEYE_SELF_REPAIR_ENABLED", "1")
+    root = _repository(tmp_path)
+    verification = VerificationCommand(
+        name="side-effecting-failure",
+        argv=[
+            sys.executable,
+            "-c",
+            (
+                "from pathlib import Path; "
+                "Path('verification-side-effect.txt').write_text('isolated'); "
+                "raise SystemExit(1)"
+            ),
+        ],
+        timeoutSeconds=30,
+    )
+    orchestrator = RepairOrchestrator(
+        lambda _: _plan(root, "VALUE = 2"),
+        _policy(root, verification=verification),
+        artifact_root=tmp_path / "artifacts",
+    )
+
+    response = orchestrator.execute(_request(attestation=_attestation()))
+
+    assert response.status == "ROLLED_BACK"
+    assert all(item.rollbackVerified is True for item in response.attempts)
+    assert not (root / "verification-side-effect.txt").exists()
+    assert (root / "target.txt").read_text() == "VALUE = 1\n"
 
 
 def test_dirty_git_is_denied_before_planner(monkeypatch, tmp_path: Path) -> None:

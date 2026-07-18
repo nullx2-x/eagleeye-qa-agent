@@ -15,6 +15,7 @@ from uuid import uuid4
 
 from pydantic import ValidationError
 
+from .repair_lock import ProjectRepairBusyError, ProjectRepairLock
 from .repair_models import (
     RepairAttemptRecord,
     RepairPlan,
@@ -25,6 +26,7 @@ from .repair_models import (
     VerificationCommandResult,
 )
 from .repair_policy import PreparedPlan, RepairAuthorization, RepairPolicy, RepairPolicyError
+from .repair_worktree import DisposableWorktree, DisposableWorktreeError
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_ARTIFACT_ROOT = ROOT / ".runtime" / "self-repair"
@@ -61,11 +63,37 @@ class RepairOrchestrator:
         attempts: list[RepairAttemptRecord] = []
         reasons: list[str] = []
         authorization: RepairAuthorization | None = None
-        final_plan: RepairPlan | None = None
+        try:
+            project_root = self.policy.resolve_project_root(request.projectId)
+            self._validate_artifact_boundary(project_root)
+            with ProjectRepairLock(project_root, self.artifact_root / ".locks"):
+                return self._execute_locked(request_id, request, audit_dir, attempts, reasons)
+        except (ProjectRepairBusyError, RepairPolicyError) as exc:
+            reasons.append(_safe_message(exc))
+            return self._finish(
+                request_id,
+                request,
+                audit_dir,
+                authorization,
+                "denied",
+                "DENIED",
+                reasons,
+                None,
+                attempts,
+            )
 
+    def _execute_locked(
+        self,
+        request_id: str,
+        request: RepairRequest,
+        audit_dir: Path,
+        attempts: list[RepairAttemptRecord],
+        reasons: list[str],
+    ) -> RepairResponse:
+        authorization: RepairAuthorization | None = None
+        final_plan: RepairPlan | None = None
         try:
             authorization = self.policy.authorize(request)
-            self._validate_artifact_boundary(authorization.root)
             reasons.extend(authorization.reasons)
         except RepairPolicyError as exc:
             reasons.append(_safe_message(exc))
@@ -84,18 +112,38 @@ class RepairOrchestrator:
         previous_failures: list[str] = []
         limits = self.policy.capabilities.limits
         for attempt_number in range(1, limits.maxAttempts + 1):
-            planner_input = RepairPlannerInput(
-                request=request,
-                projectRoot=authorization.root,
-                attempt=attempt_number,
-                limits=limits,
-                previousFailures=previous_failures,
-            )
             try:
+                planner_input = RepairPlannerInput(
+                    request=request,
+                    projectRoot=authorization.root,
+                    attempt=attempt_number,
+                    limits=limits,
+                    previousFailures=previous_failures,
+                )
                 raw_plan = self.planner(planner_input)
                 plan = raw_plan if isinstance(raw_plan, RepairPlan) else RepairPlan.model_validate(raw_plan)
-                prepared = self.policy.prepare_plan(authorization.root, plan)
                 final_plan = plan
+                if plan.action == "no_safe_repair":
+                    reasons.append(plan.summary)
+                    attempts.append(
+                        RepairAttemptRecord(
+                            attempt=attempt_number,
+                            status="NO_SAFE_REPAIR",
+                            reason=plan.summary,
+                        )
+                    )
+                    return self._finish(
+                        request_id,
+                        request,
+                        audit_dir,
+                        authorization,
+                        "proposal_only",
+                        "NO_SAFE_REPAIR",
+                        reasons,
+                        plan,
+                        attempts,
+                    )
+                original_prepared = self.policy.prepare_plan(authorization.root, plan)
             except (RepairPolicyError, ValidationError, ValueError, TypeError) as exc:
                 failure = _safe_message(exc)
                 previous_failures.append(failure)
@@ -112,13 +160,15 @@ class RepairOrchestrator:
             except Exception as exc:  # noqa: BLE001 - planner boundary is intentionally contained
                 failure = f"Planner failed: {_safe_message(exc)}"
                 previous_failures.append(failure)
-                attempts.append(RepairAttemptRecord(attempt=attempt_number, status="FAILED", reason=failure))
+                attempts.append(
+                    RepairAttemptRecord(attempt=attempt_number, status="FAILED", reason=failure)
+                )
                 if attempt_number == limits.maxAttempts:
                     reasons.append("Planner failed within the bounded attempt budget")
                 continue
 
             if authorization.effective_mode == "proposal_only":
-                attempts.append(self._attempt_record(attempt_number, "PROPOSED", prepared))
+                attempts.append(self._attempt_record(attempt_number, "PROPOSED", original_prepared))
                 return self._finish(
                     request_id,
                     request,
@@ -131,81 +181,89 @@ class RepairOrchestrator:
                     attempts,
                 )
 
-            try:
-                checkpoint_path = self._create_checkpoint(
-                    authorization.root, audit_dir, attempt_number, prepared
-                )
-            except OSError as exc:
-                failure = f"Atomic checkpoint failed: {_safe_message(exc)}"
-                previous_failures.append(failure)
-                attempts.append(
-                    self._attempt_record(
-                        attempt_number,
-                        "FAILED",
-                        prepared,
-                        reason=failure,
-                    )
-                )
-                continue
+            prepared: PreparedPlan | None = None
+            checkpoint_path: Path | None = None
             verification: list[VerificationCommandResult] = []
-            failure = ""
-            applied = False
             postimages: dict[str, str] = {}
+            failure = ""
             try:
-                applied = True
-                self._apply(authorization.root, prepared)
-                postimages = self._verify_postimages(prepared)
-                verification = self._run_verification(authorization.root, authorization.project.verification)
-                failed_commands = [item for item in verification if item.timedOut or item.returnCode != 0]
-                if failed_commands:
-                    failure = "Verification command failed"
-                else:
-                    self._verify_postimages(prepared)
-                    changed = self.policy.git_changed_paths(authorization.root)
-                    planned = {item.relative_path for item in prepared.files}
-                    if changed != planned:
-                        failure = "Verification produced unapproved worktree changes"
-                if not failure:
-                    attempts.append(
-                        self._attempt_record(
-                            attempt_number,
-                            "APPLIED",
-                            prepared,
-                            checkpoint_path=checkpoint_path,
-                            postimages=postimages,
-                            verification=verification,
+                with DisposableWorktree(authorization.root) as execution_root:
+                    self._synchronize_worktree(execution_root, original_prepared)
+                    prepared = self.policy.prepare_plan(execution_root, plan)
+                    checkpoint_path = self._create_checkpoint(
+                        execution_root, audit_dir, attempt_number, prepared
+                    )
+                    self._apply(execution_root, prepared)
+                    postimages = self._verify_postimages(prepared)
+                    verification = self._run_verification(
+                        execution_root, authorization.project.verification
+                    )
+                    failed_commands = [
+                        item for item in verification if item.timedOut or item.returnCode != 0
+                    ]
+                    if failed_commands:
+                        failure = "Verification command failed"
+                    else:
+                        self._verify_postimages(prepared)
+                        planned = {item.relative_path for item in prepared.files}
+                        if self.policy.git_changed_paths(execution_root) != planned:
+                            failure = "Verification produced unapproved worktree changes"
+                    if not failure:
+                        self.policy.require_clean_git(authorization.root)
+                        self._apply(authorization.root, original_prepared)
+                        self._verify_postimages(original_prepared)
+                        if self.policy.git_changed_paths(authorization.root) != planned:
+                            raise RepairPolicyError(
+                                "Publication produced unapproved original worktree changes"
+                            )
+                        attempts.append(
+                            self._attempt_record(
+                                attempt_number,
+                                "APPLIED",
+                                prepared,
+                                checkpoint_path=checkpoint_path,
+                                postimages=postimages,
+                                verification=verification,
+                            )
                         )
-                    )
-                    return self._finish(
-                        request_id,
-                        request,
-                        audit_dir,
-                        authorization,
-                        "apply",
-                        "APPLIED",
-                        reasons,
-                        plan,
-                        attempts,
-                    )
-            except (OSError, RepairPolicyError) as exc:
+                        return self._finish(
+                            request_id,
+                            request,
+                            audit_dir,
+                            authorization,
+                            "apply",
+                            "APPLIED",
+                            reasons,
+                            plan,
+                            attempts,
+                        )
+            except (DisposableWorktreeError, OSError, RepairPolicyError) as exc:
                 failure = _safe_message(exc)
 
-            rollback_verified = (
-                self._rollback(authorization.root, prepared, checkpoint_path) if applied else True
+            if prepared is None or checkpoint_path is None:
+                attempts.append(
+                    RepairAttemptRecord(attempt=attempt_number, status="FAILED", reason=failure)
+                )
+                previous_failures.append(failure or "Disposable repair worktree failed")
+                continue
+
+            rollback_verified = not self.policy.git_changed_paths(authorization.root)
+            if not rollback_verified:
+                rollback_verified = self._rollback(
+                    authorization.root, original_prepared, checkpoint_path
+                ) and not self.policy.git_changed_paths(authorization.root)
+            attempts.append(
+                self._attempt_record(
+                    attempt_number,
+                    "ROLLED_BACK" if rollback_verified else "FAILED",
+                    prepared,
+                    reason=failure,
+                    checkpoint_path=checkpoint_path,
+                    postimages=postimages,
+                    rollback_verified=rollback_verified,
+                    verification=verification,
+                )
             )
-            if rollback_verified:
-                rollback_verified = not self.policy.git_changed_paths(authorization.root)
-            record = self._attempt_record(
-                attempt_number,
-                "ROLLED_BACK" if rollback_verified else "FAILED",
-                prepared,
-                reason=failure,
-                checkpoint_path=checkpoint_path,
-                postimages=postimages,
-                rollback_verified=rollback_verified,
-                verification=verification,
-            )
-            attempts.append(record)
             previous_failures.append(failure or "Repair attempt failed")
             if not rollback_verified:
                 reasons.append("Rollback could not prove the original clean worktree")
@@ -225,6 +283,18 @@ class RepairOrchestrator:
             final_plan,
             attempts,
         )
+
+    @staticmethod
+    def _synchronize_worktree(execution_root: Path, prepared: PreparedPlan) -> None:
+        """Make planned temp files byte-identical to the locked clean source worktree."""
+
+        for item in prepared.files:
+            target = execution_root / Path(item.relative_path)
+            current_sha = _sha256(target.read_bytes())
+            _require_safe_current_file(execution_root, target, current_sha)
+            _atomic_replace_bytes(target, item.preimage)
+            if _sha256(target.read_bytes()) != item.preimage_sha256:
+                raise RepairPolicyError(f"Disposable preimage sync failed for {item.relative_path}")
 
     def _validate_artifact_boundary(self, project_root: Path) -> None:
         resolved = self.artifact_root.resolve()
@@ -417,6 +487,7 @@ class RepairOrchestrator:
                 "failureFingerprint": request.failureFingerprint,
                 "failureSummary": _redact(request.failureSummary),
                 "evidencePathHashes": [_sha256(value.encode()) for value in request.evidencePaths],
+                "evidenceContentSha256": request.evidenceContentSha256,
                 "attestationId": request.attestation.id if request.attestation else None,
             },
             "authorization": {
@@ -454,6 +525,7 @@ def _audit_plan(plan: RepairPlan | None) -> dict[str, Any] | None:
     if plan is None:
         return None
     return {
+        "action": plan.action,
         "summarySha256": _sha256(plan.summary.encode()),
         "confidence": plan.confidence,
         "files": [
