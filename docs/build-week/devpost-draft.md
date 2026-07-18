@@ -1,6 +1,6 @@
-# Devpost draft - EagleEye
+# Devpost submission - EagleEye
 
-> **Draft status:** The product path, six submission screenshots, Architecture image, private judge-review repository, and public 2:55 captioned video are verified. Final Devpost submission remains release-gated.
+> **Submission status:** Submitted to OpenAI Build Week on 2026-07-18 09:22:16 JST. Submission ID: `1089902`.
 
 ## Title
 
@@ -87,7 +87,7 @@ Official reference: [Codex App Server documentation](https://learn.chatgpt.com/d
 | Six submission screenshots | Captured from the verified flow |
 | Private judge-review repository | Security-reviewed single-snapshot release |
 | Public video URL | Verified: <https://youtu.be/zLSLiG7QYr4> |
-| Final Devpost submit | Release-gated |
+| Final Devpost submit | Submitted: <https://devpost.com/software/eagleeye-browser-native-ai-qa-agent> |
 
 ## Challenges we ran into
 

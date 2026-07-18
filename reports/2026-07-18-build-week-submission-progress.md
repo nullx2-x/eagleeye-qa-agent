@@ -2,9 +2,9 @@
 
 更新日: 2026-07-18 (JST)
 
-総合ステータス: **PARTIAL**
+総合ステータス: **PASS**
 
-EagleEye本体、提出用privateリポジトリ、英語音声・字幕付き公開デモ動画、Devpost本文は提出可能な状態まで完成しています。最終提出はDevpostの居住国入力を待っているため未実施です。
+EagleEye本体、提出用privateリポジトリ、英語音声・字幕付き公開デモ動画、英語README、Devpost本文を完成させ、OpenAI Build Weekへ最終提出しました。
 
 ## 完了した成果
 
@@ -23,7 +23,7 @@ EagleEye本体、提出用privateリポジトリ、英語音声・字幕付き�
 | Devpost下書き | PASS | <https://devpost.com/software/eagleeye-browser-native-ai-qa-agent>、説明・技術・画像・private repo URLを設定済み |
 | YouTube提出版 | PASS | 公開・2:55・1080p・age limit 0。remote 60秒frameでGPT-5.6 / Codex焼込み字幕を確認 |
 | Devpost動画URL | PASS | `https://youtu.be/zLSLiG7QYr4`をproject version 4へ設定済み |
-| Devpost最終送信 | BLOCKED | 居住国の本人入力待ち |
+| Devpost最終送信 | PASS | Submission ID `1089902`、status `Submitted`、2026-07-18 09:22:16 JST |
 
 ## 提出動画
 
@@ -51,9 +51,17 @@ EagleEye本体、提出用privateリポジトリ、英語音声・字幕付き�
 
 詳細: `reports/2026-07-18-nullx2-private-release-security-privacy.md`
 
-## 残作業
+## 最終提出
 
-1. Devpost必須項目のCountry of Residenceを本人回答で設定する。
-2. Devpostの最終Submitを実行し、提出状態とURLを再確認する。
+- URL: <https://devpost.com/software/eagleeye-browser-native-ai-qa-agent>
+- Submission ID: `1089902`
+- Status: `Submitted`
+- Submitted at: 2026-07-18 09:22:16 JST
+- Submitter type: Individual
+- Country of Residence: Japan
+- Category: Developer Tools
+- Video: <https://youtu.be/zLSLiG7QYr4>
+- Repository: <https://github.com/nullx2-x/eagleeye-qa-agent> (private、審査用2招待済み)
+- Codex `/feedback` Session ID: `019f6700-b156-7672-b248-2e3ba256cfb6`
 
-締切: 2026-07-22 09:00 JST。現在は締切前で、提出物本体は完成済みです。
+締切: 2026-07-22 09:00 JST。締切前に提出済みです。Devpostギャラリーへの追加スクリーンショット掲載は任意の審査向け磨き込みであり、公式必須項目ではありません。提出用画像6点、GIF、Architecture画像はリポジトリ内に保存済みです。
