@@ -103,9 +103,9 @@ def live_html() -> str:
             </ol>
 
             <div class="hero-actions">
-              <button id="wordpress-demo" class="button button-primary" type="button"
+              <button id="local-sample" class="button button-primary" type="button"
                       aria-describedby="demo-help" disabled>
-                <span id="wordpress-demo-label">ローカルsampleを開始</span>
+                <span id="local-sample-label">ローカルsampleを開始</span>
               </button>
               <a class="button button-secondary" href="#extension-setup">拡張導入ガイド</a>
             </div>
@@ -1512,8 +1512,8 @@ def live_js() -> str:
     nodes.service = byId("service-indicator");
     nodes.serviceLabel = byId("service-label");
     nodes.theme = byId("theme-toggle");
-    nodes.demo = byId("wordpress-demo");
-    nodes.demoLabel = byId("wordpress-demo-label");
+    nodes.demo = byId("local-sample");
+    nodes.demoLabel = byId("local-sample-label");
     nodes.demoHelp = byId("demo-help");
     nodes.readinessBadge = byId("readiness-badge");
     nodes.providerState = byId("provider-state");
