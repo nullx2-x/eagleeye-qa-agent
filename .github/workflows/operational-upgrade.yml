@@ -54,20 +54,30 @@ jobs:
         run: uv run python -m compileall -q app scripts tests
 
       - name: Run regression tests
-        run: uv run pytest -q
-
-      - name: Verify clean operational tree
+        id: pytest
+        continue-on-error: true
         shell: bash
         run: |
-          test ! -e reports
-          test ! -e videos/eagleeye-build-week
-          test ! -e docs/build-week
-          test ! -e app/browser_hardening.py
-          test ! -e scripts/apply_operational_upgrade.py
-          ! git grep -n -i 'create_wordpress_demo\|demo/wordpress\|page_id=2\|EagleEye WP Lab\|extension-wordpress' -- .
-          git diff --check
+          set -o pipefail
+          uv run pytest -q 2>&1 | tee "${RUNNER_TEMP}/pytest.log"
 
-      - name: Commit formatted and tested changes
+      - name: Verify clean operational tree
+        id: safety
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -o pipefail
+          {
+            test ! -e reports
+            test ! -e videos/eagleeye-build-week
+            test ! -e docs/build-week
+            test ! -e app/browser_hardening.py
+            test ! -e scripts/apply_operational_upgrade.py
+            ! git grep -n -i 'create_wordpress_demo\|demo/wordpress\|page_id=2\|EagleEye WP Lab\|extension-wordpress' -- .
+            git diff --check
+          } 2>&1 | tee "${RUNNER_TEMP}/safety.log"
+
+      - name: Commit formatted workspace
         shell: bash
         run: |
           if git diff --quiet && git diff --cached --quiet; then
@@ -88,15 +98,22 @@ jobs:
           set -o pipefail
           uv run ruff check app scripts tests 2>&1 | tee "${RUNNER_TEMP}/ruff.log"
 
-      - name: Upload lint diagnostics
+      - name: Upload diagnostics
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: operational-qa-lint-${{ github.run_id }}
-          path: ${{ runner.temp }}/ruff.log
+          name: operational-qa-diagnostics-${{ github.run_id }}
+          path: |
+            ${{ runner.temp }}/pytest.log
+            ${{ runner.temp }}/safety.log
+            ${{ runner.temp }}/ruff.log
           if-no-files-found: warn
           retention-days: 7
 
-      - name: Enforce lint gate
+      - name: Enforce final gate
         if: always()
-        run: test "${{ steps.lint.outcome }}" = "success"
+        shell: bash
+        run: |
+          test "${{ steps.pytest.outcome }}" = "success"
+          test "${{ steps.safety.outcome }}" = "success"
+          test "${{ steps.lint.outcome }}" = "success"
