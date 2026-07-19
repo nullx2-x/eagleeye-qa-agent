@@ -1,7 +1,6 @@
 from fastapi import APIRouter, HTTPException, Response
 from fastapi.responses import HTMLResponse
 
-from . import browser_hardening as _browser_hardening  # noqa: F401
 from .browser_agent import (
     agent_status,
     append_observation,
