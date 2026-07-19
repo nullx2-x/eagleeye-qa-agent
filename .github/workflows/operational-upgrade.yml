@@ -4,24 +4,36 @@ on:
   push:
     branches:
       - upgrade/operational-qa-hardening
+  pull_request:
+    branches:
+      - main
+    types: [opened, synchronize, reopened]
 
 permissions:
   contents: write
 
 concurrency:
-  group: operational-qa-upgrade-${{ github.ref }}
+  group: operational-qa-upgrade-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: false
 
 jobs:
   migrate-and-verify:
-    if: ${{ !contains(github.event.head_commit.message, '[operational-sync]') }}
+    if: >-
+      ${{
+        (github.event_name == 'pull_request' &&
+          github.event.pull_request.head.repo.full_name == github.repository &&
+          github.head_ref == 'upgrade/operational-qa-hardening') ||
+        (github.event_name == 'push' &&
+          !contains(github.event.head_commit.message, '[operational-sync]'))
+      }}
     runs-on: ubuntu-latest
     timeout-minutes: 30
 
     steps:
-      - name: Check out branch
+      - name: Check out writable branch
         uses: actions/checkout@v4
         with:
+          ref: ${{ github.head_ref || github.ref_name }}
           fetch-depth: 0
 
       - name: Set up Python
@@ -62,6 +74,8 @@ jobs:
 
       - name: Commit verified upgrade
         shell: bash
+        env:
+          TARGET_BRANCH: ${{ github.head_ref || github.ref_name }}
         run: |
           if git diff --quiet && git diff --cached --quiet; then
             echo 'No migration changes to commit.'
@@ -71,4 +85,4 @@ jobs:
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add -A
           git commit -m 'chore: apply operational QA upgrade [operational-sync]'
-          git push origin HEAD:${GITHUB_REF_NAME}
+          git push origin HEAD:${TARGET_BRANCH}
