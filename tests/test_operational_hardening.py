@@ -2,7 +2,7 @@ from types import SimpleNamespace
 
 import pytest
 
-from app import browser_agent, browser_hardening, project_qa
+from app import browser_agent, project_qa
 
 
 def test_nonce_userinfo_and_fragment_are_removed() -> None:
@@ -10,7 +10,7 @@ def test_nonce_userinfo_and_fragment_are_removed() -> None:
         "https://user:password@example.test:8443/wp-admin/post.php"
         "?post=10&_wpnonce=secret&nonce=also-secret&view=public#editor"
     )
-    safe = browser_hardening.sanitize_browser_url(value)
+    safe = browser_agent._sanitize_url(value)
 
     assert "user" not in safe
     assert "password" not in safe
@@ -29,12 +29,12 @@ def test_nonce_userinfo_and_fragment_are_removed() -> None:
     ],
 )
 def test_sensitive_admin_paths_are_detected(url: str) -> None:
-    assert browser_hardening.is_sensitive_admin_url(url)
+    assert browser_agent._is_sensitive_admin_url(url)
 
 
 def test_admin_ai_generation_is_disabled() -> None:
     session = SimpleNamespace(startUrl="https://example.test/wp-admin/", observations=[])
-    cases, result, risks, suggestions = browser_hardening._guarded_ai_cases(session)
+    cases, result, risks, suggestions = browser_agent._ai_cases(session)
 
     assert cases == []
     assert result.available is False
@@ -48,7 +48,7 @@ def test_admin_replay_is_blocked(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(browser_agent, "load_session", lambda _session_id: session)
 
     with pytest.raises(PermissionError, match="Replay is disabled"):
-        browser_hardening._guarded_run_session("a" * 32)
+        browser_agent.run_session("a" * 32)
 
 
 def test_project_discovery_has_no_cpu_or_web_diagnostic_requirement(
