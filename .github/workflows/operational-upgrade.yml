@@ -1,0 +1,74 @@
+name: Operational QA upgrade
+
+on:
+  push:
+    branches:
+      - upgrade/operational-qa-hardening
+
+permissions:
+  contents: write
+
+concurrency:
+  group: operational-qa-upgrade-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  migrate-and-verify:
+    if: ${{ !contains(github.event.head_commit.message, '[operational-sync]') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Check out branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          version: '0.8.22'
+          enable-cache: true
+
+      - name: Apply deterministic migration
+        run: python scripts/apply_operational_upgrade.py
+
+      - name: Install locked dependencies
+        run: uv sync --locked --dev
+
+      - name: Format and lint
+        run: |
+          uv run ruff format app scripts tests
+          uv run ruff check app scripts tests --fix
+          uv run ruff format --check app scripts tests
+          uv run ruff check app scripts tests
+
+      - name: Run regression tests
+        run: uv run pytest -q
+
+      - name: Verify removed history and legacy routes
+        shell: bash
+        run: |
+          test ! -e reports
+          test ! -e videos/eagleeye-build-week
+          test ! -e docs/build-week
+          ! git grep -n -i 'create_wordpress_demo\|demo/wordpress\|page_id=2' -- . ':!scripts/apply_operational_upgrade.py'
+          git diff --check
+
+      - name: Commit verified upgrade
+        shell: bash
+        run: |
+          if git diff --quiet && git diff --cached --quiet; then
+            echo 'No migration changes to commit.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git commit -m 'chore: apply operational QA upgrade [operational-sync]'
+          git push origin HEAD:${GITHUB_REF_NAME}
