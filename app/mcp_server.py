@@ -44,6 +44,7 @@ def eagleeye_status() -> dict:
         "execution": "localhost-only",
         "automaticFixes": False,
         "humanApproval": "required for release, destructive actions, and code application",
+        "projectQA": "authorized local repositories with evidence-backed quality gates",
     }
 
 
@@ -262,7 +263,7 @@ def guided_get_retest(session_id: str) -> dict:
 @mcp.tool()
 def discover_project_qa(project_root: str, authorized: bool = False) -> dict:
     if not authorized:
-        raise PermissionError("Project QA discovery requires authorized=true")
+        raise PermissionError("Explicit project test authorization is required (authorized=true)")
     return discover_project(project_root).model_dump(mode="json")
 
 
@@ -276,7 +277,7 @@ def run_project_qa(
     fail_fast: bool = False,
 ) -> dict:
     if not authorized:
-        raise PermissionError("Project QA execution requires authorized=true")
+        raise PermissionError("Explicit project test authorization is required (authorized=true)")
     request = ProjectRunRequest.model_validate(
         {
             "projectRoot": project_root,

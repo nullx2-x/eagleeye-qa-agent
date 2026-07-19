@@ -15,7 +15,7 @@ def test_live_html_has_review_ready_content_and_external_assets() -> None:
         assert stage in html
     for tab in ("Dashboard", "Test一覧", "実行中", "レポート"):
         assert tab in html
-    assert "ローカルsampleを開始" in html
+    assert "ローカルサンプルを作成" in html
     assert "拡張導入ガイド" in html
     assert "Codex / provider" in html
     assert 'href="/assets/live.css"' in html

@@ -1,3 +1,6 @@
+import pytest
+from pydantic import ValidationError
+
 from app.configuration import load_configuration
 from app.quality import evaluate_quality_gate
 from app.strategy import calculate_risk, generate_profile
@@ -104,6 +107,45 @@ def test_emulator_defaults_to_functional_compatibility() -> None:
     assert "cycle-trace" not in profile.requiredTests
 
 
+def test_web_profile_rejects_emulator_compatibility_level() -> None:
+    with pytest.raises(ValidationError, match="serviceType=emulator"):
+        request(serviceType="web", compatibilityLevel="functional")
+
+
+def test_web_quality_gate_does_not_require_cpu_emulator_tests() -> None:
+    gate = evaluate_quality_gate(
+        QualityGateRequest.model_validate(
+            {
+                "profileId": "profile-web",
+                "mode": "strict",
+                "serviceType": "web",
+                "requiredTestTypes": ["browser-compatibility"],
+                "results": [
+                    {
+                        "testId": "browser",
+                        "testType": "browser-compatibility",
+                        "status": "PASSED",
+                    }
+                ],
+            }
+        )
+    )
+    assert gate.decision == "PASS"
+    assert not any("instruction-conformance" in blocker for blocker in gate.blockers)
+
+
+def test_quality_gate_rejects_compatibility_without_emulator_scope() -> None:
+    with pytest.raises(ValidationError, match="explicit serviceType=emulator"):
+        QualityGateRequest.model_validate(
+            {
+                "profileId": "profile-web-ambiguous",
+                "mode": "strict",
+                "compatibilityLevel": "functional",
+                "results": [{"testId": "unit", "testType": "unit", "status": "PASSED"}],
+            }
+        )
+
+
 def test_quality_gate_blocks_critical_failure() -> None:
     gate = evaluate_quality_gate(
         QualityGateRequest.model_validate(
@@ -151,6 +193,7 @@ def test_cycle_gate_blocks_missing_compatibility_tests() -> None:
             {
                 "profileId": "profile-cycle",
                 "mode": "release_gate",
+                "serviceType": "emulator",
                 "compatibilityLevel": "cycle",
                 "results": [
                     {
@@ -204,6 +247,7 @@ def test_functional_gate_rejects_nonzero_differential_mismatch() -> None:
             {
                 "profileId": "profile-functional",
                 "mode": "release_gate",
+                "serviceType": "emulator",
                 "compatibilityLevel": "functional",
                 "results": results,
             }

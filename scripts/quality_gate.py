@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import subprocess
 import sys
 from datetime import UTC, datetime
@@ -40,10 +41,20 @@ def main() -> int:
     root = args.root.resolve()
     python = root / ".venv" / "Scripts" / "python.exe"
     ruff = root / ".venv" / "Scripts" / "ruff.exe"
-    if not python.exists():
+    if os.name != "nt" or not python.exists():
         python = Path(sys.executable)
+        ruff_candidate = Path(sys.executable).with_name("ruff")
+        ruff = ruff_candidate if ruff_candidate.exists() else Path("ruff")
+    stamp = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
+    local_app_data = Path(os.environ.get("LOCALAPPDATA", root / ".runtime"))
+    pytest_root = local_app_data / "EagleEye" / "pytest" / stamp
+    pytest_root.parent.mkdir(parents=True, exist_ok=True)
     steps = [
-        run_step("pytest", [str(python), "-m", "pytest", "-q"], root),
+        run_step(
+            "pytest",
+            [str(python), "-m", "pytest", "-q", "--basetemp", str(pytest_root)],
+            root,
+        ),
         run_step("ruff-check", [str(ruff), "check", "."], root),
         run_step("ruff-format", [str(ruff), "format", "--check", "."], root),
     ]
@@ -77,7 +88,6 @@ def main() -> int:
                 root,
             )
         )
-        stamp = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
         archive = root / ".runtime" / "backups" / f"eagleeye-runtime-{stamp}.zip"
         restore = root / ".runtime" / "restore-drill" / stamp
         steps.append(

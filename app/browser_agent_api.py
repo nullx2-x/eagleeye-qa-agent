@@ -23,7 +23,6 @@ from .browser_agent_models import (
     BrowserSessionList,
 )
 from .demo_site import demo_site_html
-from .project_qa_api import router as project_qa_router
 
 router = APIRouter()
 browser_router = APIRouter(prefix="/api/v1/browser-agent", tags=["browser-agent"])
@@ -154,4 +153,3 @@ def bundled_sample_page() -> HTMLResponse:
 
 
 router.include_router(browser_router)
-router.include_router(project_qa_router)

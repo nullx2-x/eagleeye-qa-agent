@@ -38,6 +38,7 @@ Project QAの各実行では、次を必須にします。
 - 決定論的なquality gate
 
 CPU固有検証、端末ベンチマーク、Web診断probeは必須項目ではありません。必要な場合だけ、リポジトリ管理者が`.eagleeye/qa.json`へ明示的に追加します。
+エミュレータ互換性レベルは`serviceType=emulator`の場合だけ受け付け、Webなど他サービスへの混在は拒否します。
 
 ## Quick Start
 
@@ -79,7 +80,7 @@ uv run python scripts/run_project_qa.py C:\WorkSpace\01_Apps\your-project --disc
 
 ### 機密性の高い管理画面
 
-`/wp-admin`、`/wp-login.php`とその配下では、次の制限を適用します。
+機密性の高い管理・認証パスでは、次の制限を適用します。
 
 - AIケース生成を停止
 - Replayを拒否

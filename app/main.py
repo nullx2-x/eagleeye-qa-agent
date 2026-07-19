@@ -25,6 +25,7 @@ from .guided_api import router as guided_router
 from .live_ui import live_css, live_html, live_js
 from .model_recommendations import ModelRecommendationCatalog, Workload, catalog
 from .models import CodexHandoff, EagleEyeBundle, RunResult, SessionReceipt
+from .project_qa_api import router as project_qa_router
 from .providers import ApiKeyInput, OAuthStartResponse, ProviderStatus, broker
 from .quality import evaluate_quality_gate
 from .repair_models import RepairRequest, RepairResponse
@@ -49,7 +50,7 @@ PROFILES = ROOT / "data" / "profiles"
 api_docs_enabled = os.getenv("EAGLEEYE_ENABLE_API_DOCS", "0") == "1"
 app = FastAPI(
     title="EagleEye AI QA Agent",
-    version="1.0.0",
+    version="1.1.0",
     docs_url="/docs" if api_docs_enabled else None,
     redoc_url=None,
     openapi_url="/openapi.json" if api_docs_enabled else None,
@@ -68,6 +69,7 @@ app.add_middleware(
 )
 app.include_router(guided_router)
 app.include_router(browser_agent_router)
+app.include_router(project_qa_router)
 
 
 @app.middleware("http")
@@ -99,7 +101,7 @@ def health() -> dict:
     return {
         "status": "ok",
         "service": "eagleeye-qa-agent",
-        "version": "1.0.0",
+        "version": "1.1.0",
         "mcp": "http://127.0.0.1:8768/mcp",
         "aiFirst": True,
     }

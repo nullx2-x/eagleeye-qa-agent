@@ -105,7 +105,7 @@ def live_html() -> str:
             <div class="hero-actions">
               <button id="local-sample" class="button button-primary" type="button"
                       aria-describedby="demo-help" disabled>
-                <span id="local-sample-label">ローカルsampleを開始</span>
+                <span id="local-sample-label">ローカルサンプルを作成</span>
               </button>
               <a class="button button-secondary" href="#extension-setup">拡張導入ガイド</a>
             </div>
@@ -126,7 +126,7 @@ def live_html() -> str:
                 <dd id="provider-state">読み込み中</dd>
               </div>
               <div>
-                <dt>WordPress target</dt>
+                <dt>Authorized sample target</dt>
                 <dd id="target-state">読み込み中</dd>
               </div>
               <div>
@@ -1498,7 +1498,7 @@ def live_js() -> str:
     cacheNodes();
     setupTheme();
     setupTabs();
-    nodes.demo.addEventListener("click", startWordPressDemo);
+    nodes.demo.addEventListener("click", startLocalSample);
     nodes.refresh.addEventListener("click", () => refreshSessions(true));
     document.querySelectorAll("[data-open-tab]").forEach((button) => {
       button.addEventListener("click", () => activateTab(button.dataset.openTab, true));
@@ -1690,14 +1690,14 @@ def live_js() -> str:
     }
   }
 
-  async function startWordPressDemo() {
+  async function startLocalSample() {
     if (nodes.demo.disabled || state.demoBusy) {
       return;
     }
     state.demoBusy = true;
     state.actionNotice = {
       kind: "loading",
-      title: "WordPress デモを準備中",
+      title: "ローカルサンプルを準備中",
       detail: "公開導線を観察し、安全なテストケースへ変換しています。",
     };
     renderAll();
@@ -1706,16 +1706,16 @@ def live_js() -> str:
       upsertSession(session);
       state.actionNotice = {
         kind: "success",
-        title: "WordPress デモを生成しました",
+        title: "ローカルサンプルを生成しました",
         detail: "Test一覧から Replay を実行すると、判定とレポートまで確認できます。",
       };
       activateTab("tests", true);
-      showToast("WordPress デモを Test一覧へ追加しました。", "success");
+      showToast("ローカルサンプルを Test一覧へ追加しました。", "success");
     } catch (error) {
       const message = messageFromError(error);
       state.actionNotice = {
         kind: "error",
-        title: "WordPress デモを開始できませんでした",
+        title: "ローカルサンプルを開始できませんでした",
         detail: message,
       };
       showToast(message, "error");
@@ -1920,7 +1920,7 @@ def live_js() -> str:
     const targetUnavailable = !state.agent || !state.agent.demoTargetReachable;
     nodes.demo.disabled =
       state.statusLoading || Boolean(state.statusError) || state.demoBusy || targetUnavailable;
-    nodes.demoLabel.textContent = state.demoBusy ? "デモ準備中…" : "ローカルsampleを開始";
+    nodes.demoLabel.textContent = state.demoBusy ? "サンプル準備中…" : "ローカルサンプルを作成";
     if (state.demoBusy) {
       nodes.demoHelp.textContent = "観察データとテストケースを生成しています。";
     } else if (state.statusLoading) {
@@ -1928,7 +1928,7 @@ def live_js() -> str:
     } else if (state.statusError) {
       nodes.demoHelp.textContent = "APIへの接続後に利用できます。";
     } else if (targetUnavailable) {
-      nodes.demoHelp.textContent = "ローカル WordPress target の起動後に利用できます。";
+      nodes.demoHelp.textContent = "認可済みローカルサンプルの起動後に利用できます。";
     } else {
       nodes.demoHelp.textContent = "公開ページだけを使い、約30秒で生成します。";
     }
@@ -2031,7 +2031,7 @@ def live_js() -> str:
         nodes.dashboardRecent,
         "empty",
         "まだテストはありません",
-        "WordPress デモまたはブラウザー拡張から最初の操作を記録してください。",
+        "ローカルサンプルまたはブラウザー拡張から最初の操作を記録してください。",
         null,
         true,
       );
@@ -2094,7 +2094,7 @@ def live_js() -> str:
         nodes.testsState,
         "empty",
         "テストはまだありません",
-        "Dashboard の WordPress デモ、またはブラウザー拡張から作成できます。",
+        "Dashboard のローカルサンプル、またはブラウザー拡張から作成できます。",
       );
       return;
     }

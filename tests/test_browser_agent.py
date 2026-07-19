@@ -172,13 +172,13 @@ def test_secret_query_parameters_are_removed(isolated_browser_agent: Path) -> No
         BrowserSessionCreate(
             name="Query safety",
             goal="秘密値を保存しない",
-            startUrl="http://127.0.0.1:8888/?view=2&token=do-not-store&_wpnonce=secret",
+            startUrl="http://127.0.0.1:8888/?view=2&token=do-not-store&request_nonce=secret",
         )
     )
 
     assert "view=2" in str(session.startUrl)
     assert "token" not in str(session.startUrl)
-    assert "_wpnonce" not in str(session.startUrl)
+    assert "request_nonce" not in str(session.startUrl)
     assert "do-not-store" not in session.model_dump_json()
     assert "secret" not in session.model_dump_json()
 

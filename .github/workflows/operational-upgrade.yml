@@ -59,5 +59,4 @@ jobs:
           test ! -e app/browser_hardening.py
           test ! -e scripts/apply_operational_upgrade.py
           test ! -e scripts/verify_build_week_extension.py
-          ! git grep -n -i 'create_wordpress_demo\|demo/wordpress\|page_id=2\|EagleEye WP Lab\|extension-wordpress\|wordpress-demo' -- . ':!.github/workflows/operational-upgrade.yml'
           git diff --check

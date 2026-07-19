@@ -38,6 +38,7 @@ Every Project QA run requires:
 - deterministic quality-gate evaluation.
 
 Project QA does not require CPU-specific checks, machine benchmarks, or web-diagnostic probes unless the repository owner explicitly adds them to `.eagleeye/qa.json`.
+Emulator compatibility levels are accepted only when `serviceType=emulator`; mixing them into Web or other service profiles is rejected.
 
 ## Quick Start
 
@@ -79,7 +80,7 @@ The extension requests only `activeTab`, `scripting`, session storage, and loopb
 
 ### Sensitive administration paths
 
-For `/wp-admin`, `/wp-login.php`, and their child paths:
+For sensitive administration and authentication paths:
 
 - AI case generation is disabled;
 - Replay is rejected;

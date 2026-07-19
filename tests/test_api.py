@@ -65,7 +65,7 @@ def test_health() -> None:
     response = client.get("/health")
     assert response.status_code == 200
     assert response.json()["status"] == "ok"
-    assert response.json()["version"] == "1.0.0"
+    assert response.json()["version"] == "1.1.0"
     assert response.headers["x-content-type-options"] == "nosniff"
     assert response.headers["x-frame-options"] == "DENY"
 
@@ -195,12 +195,29 @@ def test_emulator_cycle_profile_api(tmp_path, monkeypatch) -> None:
     assert "llm-schema" not in body["requiredTests"]
 
 
+def test_profile_api_rejects_emulator_compatibility_for_web(tmp_path, monkeypatch) -> None:
+    monkeypatch.setattr("app.main.PROFILES", tmp_path / "profiles")
+    response = client.post(
+        "/api/v1/test-profiles/generate",
+        json={
+            "projectId": "web-client",
+            "developmentStage": "development",
+            "serviceType": "web",
+            "compatibilityLevel": "functional",
+            "aiEnabled": False,
+        },
+    )
+    assert response.status_code == 422
+    assert "serviceType=emulator" in response.text
+
+
 def test_quality_gate_api() -> None:
     response = client.post(
         "/api/v1/quality-gates/evaluate",
         json={
             "profileId": "profile-test",
             "mode": "standard",
+            "serviceType": "web",
             "results": [
                 {"testId": "one", "testType": "unit", "status": "PASSED"},
                 {"testId": "two", "testType": "api", "status": "PASSED"},

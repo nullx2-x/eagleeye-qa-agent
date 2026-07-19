@@ -43,7 +43,7 @@ const QUALITY_DECISIONS = new Set([
   "FAIL",
   "BLOCKED",
 ]);
-const SECRET_QUERY_KEY = /(token|secret|password|passwd|api[_-]?key|auth|code|session|nonce|wpnonce|rest[_-]?nonce)/iu;
+const SECRET_QUERY_KEY = /(token|secret|password|passwd|api[_-]?key|auth|code|session|nonce)/iu;
 const MAX_JSON_RESPONSE = 5_000_000;
 const MAX_REPORT_RESPONSE = 2_000_000;
 const MAX_SCREENSHOT_DATA_URL = 4_000_000;

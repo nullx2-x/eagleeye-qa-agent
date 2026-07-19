@@ -7,14 +7,14 @@ from app import browser_agent, project_qa
 
 def test_nonce_userinfo_and_fragment_are_removed() -> None:
     value = (
-        "https://user:password@example.test:8443/wp-admin/post.php"
-        "?post=10&_wpnonce=secret&nonce=also-secret&view=public#editor"
+        "https://user:password@example.test:8443/admin/content"
+        "?post=10&request_nonce=secret&nonce=also-secret&view=public#editor"
     )
     safe = browser_agent._sanitize_url(value)
 
     assert "user" not in safe
     assert "password" not in safe
-    assert "_wpnonce" not in safe
+    assert "request_nonce" not in safe
     assert "also-secret" not in safe
     assert "view=public" in safe
     assert "#" not in safe
@@ -23,17 +23,29 @@ def test_nonce_userinfo_and_fragment_are_removed() -> None:
 @pytest.mark.parametrize(
     "url",
     [
-        "https://example.test/wp-admin/",
-        "https://example.test/wp-admin/post.php",
-        "https://example.test/wp-login.php",
+        "https://example.test/admin/",
+        "https://example.test/admin/content",
+        "https://example.test/account/login",
     ],
 )
 def test_sensitive_admin_paths_are_detected(url: str) -> None:
     assert browser_agent._is_sensitive_admin_url(url)
 
 
+@pytest.mark.parametrize(
+    "url",
+    [
+        "https://example.test/authors/alice",
+        "https://example.test/oauth/callback",
+        "https://example.test/docs/administrator-guide",
+    ],
+)
+def test_non_sensitive_paths_are_not_misclassified(url: str) -> None:
+    assert not browser_agent._is_sensitive_admin_url(url)
+
+
 def test_admin_ai_generation_is_disabled() -> None:
-    session = SimpleNamespace(startUrl="https://example.test/wp-admin/", observations=[])
+    session = SimpleNamespace(startUrl="https://example.test/admin/", observations=[])
     cases, result, risks, suggestions = browser_agent._ai_cases(session)
 
     assert cases == []
@@ -44,7 +56,7 @@ def test_admin_ai_generation_is_disabled() -> None:
 
 
 def test_admin_replay_is_blocked(monkeypatch: pytest.MonkeyPatch) -> None:
-    session = SimpleNamespace(startUrl="https://example.test/wp-admin/", observations=[])
+    session = SimpleNamespace(startUrl="https://example.test/admin/", observations=[])
     monkeypatch.setattr(browser_agent, "load_session", lambda _session_id: session)
 
     with pytest.raises(PermissionError, match="Replay is disabled"):

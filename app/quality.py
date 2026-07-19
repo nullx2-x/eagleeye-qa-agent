@@ -1,7 +1,7 @@
 from collections import Counter
 
 from .compatibility import FULL_COVERAGE_TESTS, compatibility_tests
-from .strategy_models import QualityGateRequest, QualityGateResponse, TestMode
+from .strategy_models import QualityGateRequest, QualityGateResponse, ServiceType, TestMode
 
 
 def evaluate_quality_gate(request: QualityGateRequest) -> QualityGateResponse:
@@ -13,7 +13,11 @@ def evaluate_quality_gate(request: QualityGateRequest) -> QualityGateResponse:
     warnings: list[str] = []
 
     result_types = {result.testType for result in request.results}
-    compatibility_required = set(compatibility_tests(request.compatibilityLevel))
+    compatibility_required = (
+        set(compatibility_tests(request.compatibilityLevel))
+        if request.serviceType is ServiceType.EMULATOR
+        else set()
+    )
     required_types = set(request.requiredTestTypes)
     required_types.update(compatibility_required)
     missing_types = sorted(required_types - result_types)

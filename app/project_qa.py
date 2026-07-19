@@ -345,17 +345,12 @@ def _run_suite(
     output = bytearray()
     truncated = False
     flags = subprocess.CREATE_NEW_PROCESS_GROUP if os.name == "nt" else 0
-    suite_tmp = Path(tempfile.mkdtemp(prefix=f"ee-{_short_key(suite.id)}-"))
-    env = {key: value for key, value in os.environ.items() if key.upper() in _ENV_ALLOWLIST}
-    env.update(
-        {
-            "CI": "1",
-            "NO_COLOR": "1",
-            "TMP": str(suite_tmp),
-            "TEMP": str(suite_tmp),
-            "TMPDIR": str(suite_tmp),
-        }
-    )
+    suite_tmp = _suite_temp_dir(run_dir.name, suite.id)
+    suite_tmp.mkdir(parents=True, exist_ok=True)
+    environment = _minimal_env()
+    environment["TEMP"] = str(suite_tmp)
+    environment["TMP"] = str(suite_tmp)
+    environment["TMPDIR"] = str(suite_tmp)
     try:
         process = subprocess.Popen(  # noqa: S603 - executable is validated by the exact allowlist
             suite.command,
@@ -363,11 +358,12 @@ def _run_suite(
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
             shell=False,
-            env=env,
+            env=environment,
             creationflags=flags,
+            start_new_session=os.name != "nt",
         )
     except OSError as exc:
-        payload = _redact_bytes(str(exc).encode())
+        payload = (f"[EagleEye: suite executable could not be started: {exc.__class__.__name__}]\n").encode()
         shutil.rmtree(suite_tmp, ignore_errors=True)
         return _write_suite_evidence(
             run_dir,
@@ -376,48 +372,49 @@ def _run_suite(
             None,
             int((time.monotonic() - started) * 1000),
             payload,
-            f"Executable unavailable: {Path(suite.command[0]).name}",
+            f"Unable to start suite executable: {exc.__class__.__name__}.",
         )
 
     assert process.stdout is not None
-    lock = threading.Lock()
 
     def consume() -> None:
         nonlocal truncated
-        while chunk := process.stdout.read(8192):
-            clean = _redact_bytes(chunk)
-            with lock:
-                remaining = MAX_LOG_BYTES - len(output)
-                if remaining <= 0:
-                    truncated = True
-                    continue
-                output.extend(clean[:remaining])
-                if len(clean) > remaining:
-                    truncated = True
+        while chunk := process.stdout.read(64 * 1024):
+            remaining = MAX_LOG_BYTES - len(output)
+            if remaining > 0:
+                output.extend(chunk[:remaining])
+            if len(chunk) > remaining:
+                truncated = True
 
     reader = threading.Thread(target=consume, daemon=True)
     reader.start()
-    error: str | None = None
+    timed_out = False
     try:
         exit_code = process.wait(timeout=timeout_seconds)
     except subprocess.TimeoutExpired:
+        timed_out = True
         _terminate_process_tree(process)
-        exit_code = process.wait()
-        error = f"Suite timed out after {timeout_seconds} seconds"
-    finally:
-        reader.join(timeout=5)
-        shutil.rmtree(suite_tmp, ignore_errors=True)
-
-    status = "PASSED" if exit_code == 0 and error is None else "FAILED"
+        exit_code = None
+    reader.join(timeout=5)
+    clean = _redact_bytes(bytes(output))
     if truncated:
-        output.extend(b"\n[EagleEye log truncated at 2 MiB]\n")
+        clean += b"\n[EagleEye: output truncated at 2 MiB]\n"
+    if timed_out:
+        clean += f"\n[EagleEye: suite timed out after {timeout_seconds}s]\n".encode()
+    status = "INFRA_ERROR" if timed_out else ("PASSED" if exit_code == 0 else "FAILED")
+    error = None
+    if timed_out:
+        error = f"Suite exceeded the {timeout_seconds}s timeout."
+    elif exit_code != 0:
+        error = f"Suite exited with code {exit_code}."
+    shutil.rmtree(suite_tmp, ignore_errors=True)
     return _write_suite_evidence(
         run_dir,
         suite,
         status,
         exit_code,
         int((time.monotonic() - started) * 1000),
-        bytes(output),
+        clean,
         error,
     )
 
@@ -453,21 +450,38 @@ def _terminate_process_tree(process: subprocess.Popen) -> None:
     if process.poll() is not None:
         return
     if os.name == "nt":
+        taskkill = str(Path(os.environ.get("SYSTEMROOT", r"C:\Windows")) / "System32" / "taskkill.exe")
         subprocess.run(  # noqa: S603 - fixed Windows process-tree cleanup
-            ["taskkill", "/PID", str(process.pid), "/T", "/F"],  # noqa: S607
-            capture_output=True,
+            [taskkill, "/PID", str(process.pid), "/T", "/F"],
             check=False,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
             shell=False,
         )
     else:
         try:
-            os.killpg(os.getpgid(process.pid), signal.SIGTERM)
+            os.killpg(process.pid, signal.SIGKILL)
         except (ProcessLookupError, PermissionError):
-            process.terminate()
+            process.kill()
     try:
         process.wait(timeout=5)
     except subprocess.TimeoutExpired:
         process.kill()
+
+
+def _minimal_env() -> dict[str, str]:
+    environment = {key: value for key, value in os.environ.items() if key.upper() in _ENV_ALLOWLIST}
+    environment["CI"] = "1"
+    environment["NO_COLOR"] = "1"
+    return environment
+
+
+def _suite_temp_dir(run_id: str, suite_id: str) -> Path:
+    if os.name == "nt":
+        base = Path(os.environ.get("LOCALAPPDATA", tempfile.gettempdir())) / "EagleEye" / "q"
+        suite_key = hashlib.sha256(suite_id.encode()).hexdigest()[:12]
+        return base / run_id[:12] / suite_key
+    return Path(tempfile.gettempdir()) / "eagleeye-project-qa" / run_id / suite_id
 
 
 def _authorized_root(value: str) -> Path:
@@ -501,7 +515,7 @@ def _short_key(value: str) -> str:
 
 
 def _redact_bytes(value: bytes) -> bytes:
-    return _SECRET.sub(lambda match: match.group(1) + b"[redacted]", value)
+    return _SECRET.sub(lambda match: match.group(1) + b"[REDACTED]", value)
 
 
 def _atomic_write(path: Path, content: str) -> None:

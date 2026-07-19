@@ -1,7 +1,7 @@
 from enum import StrEnum
-from typing import Literal
+from typing import Literal, Self
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 
 class DevelopmentStage(StrEnum):
@@ -82,6 +82,12 @@ class ProfileRequest(BaseModel):
     aiEnabled: bool = True
     compatibilityLevel: CompatibilityLevel | None = None
 
+    @model_validator(mode="after")
+    def scope_emulator_compatibility(self) -> Self:
+        if self.compatibilityLevel is not None and self.serviceType is not ServiceType.EMULATOR:
+            raise ValueError("compatibilityLevel is valid only when serviceType=emulator")
+        return self
+
 
 class TestSelection(BaseModel):
     name: str
@@ -134,7 +140,16 @@ class QualityGateRequest(BaseModel):
     mode: TestMode
     results: list[TestResultInput] = Field(min_length=1, max_length=20_000)
     requiredTestTypes: list[str] = Field(default_factory=list, max_length=200)
+    serviceType: ServiceType | None = None
     compatibilityLevel: CompatibilityLevel | None = None
+
+    @model_validator(mode="after")
+    def scope_emulator_compatibility(self) -> Self:
+        if self.compatibilityLevel is not None and self.serviceType is not ServiceType.EMULATOR:
+            raise ValueError(
+                "compatibilityLevel requires an explicit serviceType=emulator quality-gate scope"
+            )
+        return self
 
 
 class QualityGateResponse(BaseModel):

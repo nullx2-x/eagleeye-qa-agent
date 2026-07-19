@@ -43,9 +43,7 @@ BROWSER_SESSIONS = ROOT / "data" / "browser-agent"
 BROWSER_CAPTURES = ROOT / "artifacts" / "browser-agent"
 CODEX_BROWSER_CWD = ROOT / ".runtime" / "browser-ai-cwd"
 DEMO_EXTENSION_STATUS = "exact origin configured (value withheld)"
-_SECRET_QUERY_KEYS = re.compile(
-    r"(?i)(token|secret|password|passwd|api[_-]?key|auth|code|session|nonce|wpnonce|rest[_-]?nonce)"
-)
+_SECRET_QUERY_KEYS = re.compile(r"(?i)(token|secret|password|passwd|api[_-]?key|auth|code|session|nonce)")
 _EMAIL = re.compile(r"(?i)\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b")
 _PHONE = re.compile(r"(?<!\d)(?:\+?\d[\d ()-]{7,}\d)(?!\d)")
 _UUID = re.compile(r"(?i)\b[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}\b")
@@ -236,7 +234,7 @@ def run_session(session_id: str) -> BrowserAgentSession:
     session = load_session(session_id)
     if _session_has_sensitive_admin_path(session):
         raise PermissionError(
-            "Replay is disabled for WordPress administration and login paths. "
+            "Replay is disabled for sensitive administration and authentication paths. "
             "Use a disposable local fixture or reviewed non-destructive environment."
         )
     if not session.generatedCases:
@@ -903,8 +901,14 @@ def _with_query_value(value: str, key: str, item: str) -> str:
 
 
 def _is_sensitive_admin_url(value: str) -> bool:
-    path = urlsplit(value).path.casefold().rstrip("/")
-    return path == "/wp-login.php" or path == "/wp-admin" or path.startswith("/wp-admin/")
+    segments = [segment for segment in urlsplit(value).path.casefold().split("/") if segment]
+    sensitive_tokens = {"admin", "login", "auth", "authenticate", "authentication"}
+    for segment in segments:
+        tokens = {token for token in re.split(r"[-_.]+", segment) if token}
+        compact = re.sub(r"[-_.]+", "", segment)
+        if tokens & sensitive_tokens or compact == "signin":
+            return True
+    return False
 
 
 def _session_has_sensitive_admin_path(session: BrowserAgentSession) -> bool:

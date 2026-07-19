@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.1.0 - 2026-07-20
+
+- 明示承認されたローカルリポジトリからテスト、lint、型検査、buildを検出・実行するOperational Project QAを追加。
+- REST、MCP、CLI、PowerShellから同一の品質ゲートとSHA-256付き証跡を利用可能にした。
+- Windowsの短いsuite一時パス、process tree停止、最小環境変数、出力上限・秘匿化を追加。
+- エミュレータ互換性検査を`serviceType=emulator`へ限定し、Web等への誤適用を拒否。
+- Project QAの全回帰テストと運用スモーク検査を品質ゲートへ統合。
+
 ## 1.0.0 - 2026-07-17
 
 - Chrome拡張を明示的にONにし、通常操作から安全なDOM要約、可視スクリーンショット、操作履歴を同一セッションへ記録するBuild Week導線を追加。

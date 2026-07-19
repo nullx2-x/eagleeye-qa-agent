@@ -33,6 +33,9 @@ REQUIRED_MCP_TOOLS = {
     "guided_control_session",
     "guided_record_human_result",
     "guided_get_retest",
+    "discover_project_qa",
+    "run_project_qa",
+    "project_qa_run_status",
 }
 
 
