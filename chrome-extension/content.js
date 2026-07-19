@@ -10,7 +10,7 @@
   const MAX_LANDMARKS = 20;
   const MAX_CONTROLS = 60;
   const MAX_NAME_LENGTH = 240;
-  const SECRET_QUERY_KEY = /(token|secret|password|passwd|api[_-]?key|auth|code|session)/iu;
+  const SECRET_QUERY_KEY = /(token|secret|password|passwd|api[_-]?key|auth|code|session|nonce|wpnonce|rest[_-]?nonce)/iu;
   const CONTROL_SELECTOR = [
     "a[href]",
     "button",

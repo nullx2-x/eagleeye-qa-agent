@@ -29,7 +29,7 @@ def isolated_browser_agent(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> P
 
 def _session() -> BrowserSessionCreate:
     return BrowserSessionCreate(
-        name="WordPress <demo>",
+        name="Authorized target <sample>",
         goal="公開ページの主要導線を確認する",
         startUrl="http://127.0.0.1:8888/",
         locale="ja",
@@ -162,8 +162,8 @@ def test_screenshot_is_bounded_and_report_escapes_untrusted_text(isolated_browse
 
     assert content == b"small-png-fixture"
     assert media_type == "image/png"
-    assert "WordPress &lt;demo&gt;" in report
-    assert "WordPress <demo>" not in report
+    assert "Authorized target &lt;sample&gt;" in report
+    assert "Authorized target <sample>" not in report
     assert "screenshot" in report
 
 
@@ -172,20 +172,22 @@ def test_secret_query_parameters_are_removed(isolated_browser_agent: Path) -> No
         BrowserSessionCreate(
             name="Query safety",
             goal="秘密値を保存しない",
-            startUrl="http://127.0.0.1:8888/?page_id=2&token=do-not-store",
+            startUrl="http://127.0.0.1:8888/?view=2&token=do-not-store&_wpnonce=secret",
         )
     )
 
-    assert "page_id=2" in str(session.startUrl)
+    assert "view=2" in str(session.startUrl)
     assert "token" not in str(session.startUrl)
+    assert "_wpnonce" not in str(session.startUrl)
     assert "do-not-store" not in session.model_dump_json()
+    assert "secret" not in session.model_dump_json()
 
 
 def test_browser_agent_api_record_generate_and_report(isolated_browser_agent: Path) -> None:
     started = client.post(
         "/api/v1/browser-agent/sessions",
         json={
-            "name": "API demo",
+            "name": "API sample",
             "goal": "公開ページを確認する",
             "startUrl": "http://127.0.0.1:8888/",
             "locale": "ja",
@@ -321,8 +323,8 @@ def test_ai_fixed_wait_is_rewritten_before_quality_check(
                     "title": "Sample Pageへ移動する",
                     "objective": "公開導線を確認する",
                     "steps": ["リンクをクリックし、最大10秒待つ。"],
-                    "expectedResults": ["URLにpage_id=2が含まれる"],
-                    "assertions": ["page.url contains page_id=2"],
+                    "expectedResults": ["URLに/demo-site/sampleが含まれる"],
+                    "assertions": ["page.url contains /demo-site/sample"],
                     "priority": "high",
                     "criticalFlow": True,
                 }

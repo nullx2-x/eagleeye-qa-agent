@@ -103,9 +103,9 @@ def live_html() -> str:
             </ol>
 
             <div class="hero-actions">
-              <button id="wordpress-demo" class="button button-primary" type="button"
+              <button id="local-sample" class="button button-primary" type="button"
                       aria-describedby="demo-help" disabled>
-                <span id="wordpress-demo-label">WordPressデモを開始</span>
+                <span id="local-sample-label">ローカルsampleを開始</span>
               </button>
               <a class="button button-secondary" href="#extension-setup">拡張導入ガイド</a>
             </div>
@@ -1461,7 +1461,7 @@ def live_js() -> str:
   const ENDPOINTS = Object.freeze({
     status: "/api/v1/browser-agent/status",
     sessions: "/api/v1/browser-agent/sessions",
-    wordpressDemo: "/api/v1/browser-agent/demo/wordpress",
+    localSample: "/api/v1/browser-agent/sample/local",
     run: (sessionId) =>
       `/api/v1/browser-agent/sessions/${encodeURIComponent(sessionId)}/run`,
     report: (sessionId) =>
@@ -1512,8 +1512,8 @@ def live_js() -> str:
     nodes.service = byId("service-indicator");
     nodes.serviceLabel = byId("service-label");
     nodes.theme = byId("theme-toggle");
-    nodes.demo = byId("wordpress-demo");
-    nodes.demoLabel = byId("wordpress-demo-label");
+    nodes.demo = byId("local-sample");
+    nodes.demoLabel = byId("local-sample-label");
     nodes.demoHelp = byId("demo-help");
     nodes.readinessBadge = byId("readiness-badge");
     nodes.providerState = byId("provider-state");
@@ -1702,7 +1702,7 @@ def live_js() -> str:
     };
     renderAll();
     try {
-      const session = normalizeSession(await requestJson(ENDPOINTS.wordpressDemo, { method: "POST" }));
+      const session = normalizeSession(await requestJson(ENDPOINTS.localSample, { method: "POST" }));
       upsertSession(session);
       state.actionNotice = {
         kind: "success",
@@ -1920,7 +1920,7 @@ def live_js() -> str:
     const targetUnavailable = !state.agent || !state.agent.demoTargetReachable;
     nodes.demo.disabled =
       state.statusLoading || Boolean(state.statusError) || state.demoBusy || targetUnavailable;
-    nodes.demoLabel.textContent = state.demoBusy ? "デモ準備中…" : "WordPressデモを開始";
+    nodes.demoLabel.textContent = state.demoBusy ? "デモ準備中…" : "ローカルsampleを開始";
     if (state.demoBusy) {
       nodes.demoHelp.textContent = "観察データとテストケースを生成しています。";
     } else if (state.statusLoading) {

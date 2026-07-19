@@ -13,7 +13,6 @@ from pathlib import Path
 from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 from uuid import uuid4
 
-import httpx
 from pydantic import HttpUrl
 
 from . import storage
@@ -44,7 +43,9 @@ BROWSER_SESSIONS = ROOT / "data" / "browser-agent"
 BROWSER_CAPTURES = ROOT / "artifacts" / "browser-agent"
 CODEX_BROWSER_CWD = ROOT / ".runtime" / "browser-ai-cwd"
 DEMO_EXTENSION_STATUS = "exact origin configured (value withheld)"
-_SECRET_QUERY_KEYS = re.compile(r"(?i)(token|secret|password|passwd|api[_-]?key|auth|code|session)")
+_SECRET_QUERY_KEYS = re.compile(
+    r"(?i)(token|secret|password|passwd|api[_-]?key|auth|code|session|nonce|wpnonce|rest[_-]?nonce)"
+)
 _EMAIL = re.compile(r"(?i)\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b")
 _PHONE = re.compile(r"(?<!\d)(?:\+?\d[\d ()-]{7,}\d)(?!\d)")
 _UUID = re.compile(r"(?i)\b[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}\b")
@@ -233,6 +234,11 @@ def generate_session(session_id: str) -> BrowserAgentSession:
 
 def run_session(session_id: str) -> BrowserAgentSession:
     session = load_session(session_id)
+    if _session_has_sensitive_admin_path(session):
+        raise PermissionError(
+            "Replay is disabled for WordPress administration and login paths. "
+            "Use a disposable local fixture or reviewed non-destructive environment."
+        )
     if not session.generatedCases:
         session = generate_session(session.id)
     session.status = "running"
@@ -271,21 +277,15 @@ def run_session(session_id: str) -> BrowserAgentSession:
     return session
 
 
-def create_wordpress_demo() -> BrowserAgentSession:
-    target = os.getenv("EAGLEEYE_DEMO_TARGET", "http://127.0.0.1:8888/")
+def create_local_sample() -> BrowserAgentSession:
+    # Generic login-free sample without CMS-specific routes or labels.
+    target = os.getenv("EAGLEEYE_SAMPLE_TARGET", "http://127.0.0.1:8766/demo-site/")
     if not is_run_url_allowed(target):
-        raise ValueError("The demo target must be a loopback HTTP(S) URL.")
-    try:
-        with httpx.Client(trust_env=False, follow_redirects=False) as client:
-            response = client.get(target, timeout=_demo_timeout_seconds())
-            response.raise_for_status()
-    except httpx.HTTPError as exc:
-        raise RuntimeError("The local demo target is unavailable.") from exc
-    is_bundled = urlsplit(target).path.startswith("/demo-site")
-    sample_target = _with_query_value(target, "page_id", "2")
+        raise ValueError("The sample target must be a loopback HTTP(S) URL.")
+    sample_target = target.rstrip("/") + "/sample"
     session = create_session(
         BrowserSessionCreate(
-            name="Bundled public journey" if is_bundled else "WordPress public journey",
+            name="Authorized local sample journey",
             goal="普段の閲覧操作から回帰テストを生成し、公開ページの主要導線を検証する",
             startUrl=target,
             locale="ja",
@@ -294,15 +294,15 @@ def create_wordpress_demo() -> BrowserAgentSession:
     append_observation(
         session.id,
         BrowserObservation(
-            id="demo-goto",
+            id="sample-goto",
             timestamp=1,
             action="goto",
             url=target,
             redacted=False,
             dom=BrowserDomSnapshot(
-                pageTitle="EagleEye WP Lab",
-                headings=["EagleEye Demo Lab"] if is_bundled else ["Blog"],
-                landmarks=["banner", "navigation", "main", "contentinfo"],
+                pageTitle="EagleEye Local QA Lab",
+                headings=["EagleEye Local QA Lab"],
+                landmarks=["main"],
                 controls=[],
             ),
         ),
@@ -310,7 +310,7 @@ def create_wordpress_demo() -> BrowserAgentSession:
     append_observation(
         session.id,
         BrowserObservation(
-            id="demo-click",
+            id="sample-click",
             timestamp=2,
             action="click",
             url=target,
@@ -321,11 +321,17 @@ def create_wordpress_demo() -> BrowserAgentSession:
     append_observation(
         session.id,
         BrowserObservation(
-            id="demo-snapshot",
+            id="sample-snapshot",
             timestamp=3,
             action="snapshot",
             url=sample_target,
             redacted=False,
+            dom=BrowserDomSnapshot(
+                pageTitle="EagleEye Local QA Lab",
+                headings=["Sample Page"],
+                landmarks=["main"],
+                controls=[],
+            ),
         ),
     )
     return generate_session(session.id)
@@ -560,6 +566,24 @@ def _ai_cases(
     session: BrowserAgentSession,
 ) -> tuple[list[GeneratedBrowserTestCase], BrowserAIResult, list[str], list[str]]:
     provider = os.getenv("EAGLEEYE_AI_PROVIDER", "codex-agent").strip().casefold()
+    if _session_has_sensitive_admin_path(session):
+        model = (
+            os.getenv("EAGLEEYE_BROWSER_AI_MODEL", "").strip()
+            or os.getenv("EAGLEEYE_CODEX_MODEL", "").strip()
+            or "gpt-5.6-terra"
+        )
+        return (
+            [],
+            BrowserAIResult(
+                provider=provider,
+                model=model,
+                available=False,
+                fallbackUsed=True,
+                message="AI generation is disabled for sensitive administration paths.",
+            ),
+            [],
+            ["管理画面ではAI送信を行わず、非破壊の手動レビューを使用する"],
+        )
     model = (
         os.getenv("EAGLEEYE_BROWSER_AI_MODEL", "").strip()
         or os.getenv("EAGLEEYE_CODEX_MODEL", "").strip()
@@ -855,13 +879,20 @@ def _sanitize_url(value: str) -> str:
     parsed = urlsplit(value)
     if parsed.scheme not in {"http", "https"} or not parsed.hostname:
         raise ValueError("Only HTTP(S) browser URLs are accepted.")
+
+    hostname = parsed.hostname
+    if ":" in hostname and not hostname.startswith("["):
+        hostname = f"[{hostname}]"
+    netloc = hostname
+    if parsed.port is not None:
+        netloc = f"{netloc}:{parsed.port}"
+
     query_items = [
         (key, item)
         for key, item in parse_qsl(parsed.query, keep_blank_values=True)
         if not _SECRET_QUERY_KEYS.search(key)
     ]
-    query = urlencode(query_items)
-    return urlunsplit((parsed.scheme, parsed.netloc, parsed.path or "/", query, ""))
+    return urlunsplit((parsed.scheme, netloc, parsed.path or "/", urlencode(query_items), ""))
 
 
 def _with_query_value(value: str, key: str, item: str) -> str:
@@ -869,6 +900,16 @@ def _with_query_value(value: str, key: str, item: str) -> str:
     query_items = [(name, current) for name, current in parse_qsl(parsed.query) if name != key]
     query_items.append((key, item))
     return urlunsplit((parsed.scheme, parsed.netloc, parsed.path or "/", urlencode(query_items), ""))
+
+
+def _is_sensitive_admin_url(value: str) -> bool:
+    path = urlsplit(value).path.casefold().rstrip("/")
+    return path == "/wp-login.php" or path == "/wp-admin" or path.startswith("/wp-admin/")
+
+
+def _session_has_sensitive_admin_path(session: BrowserAgentSession) -> bool:
+    urls = [str(session.startUrl), *(str(item.url) for item in session.observations)]
+    return any(_is_sensitive_admin_url(value) for value in urls)
 
 
 def _same_origin(left: str, right: str) -> bool:

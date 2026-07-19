@@ -32,3 +32,7 @@ videos/**/snapshots-stable/
 !tests/generated/.gitkeep
 !data/guided/assets/.gitkeep
 !artifacts/guided-runs/.gitkeep
+artifacts/project-qa/
+reports/
+videos/eagleeye-build-week/
+docs/build-week/

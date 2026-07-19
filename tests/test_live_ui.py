@@ -15,7 +15,7 @@ def test_live_html_has_review_ready_content_and_external_assets() -> None:
         assert stage in html
     for tab in ("Dashboard", "Test一覧", "実行中", "レポート"):
         assert tab in html
-    assert "WordPressデモを開始" in html
+    assert "ローカルsampleを開始" in html
     assert "拡張導入ガイド" in html
     assert "Codex / provider" in html
     assert 'href="/assets/live.css"' in html
@@ -40,7 +40,7 @@ def test_live_js_uses_browser_agent_api_without_unsafe_dom_execution() -> None:
     for path in (
         "/api/v1/browser-agent/status",
         "/api/v1/browser-agent/sessions",
-        "/api/v1/browser-agent/demo/wordpress",
+        "/api/v1/browser-agent/sample/local",
         "/api/v1/browser-agent/sessions/${encodeURIComponent(sessionId)}/run",
         "/api/v1/browser-agent/sessions/${encodeURIComponent(sessionId)}/report",
     ):
@@ -63,12 +63,13 @@ def test_live_js_has_stable_operational_states() -> None:
     assert "nodes.demo.disabled" in script
 
 
-def test_bundled_demo_is_login_free_and_has_a_replay_destination() -> None:
+def test_bundled_sample_is_login_free_and_has_a_replay_destination() -> None:
     home = client.get("/demo-site/")
-    sample = client.get("/demo-site/?page_id=2")
+    sample = client.get("/demo-site/sample")
 
     assert home.status_code == 200
+    assert sample.status_code == 200
     assert "BUNDLED · LOGIN-FREE · LOCAL" in home.text
-    assert 'href="/demo-site/?page_id=2"' in home.text
+    assert 'href="/demo-site/sample"' in home.text
     assert "Sample Page" in sample.text
     assert "script-src" not in home.headers["content-security-policy"]

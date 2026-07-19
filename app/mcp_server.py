@@ -11,6 +11,8 @@ from .guided_models import (
     GuidedSessionStart,
 )
 from .guided_service import service as guided_service
+from .project_qa import discover_project, load_project_run, run_project
+from .project_qa_models import ProjectRunRequest
 from .providers import broker
 from .quality import evaluate_quality_gate
 from .storage import load_bundle, load_run
@@ -255,6 +257,42 @@ def guided_get_retest(session_id: str) -> dict:
         "runnerUrl": f"/guided/{retest.id}",
         "approvalRequired": True,
     }
+
+
+@mcp.tool()
+def discover_project_qa(project_root: str, authorized: bool = False) -> dict:
+    if not authorized:
+        raise PermissionError("Project QA discovery requires authorized=true")
+    return discover_project(project_root).model_dump(mode="json")
+
+
+@mcp.tool()
+def run_project_qa(
+    project_root: str,
+    authorized: bool = False,
+    suite_ids: list[str] | None = None,
+    mode: str = "development",
+    timeout_seconds: int = 900,
+    fail_fast: bool = False,
+) -> dict:
+    if not authorized:
+        raise PermissionError("Project QA execution requires authorized=true")
+    request = ProjectRunRequest.model_validate(
+        {
+            "projectRoot": project_root,
+            "authorized": True,
+            "suiteIds": suite_ids or [],
+            "mode": mode,
+            "timeoutSeconds": timeout_seconds,
+            "failFast": fail_fast,
+        }
+    )
+    return run_project(request).model_dump(mode="json")
+
+
+@mcp.tool()
+def project_qa_run_status(run_id: str) -> dict:
+    return load_project_run(run_id).model_dump(mode="json")
 
 
 @mcp.resource("qa://strategy/spec")
