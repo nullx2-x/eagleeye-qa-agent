@@ -10,11 +10,8 @@ AI can propose coverage and fixes. It cannot overwrite the recorded critical pat
 
 > **Authorized testing only.** Use EagleEye only on sites you own or have explicit permission to test. Review [Privacy](PRIVACY.md), [Security](SECURITY.md), and [Compliance](COMPLIANCE.md) before recording a real site.
 
-![EagleEye end-to-end demo flow](docs/build-week/screenshots/eagleeye-demo-flow.gif)
 
-▶ [Watch the 2:55 English demo with burned-in captions](https://youtu.be/zLSLiG7QYr4)
 
-The 12-second preview above follows the same sequence verified against a real local WordPress environment. See the full [dashboard screenshot](docs/build-week/screenshots/01-dashboard.png) or the machine-readable [WordPress E2E evidence](docs/build-week/evidence/extension-wordpress-e2e.json).
 
 ## Why EagleEye
 
@@ -31,9 +28,7 @@ EagleEye connects both sides:
 7. Export a report with screenshots, WebM evidence, byte counts, timestamps, and SHA-256 receipts.
 8. Review suggested fixes and create a developer-ready bug report with one explicit action.
 
-## Verified WordPress Proof
 
-A fresh Chrome run against a real local WordPress site on 2026-07-17 produced:
 
 | Result | Evidence |
 |---|---:|
@@ -59,7 +54,6 @@ uv run playwright install chromium
 .\scripts\start-build-week-demo.ps1
 ```
 
-Open `http://127.0.0.1:8766/` and select **Start demo**. If WordPress is already available at `127.0.0.1:8888`, EagleEye uses it. Otherwise, it falls back to the included login-free local demo.
 
 ### Load the Chrome Extension
 
@@ -107,7 +101,6 @@ Chrome MV3 extension ── redaction + consent ──► Local FastAPI service
                                       HTML / Markdown report + evidence receipts
 ```
 
-See the detailed [architecture notes](docs/build-week/architecture.md) and [architecture diagram](docs/build-week/screenshots/architecture-flow.png).
 
 ## Privacy by Input Contract
 
@@ -213,12 +206,6 @@ Run the complete operational gate with:
 
 ## Build Week Materials
 
-- [Architecture](docs/build-week/architecture.md)
-- [Demo script](docs/build-week/demo-script.md)
-- [Devpost draft](docs/build-week/devpost-draft.md)
-- [Phase 1–9 submission checklist](docs/build-week/submission-checklist.md)
-- [Publication security procedure](docs/build-week/publication-security.md)
-- [Submission screenshots](docs/build-week/screenshots/)
 - [Privacy](PRIVACY.md)
 - [Security](SECURITY.md)
 - [Compliance](COMPLIANCE.md)

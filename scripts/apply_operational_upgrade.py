@@ -39,7 +39,7 @@ def patch_browser_agent() -> None:
         r"def create_wordpress_demo\(\) -> BrowserAgentSession:\n.*?\n\n\ndef load_session",
         re.DOTALL,
     )
-    replacement = '''def create_local_sample() -> BrowserAgentSession:
+    replacement = """def create_local_sample() -> BrowserAgentSession:
     # Generic login-free sample without CMS-specific routes or labels.
     target = os.getenv("EAGLEEYE_SAMPLE_TARGET", "http://127.0.0.1:8766/demo-site/")
     if not is_run_url_allowed(target):
@@ -99,7 +99,7 @@ def patch_browser_agent() -> None:
     return generate_session(session.id)
 
 
-def load_session'''
+def load_session"""
     content, count = legacy_block.subn(replacement, content)
     if count not in {0, 1}:
         raise RuntimeError(f"Unexpected legacy demo block count: {count}")
@@ -110,7 +110,7 @@ def load_session'''
         r"def _sanitize_url\(value: str\) -> str:\n.*?\n\n\ndef _with_query_value",
         re.DOTALL,
     )
-    safe_sanitize = '''def _sanitize_url(value: str) -> str:
+    safe_sanitize = """def _sanitize_url(value: str) -> str:
     parsed = urlsplit(value)
     if parsed.scheme not in {"http", "https"} or not parsed.hostname:
         raise ValueError("Only HTTP(S) browser URLs are accepted.")
@@ -130,14 +130,14 @@ def load_session'''
     return urlunsplit((parsed.scheme, netloc, parsed.path or "/", urlencode(query_items), ""))
 
 
-def _with_query_value'''
+def _with_query_value"""
     content, count = sanitize_block.subn(safe_sanitize, content)
     if count != 1 and "hostname = parsed.hostname" not in content:
         raise RuntimeError("Could not harden Python URL sanitizer")
 
     if "def _is_sensitive_admin_url(" not in content:
         marker = "\n\ndef _same_origin(left: str, right: str) -> bool:\n"
-        helper = '''
+        helper = """
 
 def _is_sensitive_admin_url(value: str) -> bool:
     path = urlsplit(value).path.casefold().rstrip("/")
@@ -147,17 +147,19 @@ def _is_sensitive_admin_url(value: str) -> bool:
 def _session_has_sensitive_admin_path(session: BrowserAgentSession) -> bool:
     urls = [str(session.startUrl), *(str(item.url) for item in session.observations)]
     return any(_is_sensitive_admin_url(value) for value in urls)
-'''
+"""
         content = replace_required(content, marker, helper + marker, "sensitive admin helper")
 
-    run_marker = "def run_session(session_id: str) -> BrowserAgentSession:\n    session = load_session(session_id)\n"
+    run_marker = (
+        "def run_session(session_id: str) -> BrowserAgentSession:\n    session = load_session(session_id)\n"
+    )
     run_guard = (
         "def run_session(session_id: str) -> BrowserAgentSession:\n"
         "    session = load_session(session_id)\n"
         "    if _session_has_sensitive_admin_path(session):\n"
         "        raise PermissionError(\n"
-        "            \"Replay is disabled for WordPress administration and login paths. \"\n"
-        "            \"Use a disposable local fixture or reviewed non-destructive environment.\"\n"
+        '            "Replay is disabled for WordPress administration and login paths. "\n'
+        '            "Use a disposable local fixture or reviewed non-destructive environment."\n'
         "        )\n"
     )
     content = replace_required(content, run_marker, run_guard, "admin replay guard")
@@ -166,18 +168,18 @@ def _session_has_sensitive_admin_path(session: BrowserAgentSession) -> bool:
         "def _ai_cases(\n"
         "    session: BrowserAgentSession,\n"
         ") -> tuple[list[GeneratedBrowserTestCase], BrowserAIResult, list[str], list[str]]:\n"
-        "    provider = os.getenv(\"EAGLEEYE_AI_PROVIDER\", \"codex-agent\").strip().casefold()\n"
+        '    provider = os.getenv("EAGLEEYE_AI_PROVIDER", "codex-agent").strip().casefold()\n'
     )
     ai_guard = (
         "def _ai_cases(\n"
         "    session: BrowserAgentSession,\n"
         ") -> tuple[list[GeneratedBrowserTestCase], BrowserAIResult, list[str], list[str]]:\n"
-        "    provider = os.getenv(\"EAGLEEYE_AI_PROVIDER\", \"codex-agent\").strip().casefold()\n"
+        '    provider = os.getenv("EAGLEEYE_AI_PROVIDER", "codex-agent").strip().casefold()\n'
         "    if _session_has_sensitive_admin_path(session):\n"
         "        model = (\n"
-        "            os.getenv(\"EAGLEEYE_BROWSER_AI_MODEL\", \"\").strip()\n"
-        "            or os.getenv(\"EAGLEEYE_CODEX_MODEL\", \"\").strip()\n"
-        "            or \"gpt-5.6-terra\"\n"
+        '            os.getenv("EAGLEEYE_BROWSER_AI_MODEL", "").strip()\n'
+        '            or os.getenv("EAGLEEYE_CODEX_MODEL", "").strip()\n'
+        '            or "gpt-5.6-terra"\n'
         "        )\n"
         "        return (\n"
         "            [],\n"
@@ -186,10 +188,10 @@ def _session_has_sensitive_admin_path(session: BrowserAgentSession) -> bool:
         "                model=model,\n"
         "                available=False,\n"
         "                fallbackUsed=True,\n"
-        "                message=\"AI generation is disabled for sensitive administration paths.\",\n"
+        '                message="AI generation is disabled for sensitive administration paths.",\n'
         "            ),\n"
         "            [],\n"
-        "            [\"管理画面ではAI送信を行わず、非破壊の手動レビューを使用する\"],\n"
+        '            ["管理画面ではAI送信を行わず、非破壊の手動レビューを使用する"],\n'
         "        )\n"
     )
     content = replace_required(content, ai_marker, ai_guard, "admin AI guard")
@@ -199,7 +201,7 @@ def _session_has_sensitive_admin_path(session: BrowserAgentSession) -> bool:
 def patch_main() -> None:
     path = "app/main.py"
     content = read(path)
-    old = '''@app.get("/demo-site/", response_class=HTMLResponse)
+    old = """@app.get("/demo-site/", response_class=HTMLResponse)
 def bundled_demo_site(page_id: int | None = Query(default=None, ge=1, le=99)) -> HTMLResponse:
     policy = (
         "default-src 'none'; style-src 'unsafe-inline'; frame-ancestors 'none'; "
@@ -209,8 +211,8 @@ def bundled_demo_site(page_id: int | None = Query(default=None, ge=1, le=99)) ->
         demo_site_html(sample_page=page_id == 2),
         headers={"Content-Security-Policy": policy, "Cache-Control": "no-store"},
     )
-'''
-    new = '''@app.get("/demo-site/", response_class=HTMLResponse)
+"""
+    new = """@app.get("/demo-site/", response_class=HTMLResponse)
 def bundled_demo_site() -> HTMLResponse:
     policy = (
         "default-src 'none'; style-src 'unsafe-inline'; frame-ancestors 'none'; "
@@ -220,7 +222,7 @@ def bundled_demo_site() -> HTMLResponse:
         demo_site_html(sample_page=False),
         headers={"Content-Security-Policy": policy, "Cache-Control": "no-store"},
     )
-'''
+"""
     write(path, replace_required(content, old, new, "generic sample route"))
 
 
@@ -243,12 +245,13 @@ def patch_mcp() -> None:
     )
     if imports not in content:
         content = replace_required(
-            content, "from .providers import broker\n",
+            content,
+            "from .providers import broker\n",
             "from .providers import broker\n" + imports,
             "Project QA MCP imports",
         )
 
-    tools = '''@mcp.tool()
+    tools = """@mcp.tool()
 def discover_project_qa(project_root: str, authorized: bool = False) -> dict:
     if not authorized:
         raise PermissionError("Project QA discovery requires authorized=true")
@@ -284,7 +287,7 @@ def project_qa_run_status(run_id: str) -> dict:
     return load_project_run(run_id).model_dump(mode="json")
 
 
-'''
+"""
     marker = '@mcp.resource("qa://strategy/spec")\n'
     if "def discover_project_qa(" not in content:
         content = replace_required(content, marker, tools + marker, "Project QA MCP tools")
@@ -306,26 +309,34 @@ def patch_configuration_and_docs() -> None:
             ignore += ("" if ignore.endswith("\n") else "\n") + line + "\n"
     write(".gitignore", ignore)
 
-    readme = "\n".join(
-        line for line in read("README.md").splitlines()
-        if "wordpress" not in line.casefold()
-        and "eagleeye-demo-flow.gif" not in line
-        and "youtu.be/zLSLiG7QYr4" not in line
-        and "videos/eagleeye-build-week" not in line
-        and "docs/build-week/" not in line
-    ) + "\n"
+    readme = (
+        "\n".join(
+            line
+            for line in read("README.md").splitlines()
+            if "wordpress" not in line.casefold()
+            and "eagleeye-demo-flow.gif" not in line
+            and "youtu.be/zLSLiG7QYr4" not in line
+            and "videos/eagleeye-build-week" not in line
+            and "docs/build-week/" not in line
+        )
+        + "\n"
+    )
     readme = readme.replace("/demo/wordpress", "/sample/local")
     readme = readme.replace("EAGLEEYE_DEMO_TARGET", "EAGLEEYE_SAMPLE_TARGET")
     write("README.md", readme)
 
     notices = ROOT / "THIRD_PARTY_NOTICES.md"
     if notices.is_file():
-        content = "\n".join(
-            line for line in notices.read_text(encoding="utf-8").splitlines()
-            if "videos/eagleeye-build-week" not in line
-            and "Kokoro-82M" not in line
-            and "Faster-Whisper" not in line
-        ) + "\n"
+        content = (
+            "\n".join(
+                line
+                for line in notices.read_text(encoding="utf-8").splitlines()
+                if "videos/eagleeye-build-week" not in line
+                and "Kokoro-82M" not in line
+                and "Faster-Whisper" not in line
+            )
+            + "\n"
+        )
         notices.write_text(content, encoding="utf-8")
 
 

@@ -30,15 +30,51 @@ MANIFEST = Path(".eagleeye") / "qa.json"
 MAX_LOG_BYTES = 2 * 1024 * 1024
 
 _ALLOWED_EXECUTABLES = {
-    "bun", "bun.exe", "cargo", "dotnet", "go", "gradlew", "gradlew.bat",
-    "mvn", "mvnw", "mvnw.cmd", "npm", "npm.cmd", "pnpm", "pnpm.cmd",
-    "python", "python.exe", "python3", "pytest", "ruff", "uv", "yarn", "yarn.cmd",
+    "bun",
+    "bun.exe",
+    "cargo",
+    "dotnet",
+    "go",
+    "gradlew",
+    "gradlew.bat",
+    "mvn",
+    "mvnw",
+    "mvnw.cmd",
+    "npm",
+    "npm.cmd",
+    "pnpm",
+    "pnpm.cmd",
+    "python",
+    "python.exe",
+    "python3",
+    "pytest",
+    "ruff",
+    "uv",
+    "yarn",
+    "yarn.cmd",
 }
 _ENV_ALLOWLIST = {
-    "APPDATA", "CI", "COMSPEC", "FORCE_COLOR", "HOME", "HOMEDRIVE", "HOMEPATH",
-    "LANG", "LC_ALL", "LOCALAPPDATA", "NO_COLOR", "PATH", "PATHEXT",
-    "SYSTEMROOT", "TEMP", "TMP", "TMPDIR", "USERPROFILE", "UV_PROJECT_ENVIRONMENT",
-    "VIRTUAL_ENV", "WINDIR",
+    "APPDATA",
+    "CI",
+    "COMSPEC",
+    "FORCE_COLOR",
+    "HOME",
+    "HOMEDRIVE",
+    "HOMEPATH",
+    "LANG",
+    "LC_ALL",
+    "LOCALAPPDATA",
+    "NO_COLOR",
+    "PATH",
+    "PATHEXT",
+    "SYSTEMROOT",
+    "TEMP",
+    "TMP",
+    "TMPDIR",
+    "USERPROFILE",
+    "UV_PROJECT_ENVIRONMENT",
+    "VIRTUAL_ENV",
+    "WINDIR",
 }
 _SECRET = re.compile(
     rb"(?i)(bearer\s+|api[_-]?key\s*[:=]\s*|access[_-]?token\s*[:=]\s*|"
@@ -61,17 +97,25 @@ def discover_project(project_root: str) -> ProjectDiscoveryResponse:
         suites.extend(_python_suites(root))
     if (root / "go.mod").is_file():
         ecosystems.append("go")
-        suites.extend([
-            _suite("go-test", "Go tests", "unit", ["go", "test", "./..."]),
-            _suite("go-vet", "Go vet", "lint", ["go", "vet", "./..."]),
-        ])
+        suites.extend(
+            [
+                _suite("go-test", "Go tests", "unit", ["go", "test", "./..."]),
+                _suite("go-vet", "Go vet", "lint", ["go", "vet", "./..."]),
+            ]
+        )
     if (root / "Cargo.toml").is_file():
         ecosystems.append("rust")
-        suites.extend([
-            _suite("cargo-test", "Cargo tests", "unit", ["cargo", "test", "--all-targets"]),
-            _suite("cargo-clippy", "Cargo clippy", "lint",
-                   ["cargo", "clippy", "--all-targets", "--", "-D", "warnings"]),
-        ])
+        suites.extend(
+            [
+                _suite("cargo-test", "Cargo tests", "unit", ["cargo", "test", "--all-targets"]),
+                _suite(
+                    "cargo-clippy",
+                    "Cargo clippy",
+                    "lint",
+                    ["cargo", "clippy", "--all-targets", "--", "-D", "warnings"],
+                ),
+            ]
+        )
     if list(root.glob("*.sln")) or list(root.glob("*.csproj")):
         ecosystems.append("dotnet")
         suites.append(_suite("dotnet-test", ".NET tests", "unit", ["dotnet", "test"]))
@@ -126,22 +170,27 @@ def run_project(request: ProjectRunRequest) -> ProjectRunReport:
             break
 
     gate = evaluate_quality_gate(
-        QualityGateRequest.model_validate({
-            "profileId": f"project-{discovery.projectId}",
-            "mode": request.mode,
-            "results": [{
-                "testId": item.id,
-                "testType": item.testType,
-                "status": item.status,
-                "severity": "high" if item.status != "PASSED" else "medium",
-                "criticalFlow": False,
-                "durationMs": item.durationMs,
-                "errorMessage": item.errorMessage,
-                "evidencePath": item.evidencePath,
-                "evidenceSha256": item.evidenceSha256,
-            } for item in results],
-            "requiredTestTypes": sorted({suite.testType for suite in selected if suite.required}),
-        })
+        QualityGateRequest.model_validate(
+            {
+                "profileId": f"project-{discovery.projectId}",
+                "mode": request.mode,
+                "results": [
+                    {
+                        "testId": item.id,
+                        "testType": item.testType,
+                        "status": item.status,
+                        "severity": "high" if item.status != "PASSED" else "medium",
+                        "criticalFlow": False,
+                        "durationMs": item.durationMs,
+                        "errorMessage": item.errorMessage,
+                        "evidencePath": item.evidencePath,
+                        "evidenceSha256": item.evidenceSha256,
+                    }
+                    for item in results
+                ],
+                "requiredTestTypes": sorted({suite.testType for suite in selected if suite.required}),
+            }
+        )
     )
     status = "PASS" if gate.decision in {"PASS", "PASS_WITH_WARNING"} else "BLOCKED"
     if gate.decision == "FAIL":
@@ -187,19 +236,31 @@ def _node_suites(root: Path, package_json: Path, warnings: list[str]) -> list[Pr
     runner = _node_runner(root)
     accepted = {"lint": "lint", "typecheck": "typecheck", "test": "unit", "build": "build"}
     ordered = [name for name in accepted if name in scripts]
-    ordered.extend(sorted(
-        name for name, command in scripts.items()
-        if isinstance(name, str) and isinstance(command, str)
-        and name.startswith("test:") and not _interactive_node_test(name)
-    ))
+    ordered.extend(
+        sorted(
+            name
+            for name, command in scripts.items()
+            if isinstance(name, str)
+            and isinstance(command, str)
+            and name.startswith("test:")
+            and not _interactive_node_test(name)
+        )
+    )
     known = {
-        "test:unit": "unit", "test:integration": "integration",
-        "test:e2e": "e2e", "test:security": "security",
+        "test:unit": "unit",
+        "test:integration": "integration",
+        "test:e2e": "e2e",
+        "test:security": "security",
     }
     return [
-        _suite(f"node-{name.replace(':', '-')}", f"Node {name}",
-               accepted.get(name, known.get(name, "test")), [runner, "run", name])
-        for name in ordered if name in scripts
+        _suite(
+            f"node-{name.replace(':', '-')}",
+            f"Node {name}",
+            accepted.get(name, known.get(name, "test")),
+            [runner, "run", name],
+        )
+        for name in ordered
+        if name in scripts
     ]
 
 
@@ -213,8 +274,9 @@ def _python_suites(root: Path) -> list[ProjectSuiteDefinition]:
     return [
         _suite("python-pytest", "Python tests", "unit", [*prefix, "pytest", "-q"]),
         _suite("python-ruff-check", "Ruff lint", "lint", [*prefix, "ruff", "check", "."]),
-        _suite("python-ruff-format", "Ruff format check", "format",
-               [*prefix, "ruff", "format", "--check", "."]),
+        _suite(
+            "python-ruff-format", "Ruff format check", "format", [*prefix, "ruff", "format", "--check", "."]
+        ),
     ]
 
 
@@ -285,13 +347,15 @@ def _run_suite(
     flags = subprocess.CREATE_NEW_PROCESS_GROUP if os.name == "nt" else 0
     suite_tmp = Path(tempfile.mkdtemp(prefix=f"ee-{_short_key(suite.id)}-"))
     env = {key: value for key, value in os.environ.items() if key.upper() in _ENV_ALLOWLIST}
-    env.update({
-        "CI": "1",
-        "NO_COLOR": "1",
-        "TMP": str(suite_tmp),
-        "TEMP": str(suite_tmp),
-        "TMPDIR": str(suite_tmp),
-    })
+    env.update(
+        {
+            "CI": "1",
+            "NO_COLOR": "1",
+            "TMP": str(suite_tmp),
+            "TEMP": str(suite_tmp),
+            "TMPDIR": str(suite_tmp),
+        }
+    )
     try:
         process = subprocess.Popen(
             suite.command,
@@ -306,8 +370,13 @@ def _run_suite(
         payload = _redact_bytes(str(exc).encode())
         shutil.rmtree(suite_tmp, ignore_errors=True)
         return _write_suite_evidence(
-            run_dir, suite, "INFRA_ERROR", None, int((time.monotonic() - started) * 1000),
-            payload, f"Executable unavailable: {Path(suite.command[0]).name}",
+            run_dir,
+            suite,
+            "INFRA_ERROR",
+            None,
+            int((time.monotonic() - started) * 1000),
+            payload,
+            f"Executable unavailable: {Path(suite.command[0]).name}",
         )
 
     assert process.stdout is not None
@@ -343,8 +412,13 @@ def _run_suite(
     if truncated:
         output.extend(b"\n[EagleEye log truncated at 2 MiB]\n")
     return _write_suite_evidence(
-        run_dir, suite, status, exit_code, int((time.monotonic() - started) * 1000),
-        bytes(output), error,
+        run_dir,
+        suite,
+        status,
+        exit_code,
+        int((time.monotonic() - started) * 1000),
+        bytes(output),
+        error,
     )
 
 
@@ -451,8 +525,7 @@ def _markdown(report: ProjectRunReport) -> str:
     ]
     for item in report.results:
         lines.append(
-            f"- **{item.name}** — `{item.status}` — {item.durationMs} ms — "
-            f"`sha256:{item.evidenceSha256}`"
+            f"- **{item.name}** — `{item.status}` — {item.durationMs} ms — `sha256:{item.evidenceSha256}`"
         )
     lines.extend(["", "Generated locally. Review before sharing; no upload occurs automatically.", ""])
     return "\n".join(lines)

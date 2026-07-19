@@ -106,13 +106,13 @@ def health() -> dict:
 
 
 @app.get("/demo-site/", response_class=HTMLResponse)
-def bundled_demo_site(page_id: int | None = Query(default=None, ge=1, le=99)) -> HTMLResponse:
+def bundled_demo_site() -> HTMLResponse:
     policy = (
         "default-src 'none'; style-src 'unsafe-inline'; frame-ancestors 'none'; "
         "base-uri 'none'; form-action 'none'"
     )
     return HTMLResponse(
-        demo_site_html(sample_page=page_id == 2),
+        demo_site_html(sample_page=False),
         headers={"Content-Security-Policy": policy, "Cache-Control": "no-store"},
     )
 

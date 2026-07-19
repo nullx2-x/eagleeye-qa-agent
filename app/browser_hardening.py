@@ -8,10 +8,15 @@ from __future__ import annotations
 
 import os
 import re
-from urllib.parse import parse_qsl, urlencode, unquote, urljoin, urlsplit, urlunsplit
+from urllib.parse import parse_qsl, unquote, urlencode, urljoin, urlsplit, urlunsplit
 
 from . import browser_agent as _agent
-from .browser_agent_models import BrowserAIResult, BrowserDomSnapshot, BrowserObservation, BrowserSessionCreate
+from .browser_agent_models import (
+    BrowserAIResult,
+    BrowserDomSnapshot,
+    BrowserObservation,
+    BrowserSessionCreate,
+)
 
 _SECRET_QUERY_KEYS = re.compile(
     r"(?i)(token|secret|password|passwd|api[_-]?key|auth|code|session|nonce|wpnonce|rest[_-]?nonce)"
