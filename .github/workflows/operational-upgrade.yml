@@ -1,20 +1,25 @@
 name: Operational QA formatter
 
 on:
-  push:
+  pull_request:
     branches:
-      - upgrade/operational-qa-hardening
+      - main
+    types: [opened, synchronize, reopened]
 
 permissions:
   contents: write
 
 concurrency:
-  group: operational-qa-formatter-${{ github.ref }}
+  group: operational-qa-formatter-${{ github.event.pull_request.number }}
   cancel-in-progress: false
 
 jobs:
   format-test-and-commit:
-    if: ${{ !contains(github.event.head_commit.message, '[format-sync]') }}
+    if: >-
+      ${{
+        github.event.pull_request.head.repo.full_name == github.repository &&
+        github.head_ref == 'upgrade/operational-qa-hardening'
+      }}
     runs-on: ubuntu-latest
     timeout-minutes: 30
 
@@ -22,7 +27,7 @@ jobs:
       - name: Check out writable branch
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
-          ref: upgrade/operational-qa-hardening
+          ref: ${{ github.head_ref }}
           fetch-depth: 0
 
       - name: Set up Python
@@ -74,4 +79,4 @@ jobs:
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add -A
           git commit -m 'style: normalize operational QA upgrade [format-sync]'
-          git push origin HEAD:upgrade/operational-qa-hardening
+          git push origin HEAD:${{ github.head_ref }}
