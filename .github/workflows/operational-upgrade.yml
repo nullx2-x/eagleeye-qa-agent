@@ -44,39 +44,16 @@ jobs:
       - name: Install locked dependencies
         run: uv sync --locked --dev
 
-      - name: Remove final legacy UI references
+      - name: Remove final legacy UI identifiers
         shell: bash
         run: |
           python - <<'PY'
           from pathlib import Path
 
-          def replace(path: str, old: str, new: str) -> None:
-              target = Path(path)
-              content = target.read_text(encoding="utf-8")
-              if old not in content:
-                  if new in content:
-                      return
-                  raise SystemExit(f"missing expected fragment in {path}: {old}")
-              target.write_text(content.replace(old, new), encoding="utf-8")
-
-          replace(
-              "app/live_ui.py",
-              'wordpressDemo: "/api/v1/browser-agent/demo/wordpress",',
-              'localSample: "/api/v1/browser-agent/sample/local",',
-          )
-          replace("app/live_ui.py", "ENDPOINTS.wordpressDemo", "ENDPOINTS.localSample")
-          replace("app/live_ui.py", "WordPressデモを開始", "ローカルsampleを開始")
-          replace(
-              "app/project_qa.py",
-              "process = subprocess.Popen(",
-              "process = subprocess.Popen(  # noqa: S603 - executable is validated by the exact allowlist",
-          )
-          replace(
-              "app/project_qa.py",
-              "subprocess.run(\n            [\"taskkill\", \"/PID\", str(process.pid), \"/T\", \"/F\"],",
-              "subprocess.run(  # noqa: S603 - fixed Windows process-tree cleanup\n"
-              "            [\"taskkill\", \"/PID\", str(process.pid), \"/T\", \"/F\"],  # noqa: S607",
-          )
+          path = Path("app/live_ui.py")
+          content = path.read_text(encoding="utf-8")
+          content = content.replace("wordpress-demo", "local-sample")
+          path.write_text(content, encoding="utf-8")
           PY
 
       - name: Apply canonical formatting and safe fixes
@@ -109,7 +86,7 @@ jobs:
             test ! -e app/browser_hardening.py
             test ! -e scripts/apply_operational_upgrade.py
             test ! -e scripts/verify_build_week_extension.py
-            ! git grep -n -i 'create_wordpress_demo\|demo/wordpress\|page_id=2\|EagleEye WP Lab\|extension-wordpress' -- . ':!.github/workflows/operational-upgrade.yml'
+            ! git grep -n -i 'create_wordpress_demo\|demo/wordpress\|page_id=2\|EagleEye WP Lab\|extension-wordpress\|wordpress-demo' -- . ':!.github/workflows/operational-upgrade.yml'
             git diff --check
           } 2>&1 | tee "${RUNNER_TEMP}/safety.log"
 
@@ -122,7 +99,7 @@ jobs:
             git config user.name 'github-actions[bot]'
             git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
             git add -A
-            git commit -m 'style: finalize operational QA cleanup [format-sync]'
+            git commit -m 'refactor: remove final CMS-specific UI identifiers [format-sync]'
             git push origin HEAD:${{ github.head_ref }}
           fi
 
