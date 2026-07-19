@@ -62,18 +62,28 @@ jobs:
         run: uv run python -m compileall -q app scripts tests
 
       - name: Run regression tests
-        run: uv run pytest -q
-
-      - name: Verify removed history and legacy routes
+        id: pytest
+        continue-on-error: true
         shell: bash
         run: |
-          test ! -e reports
-          test ! -e videos/eagleeye-build-week
-          test ! -e docs/build-week
-          ! git grep -n -i 'create_wordpress_demo\|demo/wordpress\|page_id=2' -- . ':!scripts/apply_operational_upgrade.py'
-          git diff --check
+          set -o pipefail
+          uv run pytest -q 2>&1 | tee "${RUNNER_TEMP}/pytest.log"
 
-      - name: Commit verified migration
+      - name: Verify removed history and legacy routes
+        id: safety
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -o pipefail
+          {
+            test ! -e reports
+            test ! -e videos/eagleeye-build-week
+            test ! -e docs/build-week
+            ! git grep -n -i 'create_wordpress_demo\|demo/wordpress\|page_id=2' -- . ':!scripts/apply_operational_upgrade.py'
+            git diff --check
+          } 2>&1 | tee "${RUNNER_TEMP}/safety.log"
+
+      - name: Commit migrated workspace
         shell: bash
         env:
           TARGET_BRANCH: ${{ github.head_ref || github.ref_name }}
@@ -89,6 +99,32 @@ jobs:
           fi
 
       - name: Enforce final formatting and lint
+        id: lint
+        continue-on-error: true
+        shell: bash
         run: |
-          uv run ruff format --check app scripts tests
-          uv run ruff check app scripts tests
+          set -o pipefail
+          {
+            uv run ruff format --check app scripts tests
+            uv run ruff check app scripts tests
+          } 2>&1 | tee "${RUNNER_TEMP}/ruff.log"
+
+      - name: Upload diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: operational-upgrade-${{ github.run_id }}
+          path: |
+            ${{ runner.temp }}/pytest.log
+            ${{ runner.temp }}/safety.log
+            ${{ runner.temp }}/ruff.log
+          if-no-files-found: warn
+          retention-days: 7
+
+      - name: Enforce final gate
+        if: always()
+        shell: bash
+        run: |
+          test "${{ steps.pytest.outcome }}" = "success"
+          test "${{ steps.safety.outcome }}" = "success"
+          test "${{ steps.lint.outcome }}" = "success"
