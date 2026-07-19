@@ -357,7 +357,7 @@ def _run_suite(
         }
     )
     try:
-        process = subprocess.Popen(
+        process = subprocess.Popen(  # noqa: S603 - executable is validated by the exact allowlist
             suite.command,
             cwd=project_root,
             stdout=subprocess.PIPE,
@@ -453,8 +453,8 @@ def _terminate_process_tree(process: subprocess.Popen) -> None:
     if process.poll() is not None:
         return
     if os.name == "nt":
-        subprocess.run(
-            ["taskkill", "/PID", str(process.pid), "/T", "/F"],
+        subprocess.run(  # noqa: S603 - fixed Windows process-tree cleanup
+            ["taskkill", "/PID", str(process.pid), "/T", "/F"],  # noqa: S607
             capture_output=True,
             check=False,
             shell=False,
