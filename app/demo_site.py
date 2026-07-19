@@ -4,23 +4,23 @@ from __future__ import annotations
 
 
 def demo_site_html(sample_page: bool = False) -> str:
-    heading = "Sample Page" if sample_page else "EagleEye Demo Lab"
+    heading = "Sample Page" if sample_page else "EagleEye Local QA Lab"
     copy = (
         "This public sample page is the deterministic destination used by EagleEye Replay."
         if sample_page
         else "A login-free local site for recording a normal browser journey."
     )
     link = (
-        '<a class="button" href="/demo-site/">Back to demo home</a>'
+        '<a class="button" href="/demo-site/">Back to sample home</a>'
         if sample_page
-        else ('<a class="button" href="/demo-site/?page_id=2" aria-label="Sample Page">Open Sample Page</a>')
+        else '<a class="button" href="/demo-site/sample" aria-label="Sample Page">Open Sample Page</a>'
     )
     return f"""<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>EagleEye WP Lab</title>
+  <title>EagleEye Local QA Lab</title>
   <style>
     :root {{ color-scheme: light dark; font-family: Inter, system-ui, sans-serif; }}
     body {{ margin: 0; min-height: 100vh; display: grid; place-items: center;
