@@ -1,29 +1,29 @@
-name: Operational QA verification
+name: Operational QA formatter
 
 on:
   push:
     branches:
-      - main
       - upgrade/operational-qa-hardening
-  pull_request:
-    branches:
-      - main
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
-  group: operational-qa-${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  group: operational-qa-formatter-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
-  verify:
+  format-test-and-commit:
+    if: ${{ !contains(github.event.head_commit.message, '[format-sync]') }}
     runs-on: ubuntu-latest
     timeout-minutes: 30
 
     steps:
-      - name: Check out repository
+      - name: Check out writable branch
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          ref: upgrade/operational-qa-hardening
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
@@ -39,13 +39,15 @@ jobs:
       - name: Install locked dependencies
         run: uv sync --locked --dev
 
-      - name: Compile Python sources
-        run: uv run python -m compileall -q app scripts tests
-
-      - name: Check formatting and lint
+      - name: Apply canonical formatting and safe fixes
         run: |
+          uv run ruff format app scripts tests
+          uv run ruff check app scripts tests --fix
           uv run ruff format --check app scripts tests
           uv run ruff check app scripts tests
+
+      - name: Compile Python sources
+        run: uv run python -m compileall -q app scripts tests
 
       - name: Run regression tests
         run: uv run pytest -q
@@ -60,3 +62,16 @@ jobs:
           test ! -e scripts/apply_operational_upgrade.py
           ! git grep -n -i 'create_wordpress_demo\|demo/wordpress\|page_id=2\|EagleEye WP Lab\|extension-wordpress' -- .
           git diff --check
+
+      - name: Commit formatting changes
+        shell: bash
+        run: |
+          if git diff --quiet && git diff --cached --quiet; then
+            echo 'No formatting changes required.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git commit -m 'style: normalize operational QA upgrade [format-sync]'
+          git push origin HEAD:upgrade/operational-qa-hardening
