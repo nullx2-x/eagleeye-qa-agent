@@ -471,13 +471,22 @@ def _suite_temp_dir(run_id: str, suite_id: str) -> Path:
 
 
 def _authorized_root(value: str) -> Path:
-    requested = Path(value).expanduser().resolve(strict=True)
-    if not requested.is_dir():
-        raise ValueError("Project root must be a directory")
     allowed = _allowed_roots()
-    if not any(requested == root or requested.is_relative_to(root) for root in allowed):
-        raise PermissionError("Project root is outside EAGLEEYE_PROJECT_ROOTS")
-    return requested
+    candidate = os.path.normcase(os.path.abspath(os.path.expanduser(value)))
+    checked_candidate = candidate.rstrip(os.sep) + os.sep
+    for root in allowed:
+        trusted_prefix = os.path.normcase(str(root)).rstrip(os.sep) + os.sep
+        if checked_candidate.startswith(trusted_prefix):
+            requested = Path(checked_candidate).resolve(strict=True)
+            if not any(
+                requested == allowed_root or requested.is_relative_to(allowed_root)
+                for allowed_root in allowed
+            ):
+                raise PermissionError("Project root is outside EAGLEEYE_PROJECT_ROOTS")
+            if not requested.is_dir():
+                raise ValueError("Project root must be a directory")
+            return requested
+    raise PermissionError("Project root is outside EAGLEEYE_PROJECT_ROOTS")
 
 
 def _allowed_roots() -> list[Path]:
