@@ -2,7 +2,7 @@
 
 ## Recording status
 
-The local winning path has passed a fresh end-to-end run and the six product screenshots plus one Architecture image are captured. The final local submission candidate is a 2:55 HyperFrames render with English AI narration generated locally by Kokoro-82M (`af_nova`) and 72 burned-in English subtitle cues. It remains understandable when Devpost autoplays muted. The exact submitted narration is the ten-scene text in `videos/eagleeye-build-week/audio_request.json`; the longer narration paragraphs below remain development reference material. Public upload remains release-gated.
+The winning path passed a fresh end-to-end run and the six product screenshots plus one Architecture image were captured. The published 2:55 HyperFrames video uses English AI narration generated locally by Kokoro-82M (`af_nova`) and 72 burned-in English subtitle cues, so it remains understandable when Devpost autoplays muted. The exact narration is the ten-scene text in `videos/eagleeye-build-week/audio_request.json`; the longer paragraphs below remain development reference material.
 
 The requested segment caps add up to 3:30 if used in full. This script keeps the same order while fitting the required 2:30-3:00 total:
 
@@ -29,7 +29,7 @@ Target runtime: **2:55**.
 - [x] The report displays provider/model, AI/recorded source labels, quality score, run outcome, evidence metadata, and suggestions.
 - [ ] The controlled regression fixture, if used, is documented, local-only, and visibly enabled; no result is edited into the video.
 - [x] Browser notifications, bookmarks, account avatars, local usernames, absolute paths, unrelated tabs, and raw session IDs are absent from the six selected product screenshots.
-- [x] Public GitHub, video, and product URLs remain visibly release-gated until actually published; screenshots are local submission assets, not fabricated URLs.
+- [x] The public GitHub and video URLs were checked independently; the project accurately identifies the product surface as a local-first Quick Start rather than a hosted SaaS.
 
 ## Shot plan and narration
 
@@ -114,11 +114,11 @@ Return to a single summary frame showing the extension, generated cases, Replay 
 ## Final asset state
 
 - Demo target URL: `http://127.0.0.1:8888/` (local Authorized target proof target)
-- Public product URL: **release-gated; local-first Quick Start is the current product surface**
+- Public product URL: **not supplied; the repository Quick Start is the current local-first product surface**
 - Local final video: `videos/eagleeye-build-week/output/eagleeye-build-week-submission-en-captioned.mp4` (1920x1080, 30fps, 175.018667 seconds)
 - Subtitle sidecars: `videos/eagleeye-build-week/assets/captions/eagleeye-build-week.en.srt` and `.vtt`
-- Video URL: **release-gated; local final candidate is complete, public upload is not yet performed**
-- Public GitHub URL: **release-gated; private development origin is not submitted**
+- Video URL: <https://youtu.be/zLSLiG7QYr4>
+- Public GitHub URL: <https://github.com/nullx2-x/eagleeye-qa-agent>
 - Final video checksum: `B4E9B44131C666AF8C2E1EECBD9BEB900FCD2CBB062AAB3CBD1B9C083D1534B4` (SHA-256)
 - Screenshots: `docs/build-week/screenshots/01-dashboard.png` through `06-report.png`
 

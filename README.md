@@ -53,7 +53,7 @@ Start the REST dashboard and MCP service, then run QA against an authorized repo
 ```powershell
 .\scripts\start-eagleeye.ps1
 .\scripts\start-mcp.ps1
-.\scripts\run-project-qa.ps1 -ProjectRoot C:\WorkSpace\01_Apps\your-project -Mode development
+.\scripts\run-project-qa.ps1 -ProjectRoot <authorized-project-path> -Mode development
 ```
 
 Use `POST /api/v1/project-qa/discover` to review detected suites before execution. `POST /api/v1/project-qa/runs` requires `authorized=true` and returns the gate plus evidence paths and hashes.
@@ -205,7 +205,7 @@ uv run pytest -q
 
 Latest release review:
 
-- 142 Python tests passed
+- 167 Python tests passed
 - Ruff lint and format passed
 - Chrome extension privacy/security verifier and ESLint passed
 - Gitleaks found zero leaks across the sanitized submission history
@@ -224,7 +224,8 @@ Run the complete operational gate with:
 
 - [Architecture](docs/build-week/architecture.md)
 - [Demo script](docs/build-week/demo-script.md)
-- [Devpost draft](docs/build-week/devpost-draft.md)
+- [Devpost submission](docs/build-week/devpost-draft.md)
+- [Release audit](docs/release/1.0.0-publication-audit.md)
 - [Phase 1–9 submission checklist](docs/build-week/submission-checklist.md)
 - [Publication security procedure](docs/build-week/publication-security.md)
 - [Submission screenshots](docs/build-week/screenshots/)

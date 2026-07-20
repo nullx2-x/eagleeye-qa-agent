@@ -74,7 +74,7 @@ Official reference: [Codex App Server documentation](https://learn.chatgpt.com/d
 
 ## Current implementation status
 
-| Capability | Status at draft time |
+| Capability | Release status |
 |---|---|
 | Risk-adaptive strategy, case checker, quality gate | Implemented |
 | Local Playwright execution and hashed evidence | Implemented |
@@ -83,9 +83,9 @@ Official reference: [Codex App Server documentation](https://learn.chatgpt.com/d
 | Browser-agent session/generation/replay code | End-to-end verified on the local Authorized target target |
 | Chrome extension | Manifest V3, fixed ID, static verifier and ESLint pass; fresh unpacked Chromium ON/OFF flow verified |
 | Local report and explicit Markdown export | Implemented and tested; no automatic public upload |
-| Windows/Linux CI workflow definition | Implemented; remote run evidence TBD |
+| Windows/Linux CI workflow | Implemented and required for the release commit |
 | Six submission screenshots | Captured from the verified flow |
-| Private judge-review repository | Security-reviewed single-snapshot release |
+| Public source repository | Security-reviewed MIT release |
 | Public video URL | Verified: <https://youtu.be/zLSLiG7QYr4> |
 | Final Devpost submit | Submitted: <https://devpost.com/software/eagleeye-browser-native-ai-qa-agent> |
 
@@ -100,7 +100,7 @@ The second challenge was graceful degradation. The recorded path remains executa
 The following are future work, not current capabilities:
 
 - package the unpacked extension for a signed store/release workflow after the hackathon;
-- prove the same commit in remote Windows and Linux GitHub Actions;
+- expand long-running cross-project regression evidence;
 - add authenticated, expiring report sharing with retention and deletion controls;
 - add stronger visual assertions and accessibility checks;
 - evaluate the system across multiple real applications and long-running regression suites;
@@ -110,7 +110,7 @@ The following are future work, not current capabilities:
 
 **https://github.com/nullx2-x/eagleeye-qa-agent**
 
-The submission repository is private and uses a security-reviewed single-snapshot history. Build Week reviewers must be granted read access before submission.
+The public MIT repository includes the no-account Quick Start, source, tests, architecture, privacy/security documentation, and reproducible release audit.
 
 ## Demo video
 
@@ -145,8 +145,8 @@ Optional hero: **[Five-stage dashboard](screenshots/01-dashboard.png)**.
 
 - Team members: **nullx2-x (individual)**
 - Build Week category or track: **Developer Tools**
-- Repository: **https://github.com/nullx2-x/eagleeye-qa-agent (private judge-review repository)**
+- Repository: **https://github.com/nullx2-x/eagleeye-qa-agent**
 - Video: **public 2:55 English demo with burned-in captions verified**
 - Public URL: **not supplied; repository Quick Start is the evaluation path**
-- Screenshots: **6 local assets ready; upload URLs are release-gated**
+- Screenshots: **6 reviewed product assets included in the repository and Devpost entry**
 - License: MIT
