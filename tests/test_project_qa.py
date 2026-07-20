@@ -160,6 +160,33 @@ def test_project_root_is_confined(monkeypatch: pytest.MonkeyPatch, tmp_path: Pat
         discover_project(str(outside))
 
 
+def test_project_root_rejects_allowed_prefix_sibling(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    allowed = tmp_path / "project"
+    prefix_sibling = tmp_path / "project-private"
+    allowed.mkdir()
+    prefix_sibling.mkdir()
+    monkeypatch.setenv("EAGLEEYE_PROJECT_ROOTS", str(allowed))
+
+    with pytest.raises(PermissionError, match="outside"):
+        discover_project(str(prefix_sibling))
+
+
+def test_project_root_rejects_symlink_escape(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    allowed = tmp_path / "allowed"
+    outside = tmp_path / "outside"
+    link = allowed / "linked-outside"
+    allowed.mkdir()
+    outside.mkdir()
+    try:
+        link.symlink_to(outside, target_is_directory=True)
+    except OSError:
+        pytest.skip("Directory symlinks are unavailable on this host")
+    monkeypatch.setenv("EAGLEEYE_PROJECT_ROOTS", str(allowed))
+
+    with pytest.raises(PermissionError, match="outside"):
+        discover_project(str(link))
+
+
 def test_python3_executable_is_allowed(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
     project = _manifest_project(tmp_path, ["python3", "-c", "print('ok')"])
     monkeypatch.setenv("EAGLEEYE_PROJECT_ROOTS", str(tmp_path))

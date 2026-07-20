@@ -72,7 +72,7 @@ its cited evidence exist; marketing language alone is not evidence.
 - [x] Gitleaks 8.30.1 scanned all fetched reachable commits with zero findings.
 - [x] No non-public personal data, private infrastructure address, local username, machine-specific user path, key, token, password, or credential is present in the public candidate.
 - [x] Dated internal reports and generated runtime artifacts are excluded from the public tree.
-- [x] `uv sync --locked --dev` succeeds; 167 pytest tests pass; Ruff lint and format pass.
+- [x] `uv sync --locked --dev` succeeds; 169 pytest tests pass; Ruff lint and format pass.
 - [x] Chrome-extension safety verifier and ESLint pass.
 - [x] OSV and npm audits report zero known vulnerabilities in the checked locked dependencies; Bandit reports zero high/medium findings.
 - [x] Public GitHub, video, README links, and Devpost entry have an unauthenticated evaluation path.

@@ -205,7 +205,7 @@ uv run pytest -q
 
 Latest release review:
 
-- 167 Python tests passed
+- 169 Python tests passed
 - Ruff lint and format passed
 - Chrome extension privacy/security verifier and ESLint passed
 - Gitleaks found zero leaks across the sanitized submission history
