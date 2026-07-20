@@ -1,0 +1,12 @@
+version: "1.0"
+targets:
+  circuit-forge-studio:
+    root: ../examples/circuit-forge-studio
+    workingDirectory: ../examples/circuit-forge-studio
+    command:
+      - node
+      - scripts/qa_packaged_electron.mjs
+    timeoutSeconds: 180
+    maxOutputBytes: 262144
+    maxArtifacts: 12
+    maxArtifactBytes: 268435456

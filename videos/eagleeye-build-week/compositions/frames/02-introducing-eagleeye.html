@@ -1,0 +1,803 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+  </head>
+  <body>
+    <template>
+      <style>
+        #root {
+          position: absolute;
+          inset: 0;
+          width: 1920px;
+          height: 1080px;
+          overflow: hidden;
+          isolation: isolate;
+          container-type: size;
+          color: #081019;
+        }
+
+        #root,
+        #root * {
+          box-sizing: border-box;
+        }
+
+        [class~="02-introducing-eagleeye-ground"] {
+          position: absolute;
+          inset: 0;
+          width: 1920px;
+          height: 1080px;
+          background: #eff8f8;
+        }
+
+        [class~="02-introducing-eagleeye-stage"] {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 1920px;
+          height: 900px;
+          overflow: hidden;
+          font-family: sans-serif;
+        }
+
+        [class~="02-introducing-eagleeye-scene-one-headline"] {
+          position: absolute;
+          top: 138px;
+          left: 158px;
+          z-index: 7;
+          width: 790px;
+          margin: 0;
+          font-size: 5.7cqw;
+          font-weight: 400;
+          line-height: 1.02;
+          letter-spacing: -0.022em;
+          text-wrap: balance;
+          will-change: transform, opacity;
+        }
+
+        [class~="02-introducing-eagleeye-ray-field"] {
+          position: absolute;
+          inset: 0;
+          z-index: 1;
+          width: 1920px;
+          height: 900px;
+          overflow: visible;
+          pointer-events: none;
+        }
+
+        [class~="02-introducing-eagleeye-ray"] {
+          fill: none;
+          stroke: rgba(8, 16, 25, 0.2);
+          stroke-width: 1.5;
+          stroke-linecap: round;
+          stroke-linejoin: round;
+        }
+
+        [class~="02-introducing-eagleeye-center-node"] {
+          fill: #081019;
+        }
+
+        [class~="02-introducing-eagleeye-assembly-shell"] {
+          position: absolute;
+          inset: 0;
+          z-index: 6;
+          width: 1920px;
+          height: 900px;
+          pointer-events: none;
+          will-change: transform, opacity;
+        }
+
+        [class~="02-introducing-eagleeye-depth-back"] {
+          position: absolute;
+          top: 236px;
+          left: 50%;
+          z-index: 1;
+          width: 920px;
+          height: 406px;
+          margin-left: -460px;
+          border: 1px solid rgba(8, 16, 25, 0.08);
+          border-radius: 12px;
+          background: rgba(226, 231, 235, 0.68);
+          will-change: transform, opacity;
+        }
+
+        [class~="02-introducing-eagleeye-depth-middle"] {
+          position: absolute;
+          top: 268px;
+          left: 50%;
+          z-index: 2;
+          width: 810px;
+          height: 342px;
+          margin-left: -405px;
+          border: 1px solid rgba(8, 16, 25, 0.12);
+          border-radius: 12px;
+          background: rgba(239, 248, 248, 0.94);
+          box-shadow: 0 1px 3px rgba(8, 16, 25, 0.08), 0 4px 16px rgba(8, 16, 25, 0.04);
+          will-change: transform, opacity;
+        }
+
+        [class~="02-introducing-eagleeye-wordmark-wrap"] {
+          position: absolute;
+          top: 310px;
+          left: 510px;
+          z-index: 4;
+          display: flex;
+          width: 900px;
+          min-height: 140px;
+          align-items: center;
+          justify-content: center;
+          overflow: hidden;
+          white-space: nowrap;
+          will-change: transform, opacity;
+        }
+
+        [class~="02-introducing-eagleeye-wordmark"] {
+          display: block;
+          width: 100%;
+          min-height: 1em;
+          color: #081019;
+          font-size: 5.6cqw;
+          font-weight: 400;
+          line-height: 1;
+          letter-spacing: -0.028em;
+          text-align: center;
+        }
+
+        [class~="02-introducing-eagleeye-pill"] {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          z-index: 5;
+          display: grid;
+          width: 146px;
+          height: 58px;
+          place-items: center;
+          border: 1px solid rgba(8, 16, 25, 0.12);
+          border-radius: 9999px;
+          background: #eff8f8;
+          color: #081019;
+          box-shadow: 0 1px 3px rgba(8, 16, 25, 0.08), 0 4px 16px rgba(8, 16, 25, 0.04);
+          font-size: 1.4cqw;
+          font-weight: 500;
+          line-height: 1;
+          letter-spacing: -0.005em;
+          will-change: transform, opacity;
+        }
+
+        [class~="02-introducing-eagleeye-pill"][data-accent="observe"] {
+          border-color: rgba(8, 16, 25, 0.2);
+          background: #34d6b4;
+          color: #081019;
+        }
+
+        [class~="02-introducing-eagleeye-morph-anchor"] {
+          position: absolute;
+          inset: 0;
+          z-index: 5;
+          display: grid;
+          width: 1920px;
+          height: 900px;
+          place-items: center;
+          padding-bottom: 20px;
+          pointer-events: none;
+        }
+
+        [class~="02-introducing-eagleeye-morph-card"] {
+          position: relative;
+          width: 760px;
+          height: 260px;
+          overflow: hidden;
+          border: 1px solid rgba(8, 16, 25, 0.12);
+          border-radius: 12px;
+          background: #e2e7eb;
+          box-shadow: 0 1px 3px rgba(8, 16, 25, 0.08), 0 4px 16px rgba(8, 16, 25, 0.04);
+          will-change: width, height, transform, opacity, background-color, border-radius;
+        }
+
+        [class~="02-introducing-eagleeye-dashboard"] {
+          position: absolute;
+          inset: 0;
+          z-index: 1;
+          display: block;
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          object-position: center top;
+          will-change: transform, opacity;
+        }
+
+        [class~="02-introducing-eagleeye-morph-old"] {
+          position: absolute;
+          inset: 0;
+          z-index: 2;
+          display: grid;
+          align-content: center;
+          justify-items: center;
+          gap: 24px;
+          color: #081019;
+          will-change: opacity;
+        }
+
+        [class~="02-introducing-eagleeye-morph-old-mark"] {
+          font-size: 3.3cqw;
+          font-weight: 400;
+          line-height: 1;
+          letter-spacing: -0.022em;
+        }
+
+        [class~="02-introducing-eagleeye-morph-rail"] {
+          display: flex;
+          gap: 14px;
+          align-items: center;
+        }
+
+        [class~="02-introducing-eagleeye-morph-rail-segment"] {
+          display: block;
+          width: 74px;
+          height: 1px;
+          background: rgba(8, 16, 25, 0.2);
+        }
+
+        [class~="02-introducing-eagleeye-scene-three-copy"] {
+          position: absolute;
+          top: 56px;
+          left: 240px;
+          z-index: 9;
+          width: 1440px;
+          margin: 0;
+          color: #081019;
+          font-size: 3.5cqw;
+          font-weight: 400;
+          line-height: 1.08;
+          letter-spacing: -0.018em;
+          text-align: center;
+          will-change: transform, opacity;
+        }
+
+        [class~="02-introducing-eagleeye-final-lockup"] {
+          position: absolute;
+          top: 68px;
+          left: 306px;
+          z-index: 10;
+          display: flex;
+          min-width: 360px;
+          height: 58px;
+          align-items: center;
+          gap: 18px;
+          color: #081019;
+          will-change: transform, opacity;
+        }
+
+        [class~="02-introducing-eagleeye-final-mark"] {
+          display: grid;
+          width: 52px;
+          height: 52px;
+          place-items: center;
+          border: 1px solid rgba(8, 16, 25, 0.2);
+          border-radius: 9999px;
+          background: #e2e7eb;
+          font-family: monospace;
+          font-size: 1.45cqw;
+          font-weight: 500;
+          line-height: 1;
+        }
+
+        [class~="02-introducing-eagleeye-final-name"] {
+          font-size: 1.9cqw;
+          font-weight: 700;
+          line-height: 1;
+          letter-spacing: -0.012em;
+        }
+
+        [class~="02-introducing-eagleeye-final-headline"] {
+          position: absolute;
+          top: 318px;
+          left: 460px;
+          z-index: 10;
+          display: grid;
+          width: 1000px;
+          height: 190px;
+          place-items: center;
+          border: 1px solid rgba(8, 16, 25, 0.2);
+          border-radius: 12px;
+          background: #eff8f8;
+          color: #081019;
+          box-shadow: 0 1px 3px rgba(8, 16, 25, 0.08), 0 4px 16px rgba(8, 16, 25, 0.04);
+          font-size: 6.3cqw;
+          font-weight: 400;
+          line-height: 0.98;
+          letter-spacing: -0.028em;
+          text-align: center;
+          will-change: transform, opacity;
+        }
+      </style>
+
+      <div
+        id="root"
+        data-composition-id="02-introducing-eagleeye"
+        data-start="0"
+        data-duration="13.5"
+        data-width="1920"
+        data-height="1080"
+      >
+        <div
+          id="02-introducing-eagleeye-ground"
+          class="clip 02-introducing-eagleeye-ground"
+          data-start="0"
+          data-duration="13.5"
+          data-track-index="0"
+        ></div>
+
+        <div
+          id="02-introducing-eagleeye-stage"
+          class="clip 02-introducing-eagleeye-stage"
+          data-start="0"
+          data-duration="13.5"
+          data-track-index="1"
+        >
+          <h1
+            id="02-introducing-eagleeye-scene-one-headline"
+            class="02-introducing-eagleeye-scene-one-headline"
+          >
+            Change the entry point.
+          </h1>
+
+          <svg
+            id="02-introducing-eagleeye-ray-field"
+            class="02-introducing-eagleeye-ray-field"
+            viewBox="0 0 1920 900"
+            aria-hidden="true"
+          >
+            <path
+              id="02-introducing-eagleeye-ray-1"
+              class="02-introducing-eagleeye-ray"
+              d="M 128 236 L 960 440"
+            />
+            <path
+              id="02-introducing-eagleeye-ray-2"
+              class="02-introducing-eagleeye-ray"
+              d="M 960 72 L 960 440"
+            />
+            <path
+              id="02-introducing-eagleeye-ray-3"
+              class="02-introducing-eagleeye-ray"
+              d="M 1792 244 L 960 440"
+            />
+            <path
+              id="02-introducing-eagleeye-ray-4"
+              class="02-introducing-eagleeye-ray"
+              d="M 448 814 L 960 440"
+            />
+            <path
+              id="02-introducing-eagleeye-ray-5"
+              class="02-introducing-eagleeye-ray"
+              d="M 1472 814 L 960 440"
+            />
+            <circle
+              id="02-introducing-eagleeye-center-node"
+              class="02-introducing-eagleeye-center-node"
+              cx="960"
+              cy="440"
+              r="4"
+            />
+          </svg>
+
+          <div
+            id="02-introducing-eagleeye-assembly-shell"
+            class="02-introducing-eagleeye-assembly-shell"
+          >
+            <div
+              id="02-introducing-eagleeye-depth-back"
+              class="02-introducing-eagleeye-depth-back"
+            ></div>
+            <div
+              id="02-introducing-eagleeye-depth-middle"
+              class="02-introducing-eagleeye-depth-middle"
+            ></div>
+
+            <div
+              id="02-introducing-eagleeye-wordmark-wrap"
+              class="02-introducing-eagleeye-wordmark-wrap"
+            >
+              <span
+                id="02-introducing-eagleeye-wordmark"
+                class="02-introducing-eagleeye-wordmark"
+              ></span>
+            </div>
+
+            <div
+              id="02-introducing-eagleeye-pill-observe"
+              class="02-introducing-eagleeye-pill"
+              data-accent="observe"
+              data-assembly-start-x="-710"
+              data-assembly-start-y="-210"
+              data-assembly-end-x="-320"
+              data-assembly-end-y="130"
+            >
+              Observe
+            </div>
+            <div
+              id="02-introducing-eagleeye-pill-generate"
+              class="02-introducing-eagleeye-pill"
+              data-assembly-start-x="690"
+              data-assembly-start-y="-220"
+              data-assembly-end-x="-160"
+              data-assembly-end-y="130"
+            >
+              Generate
+            </div>
+            <div
+              id="02-introducing-eagleeye-pill-replay"
+              class="02-introducing-eagleeye-pill"
+              data-assembly-start-x="-720"
+              data-assembly-start-y="290"
+              data-assembly-end-x="0"
+              data-assembly-end-y="130"
+            >
+              Replay
+            </div>
+            <div
+              id="02-introducing-eagleeye-pill-explain"
+              class="02-introducing-eagleeye-pill"
+              data-assembly-start-x="720"
+              data-assembly-start-y="280"
+              data-assembly-end-x="160"
+              data-assembly-end-y="130"
+            >
+              Explain
+            </div>
+            <div
+              id="02-introducing-eagleeye-pill-share"
+              class="02-introducing-eagleeye-pill"
+              data-assembly-start-x="0"
+              data-assembly-start-y="340"
+              data-assembly-end-x="320"
+              data-assembly-end-y="130"
+            >
+              Share
+            </div>
+          </div>
+
+          <div
+            id="02-introducing-eagleeye-morph-anchor"
+            class="02-introducing-eagleeye-morph-anchor"
+          >
+            <div
+              id="02-introducing-eagleeye-morph-card"
+              class="02-introducing-eagleeye-morph-card"
+            >
+              <img
+                id="02-introducing-eagleeye-dashboard"
+                class="02-introducing-eagleeye-dashboard"
+                src="assets/screenshots/dashboard.png"
+                alt="EagleEye QA dashboard"
+                draggable="false"
+              />
+              <div
+                id="02-introducing-eagleeye-morph-old"
+                class="02-introducing-eagleeye-morph-old"
+              >
+                <div class="02-introducing-eagleeye-morph-old-mark">EagleEye</div>
+                <div class="02-introducing-eagleeye-morph-rail" aria-hidden="true">
+                  <span class="02-introducing-eagleeye-morph-rail-segment"></span>
+                  <span class="02-introducing-eagleeye-morph-rail-segment"></span>
+                  <span class="02-introducing-eagleeye-morph-rail-segment"></span>
+                  <span class="02-introducing-eagleeye-morph-rail-segment"></span>
+                  <span class="02-introducing-eagleeye-morph-rail-segment"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <p
+            id="02-introducing-eagleeye-scene-three-copy"
+            class="02-introducing-eagleeye-scene-three-copy"
+          >
+            Work as usual.
+          </p>
+
+          <div
+            id="02-introducing-eagleeye-final-lockup"
+            class="02-introducing-eagleeye-final-lockup"
+          >
+            <span class="02-introducing-eagleeye-final-mark">E</span>
+            <span class="02-introducing-eagleeye-final-name">EagleEye</span>
+          </div>
+
+          <div
+            id="02-introducing-eagleeye-final-headline"
+            class="02-introducing-eagleeye-final-headline"
+          >
+            Actions → tests
+          </div>
+        </div>
+      </div>
+
+      <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+      <script>
+        (() => {
+          window.__timelines = window.__timelines || {};
+
+          const byId = (suffix) =>
+            document.getElementById(`02-introducing-eagleeye-${suffix}`);
+          const tl = gsap.timeline({ paused: true });
+
+          const headline = byId("scene-one-headline");
+          const centerNode = byId("center-node");
+          const assemblyShell = byId("assembly-shell");
+          const depthBack = byId("depth-back");
+          const depthMiddle = byId("depth-middle");
+          const wordmarkWrap = byId("wordmark-wrap");
+          const wordmark = byId("wordmark");
+          const morphCard = byId("morph-card");
+          const morphOld = byId("morph-old");
+          const dashboard = byId("dashboard");
+          const sceneThreeCopy = byId("scene-three-copy");
+          const finalLockup = byId("final-lockup");
+          const finalHeadline = byId("final-headline");
+
+          const rays = [1, 2, 3, 4, 5].map((index) => byId(`ray-${index}`));
+          rays.forEach((ray) => {
+            const length = ray.getTotalLength();
+            ray.style.strokeDasharray = `${length}`;
+            ray.style.strokeDashoffset = `${length}`;
+          });
+
+          tl.fromTo(
+            headline,
+            { y: 26, opacity: 0 },
+            {
+              y: 0,
+              opacity: 1,
+              duration: 0.48,
+              ease: "power2.out",
+              immediateRender: true,
+            },
+            0,
+          );
+
+          rays.forEach((ray, index) => {
+            const length = ray.getTotalLength();
+            tl.fromTo(
+              ray,
+              { strokeDashoffset: length, opacity: 0.3 },
+              {
+                strokeDashoffset: 0,
+                opacity: 1,
+                duration: 1.45,
+                ease: "power2.out",
+                immediateRender: true,
+              },
+              0.28 + index * 0.3,
+            );
+          });
+
+          tl.fromTo(
+            centerNode,
+            { opacity: 0 },
+            {
+              opacity: 1,
+              duration: 0.3,
+              ease: "power1.out",
+              immediateRender: true,
+            },
+            2.42,
+          );
+
+          // Scene 1 → Scene 2: leftward cut-the-curve, matched on both sides.
+          tl.to(headline, { x: -230, duration: 0.34, ease: "power4.in" }, 2.98);
+          tl.to(headline, { opacity: 0, duration: 0.28, ease: "power1.in" }, 3.02);
+          tl.to(rays, { opacity: 0.16, duration: 0.3, ease: "power1.out" }, 3.0);
+          tl.fromTo(
+            assemblyShell,
+            { x: 230, opacity: 0 },
+            {
+              x: 0,
+              opacity: 1,
+              duration: 0.36,
+              ease: "power4.out",
+              immediateRender: true,
+            },
+            3.18,
+          );
+
+          // Three visual depths: ray field, paper planes, then pills + wordmark.
+          tl.fromTo(
+            depthBack,
+            { scale: 0.9, opacity: 0 },
+            {
+              scale: 1,
+              opacity: 0.58,
+              duration: 0.78,
+              ease: "power3.out",
+              immediateRender: true,
+            },
+            3.28,
+          );
+          tl.fromTo(
+            depthMiddle,
+            { scale: 0.94, opacity: 0 },
+            {
+              scale: 1,
+              opacity: 0.92,
+              duration: 0.72,
+              ease: "power3.out",
+              immediateRender: true,
+            },
+            3.44,
+          );
+
+          const pills = Array.from(
+            document.querySelectorAll('[class~="02-introducing-eagleeye-pill"]'),
+          );
+          pills.forEach((pill, index) => {
+            const startX = Number(pill.dataset.assemblyStartX);
+            const startY = Number(pill.dataset.assemblyStartY);
+            const endX = Number(pill.dataset.assemblyEndX);
+            const endY = Number(pill.dataset.assemblyEndY);
+            tl.fromTo(
+              pill,
+              {
+                xPercent: -50,
+                yPercent: -50,
+                x: startX,
+                y: startY,
+                scale: 0.72,
+                opacity: 0,
+              },
+              {
+                xPercent: -50,
+                yPercent: -50,
+                x: endX,
+                y: endY,
+                scale: 1,
+                opacity: 1,
+                duration: 1.15,
+                ease: "power3.inOut",
+                immediateRender: true,
+              },
+              3.32 + index * 0.62,
+            );
+          });
+
+          tl.fromTo(
+            wordmarkWrap,
+            { y: 22, opacity: 0 },
+            {
+              y: 0,
+              opacity: 1,
+              duration: 0.42,
+              ease: "power2.out",
+              immediateRender: true,
+            },
+            4.92,
+          );
+
+          const lockupStates = [
+            { t: 0, text: "" },
+            { t: 0.25, text: "E" },
+            { t: 0.65, text: "Ea" },
+            { t: 1.05, text: "Eagl" },
+            { t: 1.45, text: "Eagle" },
+            { t: 1.9, text: "EagleE" },
+            { t: 2.25, text: "EagleEye" },
+          ];
+          const lockupTextAt = (time) => {
+            for (let index = lockupStates.length - 1; index >= 0; index -= 1) {
+              if (time >= lockupStates[index].t) return lockupStates[index].text;
+            }
+            return "";
+          };
+          const lockupDriver = { t: 0 };
+          tl.to(
+            lockupDriver,
+            {
+              t: 2.4,
+              duration: 2.4,
+              ease: "none",
+              onUpdate: () => {
+                wordmark.textContent = lockupTextAt(lockupDriver.t);
+              },
+            },
+            5.0,
+          );
+
+          // Scene 3: the centered lockup becomes the real dashboard card.
+          tl.fromTo(
+            morphCard,
+            { scale: 0.94, opacity: 0 },
+            {
+              scale: 1,
+              opacity: 1,
+              duration: 0.55,
+              ease: "power2.out",
+              immediateRender: true,
+            },
+            7.48,
+          );
+          tl.to(
+            morphCard,
+            {
+              width: 1306,
+              height: 620,
+              borderRadius: 12,
+              backgroundColor: "#151817",
+              duration: 1.0,
+              ease: "power2.inOut",
+            },
+            8.2,
+          );
+          tl.to(morphOld, { opacity: 0, duration: 0.4, ease: "power1.in" }, 8.2);
+          tl.to(
+            assemblyShell,
+            { scale: 0.97, opacity: 0, duration: 0.42, ease: "power1.in" },
+            8.2,
+          );
+          tl.to(rays, { opacity: 0, duration: 0.3, ease: "power1.in" }, 8.2);
+          tl.fromTo(
+            dashboard,
+            { scale: 1.025, opacity: 0 },
+            {
+              scale: 1,
+              opacity: 1,
+              duration: 0.48,
+              ease: "power1.out",
+              immediateRender: true,
+            },
+            8.72,
+          );
+          tl.fromTo(
+            sceneThreeCopy,
+            { y: 20, opacity: 0 },
+            {
+              y: 0,
+              opacity: 1,
+              duration: 0.48,
+              ease: "power2.out",
+              immediateRender: true,
+            },
+            9.0,
+          );
+
+          // Scene 3 → Scene 4: another matched leftward cut, then a dead-static hold.
+          tl.to(
+            sceneThreeCopy,
+            { x: -230, duration: 0.34, ease: "power4.in" },
+            10.54,
+          );
+          tl.to(
+            sceneThreeCopy,
+            { opacity: 0, duration: 0.28, ease: "power1.in" },
+            10.58,
+          );
+          tl.fromTo(
+            finalHeadline,
+            { x: 230, opacity: 0 },
+            {
+              x: 0,
+              opacity: 1,
+              duration: 0.34,
+              ease: "power4.out",
+              immediateRender: true,
+            },
+            10.8,
+          );
+          tl.fromTo(
+            finalLockup,
+            { x: 230, opacity: 0 },
+            {
+              x: 0,
+              opacity: 1,
+              duration: 0.34,
+              ease: "power4.out",
+              immediateRender: true,
+            },
+            10.86,
+          );
+
+          window.__timelines["02-introducing-eagleeye"] = tl;
+        })();
+      </script>
+    </template>
+  </body>
+</html>

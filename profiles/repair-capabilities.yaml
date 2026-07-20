@@ -1,0 +1,18 @@
+version: "1.0"
+featureFlag: EAGLEEYE_SELF_REPAIR_ENABLED
+allowedEnvironments:
+  - local
+productionAllowed: false
+limits:
+  maxAttempts: 2
+  maxFiles: 5
+  maxChangedLines: 200
+  maxTotalBytes: 262144
+capabilities:
+  - provider: codex-agent
+    models:
+      - gpt-5.6-sol
+    proposalAllowed: true
+    automaticApplyAllowed: true
+    requiresFreshEvalAttestation: true
+    maxAttestationAgeSeconds: 300

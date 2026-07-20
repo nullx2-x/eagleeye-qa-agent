@@ -1,0 +1,30 @@
+Goal: OpenAI Build Week judges understand EagleEye's value in five minutes.
+Final video: 2 minutes 55 seconds, 16:9, English AI narration with burned-in English subtitles.
+
+Story:
+1. Chrome extension ON.
+2. The user browses a website normally.
+3. EagleEye analyzes a privacy-safe DOM summary, visible screenshot, and action history.
+4. OpenAI generates complementary test cases while the recorded critical path remains deterministic.
+5. Playwright replays the journey and produces screenshot/video SHA-256 evidence.
+6. EagleEye explains improvements and exports a report for a development team.
+
+Required beats:
+- 0:00-0:25 problem: browser testing takes time.
+- 0:25-1:15 AI test generation.
+- 1:15-2:05 deterministic Replay.
+- 2:05-2:30 report generation.
+- 2:30-2:55 summary.
+
+Truthful live evidence from 2026-07-17:
+- Real local Authorized target target.
+- Extension OFF session delta: 0.
+- Extension ON: 4 observations.
+- OpenAI via Codex App Server: 5 total cases, fallback false.
+- Case quality: PASS, 100/100.
+- Replay: PASS, 1,745 ms.
+- Screenshot and WebM evidence have SHA-256 receipts.
+
+VO_MODE: restructured from the approved Build Week phase plan.
+VOICE: local Kokoro-82M / af_nova. The voice is AI-generated.
+CAPTIONS: 72 English cues, locally timed with Faster-Whisper and delivered as burned-in subtitles plus SRT/VTT sidecars.

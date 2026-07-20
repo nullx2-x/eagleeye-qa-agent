@@ -1,0 +1,90 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    name: Python 3.12 / ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+          - windows-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: Set up Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+        with:
+          python-version: "3.12"
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@11f9893b081a58869d3b5fccaea48c9e9e46f990 # v8.3.2
+        with:
+          enable-cache: true
+
+      - name: Install locked dependencies
+        run: uv sync --locked --dev
+
+      - name: Run pytest
+        run: uv run pytest -q
+
+      - name: Run Ruff lint
+        run: uv run ruff check .
+
+      - name: Check Ruff formatting
+        run: uv run ruff format --check .
+
+      - name: Ensure repository remains clean
+        shell: pwsh
+        run: |
+          $status = git status --porcelain
+          if ($status) {
+            $status
+            throw "CI commands changed the repository."
+          }
+
+  extension:
+    name: Chrome extension safety
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: "24"
+
+      - name: Verify extension privacy and security invariants
+        run: node chrome-extension/tests/verify-extension.mjs
+
+      - name: Lint extension JavaScript
+        working-directory: chrome-extension
+        run: npx --yes eslint@9.39.5 background.js content.js popup.js tests/verify-extension.mjs
+
+      - name: Ensure repository remains clean
+        shell: pwsh
+        run: |
+          $status = git status --porcelain
+          if ($status) {
+            $status
+            throw "CI commands changed the repository."
+          }

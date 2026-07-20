@@ -1,0 +1,287 @@
+1
+00:00:00,000 --> 00:00:01,980
+Web testing is rarely one task.
+
+2
+00:00:02,300 --> 00:00:03,660
+Teams must design cases,
+
+3
+00:00:03,800 --> 00:00:06,120
+implement automation, run every path, collect
+
+4
+00:00:06,140 --> 00:00:07,860
+evidence, and explain the result.
+
+5
+00:00:08,360 --> 00:00:10,960
+That workflow consumes valuable engineering time.
+
+6
+00:00:12,000 --> 00:00:13,860
+EagleEye changes the starting point.
+
+7
+00:00:14,300 --> 00:00:15,740
+Turn on the browser agent, use
+
+8
+00:00:15,760 --> 00:00:16,620
+the site normally,
+
+9
+00:00:16,820 --> 00:00:18,200
+and your real journey becomes the
+
+10
+00:00:18,220 --> 00:00:19,300
+seed for observation,
+
+11
+00:00:19,640 --> 00:00:21,500
+generation, replay, explanation,
+
+12
+00:00:21,800 --> 00:00:22,220
+and sharing.
+
+13
+00:00:25,000 --> 00:00:26,820
+Here, the Chrome extension is explicitly
+
+14
+00:00:26,840 --> 00:00:28,660
+on while a real local Authorized target
+
+15
+00:00:28,680 --> 00:00:30,140
+site is used as usual.
+
+16
+00:00:30,460 --> 00:00:31,620
+When recording is off,
+
+17
+00:00:31,780 --> 00:00:33,080
+EagleEye captures nothing.
+
+18
+00:00:33,420 --> 00:00:34,660
+When it is on, this session
+
+19
+00:00:34,680 --> 00:00:36,100
+produced four observations.
+
+20
+00:00:43,000 --> 00:00:44,960
+EagleEye keeps only the context needed
+
+21
+00:00:44,980 --> 00:00:46,200
+for quality assurance,
+
+22
+00:00:46,500 --> 00:00:48,300
+a privacy-safe DOM summary,
+
+23
+00:00:48,420 --> 00:00:49,400
+the visible screenshot,
+
+24
+00:00:49,620 --> 00:00:50,560
+and the action trail.
+
+25
+00:00:51,300 --> 00:00:52,400
+Form values, passwords,
+
+26
+00:00:52,580 --> 00:00:54,340
+tokens, and other secret inputs are
+
+27
+00:00:54,360 --> 00:00:55,060
+not retained.
+
+28
+00:00:59,000 --> 00:01:02,720
+GPT-5.6 through Codex App Server expands the recorded
+
+29
+00:01:02,740 --> 00:01:04,540
+path with complementary tests.
+
+30
+00:01:04,980 --> 00:01:06,900
+The original case stays deterministic.
+
+31
+00:01:07,320 --> 00:01:09,060
+This run produced five cases, used
+
+32
+00:01:09,080 --> 00:01:10,980
+no fallback and passed quality review
+
+33
+00:01:11,000 --> 00:01:11,660
+at one hundred.
+
+34
+00:01:15,000 --> 00:01:15,980
+Now press replay,
+
+35
+00:01:16,300 --> 00:01:17,960
+Playwright not the language model, executes
+
+36
+00:01:17,980 --> 00:01:19,540
+the same journey and checks the
+
+37
+00:01:19,560 --> 00:01:21,500
+URL, title, and heading against the
+
+38
+00:01:21,520 --> 00:01:22,820
+real Authorized target page.
+
+39
+00:01:23,420 --> 00:01:24,780
+AI proposes coverage.
+
+40
+00:01:24,940 --> 00:01:27,040
+The deterministic runner decides pass or
+
+41
+00:01:27,060 --> 00:01:27,420
+fail.
+
+42
+00:01:35,000 --> 00:01:38,300
+This replay passed in 1,745 milliseconds.
+
+43
+00:01:38,980 --> 00:01:40,600
+EagleEye preserved the screenshot,
+
+44
+00:01:40,780 --> 00:01:42,420
+WebM recording, byte counts,
+
+45
+00:01:42,620 --> 00:01:45,580
+timestamp, and SHA-256 receipts.
+
+46
+00:01:46,180 --> 00:01:47,240
+A pass is not just a
+
+47
+00:01:47,260 --> 00:01:49,220
+message, it is verifiable evidence.
+
+48
+00:01:53,000 --> 00:01:55,420
+EagleEye can also explain likely improvements
+
+49
+00:01:55,440 --> 00:01:56,660
+and suggest fixes,
+
+50
+00:01:57,060 --> 00:01:58,180
+but applying code,
+
+51
+00:01:58,320 --> 00:02:00,400
+operating production and approving a release
+
+52
+00:02:00,420 --> 00:02:01,720
+remain human decisions.
+
+53
+00:02:02,160 --> 00:02:03,960
+The agent proposes people stay in
+
+54
+00:02:03,980 --> 00:02:04,480
+control.
+
+55
+00:02:05,000 --> 00:02:07,040
+Finally, intent recorded steps,
+
+56
+00:02:07,180 --> 00:02:09,500
+AI-generated cases, replay results,
+
+57
+00:02:09,620 --> 00:02:11,940
+improvement suggestions, and evidence are assembled
+
+58
+00:02:11,960 --> 00:02:13,020
+into one report.
+
+59
+00:02:13,640 --> 00:02:15,080
+The same result can be exported
+
+60
+00:02:15,100 --> 00:02:16,820
+as a markdown bug report and
+
+61
+00:02:16,840 --> 00:02:18,380
+handed directly to engineering,
+
+62
+00:02:18,520 --> 00:02:19,860
+so the QA loop ends with
+
+63
+00:02:19,880 --> 00:02:21,340
+an artifact the whole team can
+
+64
+00:02:21,360 --> 00:02:21,800
+use.
+
+65
+00:02:30,000 --> 00:02:31,920
+Observe reality, generate coverage,
+
+66
+00:02:32,140 --> 00:02:34,400
+replay proof. EagleEye is a browser-native
+
+67
+00:02:34,420 --> 00:02:36,560
+AI QA agent that watches approved
+
+68
+00:02:36,580 --> 00:02:38,900
+journeys, expands them with OpenAI,
+
+69
+00:02:39,080 --> 00:02:40,800
+verifies them with Playwright, and delivers
+
+70
+00:02:40,820 --> 00:02:42,380
+evidence your team can share,
+
+71
+00:02:42,840 --> 00:02:44,640
+less testing overhead without giving up
+
+72
+00:02:44,660 --> 00:02:45,200
+control.

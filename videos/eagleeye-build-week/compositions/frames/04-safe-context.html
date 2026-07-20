@@ -1,0 +1,693 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>04-safe-context</title>
+  </head>
+  <body>
+    <template>
+      <style>
+        #root {
+          position: absolute;
+          inset: 0;
+          width: 1920px;
+          height: 1080px;
+          overflow: hidden;
+          container-type: size;
+          isolation: isolate;
+          color: #081019;
+          font-family: sans-serif;
+        }
+
+        #root * {
+          box-sizing: border-box;
+        }
+
+        .clip {
+          position: absolute;
+          inset: 0;
+          width: 100%;
+          height: 100%;
+          overflow: hidden;
+        }
+
+        [data-frame-el="04-safe-context-background-layer"] {
+          z-index: 0;
+        }
+
+        [data-frame-el="04-safe-context-background-image"] {
+          position: absolute;
+          inset: 0;
+          display: block;
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          object-position: 50% 18%;
+          opacity: 0.62;
+          filter: grayscale(0.72) saturate(0.28) contrast(0.86);
+          transform-origin: 50% 38%;
+          will-change: transform;
+        }
+
+        [data-frame-el="04-safe-context-background-veil"] {
+          position: absolute;
+          inset: 0;
+          background: rgba(239, 248, 248, 0.68);
+        }
+
+        [data-frame-el="04-safe-context-content-layer"] {
+          z-index: 1;
+        }
+
+        [data-frame-el="04-safe-context-header"] {
+          position: absolute;
+          z-index: 2;
+          top: 7.2cqh;
+          left: 4.2cqw;
+          width: 56cqw;
+        }
+
+        [data-frame-el="04-safe-context-eyebrow"] {
+          display: block;
+          width: max-content;
+          color: rgba(8, 16, 25, 0.68);
+          font-family: monospace;
+          font-size: 1.35cqw;
+          font-weight: 500;
+          letter-spacing: 0.16em;
+          line-height: 1;
+          text-transform: uppercase;
+          will-change: transform, opacity;
+        }
+
+        [data-frame-el="04-safe-context-heading"] {
+          display: block;
+          width: 100%;
+          margin: 1.5cqh 0 0;
+          max-width: 54cqw;
+          color: #081019;
+          font-family: serif;
+          font-size: 5.7cqw;
+          font-weight: 400;
+          letter-spacing: -0.022em;
+          line-height: 1.02;
+          will-change: transform, opacity;
+        }
+
+        [data-frame-el="04-safe-context-header-rule"] {
+          display: block;
+          width: 44cqw;
+          height: 1px;
+          margin-top: 2.2cqh;
+          background: rgba(8, 16, 25, 0.2);
+          transform-origin: 0 50%;
+          will-change: transform, opacity;
+        }
+
+        [data-frame-el="04-safe-context-card-grid"] {
+          position: absolute;
+          z-index: 2;
+          top: 32.4cqh;
+          right: 4.2cqw;
+          left: 4.2cqw;
+          display: grid;
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+          gap: 1.7cqw;
+          height: 26cqh;
+        }
+
+        [data-frame-el="04-safe-context-context-card"] {
+          position: relative;
+          display: flex;
+          min-width: 0;
+          height: 100%;
+          flex-direction: column;
+          justify-content: space-between;
+          overflow: hidden;
+          padding: 2cqw;
+          border: 1px solid rgba(8, 16, 25, 0.12);
+          border-radius: 12px;
+          background: rgba(226, 231, 235, 0.96);
+          box-shadow: 0 1px 3px rgba(8, 16, 25, 0.08), 0 4px 16px rgba(8, 16, 25, 0.04);
+          will-change: transform, opacity;
+        }
+
+        [data-frame-el="04-safe-context-card-index"] {
+          display: flex;
+          width: 100%;
+          align-items: center;
+          justify-content: space-between;
+          color: rgba(8, 16, 25, 0.6);
+          font-family: monospace;
+          font-size: 1.35cqw;
+          font-weight: 500;
+          letter-spacing: 0.08em;
+          line-height: 1;
+        }
+
+        [data-frame-el="04-safe-context-card-mark"] {
+          display: grid;
+          width: 2.4cqw;
+          height: 2.4cqw;
+          place-items: center;
+          border: 1px solid rgba(8, 16, 25, 0.2);
+          border-radius: 6px;
+          color: #081019;
+          font-family: monospace;
+          font-size: 1.15cqw;
+          line-height: 1;
+        }
+
+        [data-frame-el="04-safe-context-card-title"] {
+          display: block;
+          width: 100%;
+          margin: 0;
+          color: #081019;
+          font-family: sans-serif;
+          font-size: 2.3cqw;
+          font-weight: 500;
+          letter-spacing: -0.005em;
+          line-height: 1.18;
+        }
+
+        [data-frame-el="04-safe-context-card-subline"] {
+          display: block;
+          width: 100%;
+          margin: 1.3cqh 0 0;
+          color: rgba(8, 16, 25, 0.62);
+          font-family: monospace;
+          font-size: 1.42cqw;
+          font-weight: 500;
+          letter-spacing: 0.02em;
+          line-height: 1.2;
+          will-change: transform, opacity;
+        }
+
+        [data-frame-el="04-safe-context-card-rule"] {
+          display: block;
+          width: 100%;
+          height: 1px;
+          margin-top: 1.8cqh;
+          background: rgba(8, 16, 25, 0.16);
+        }
+
+        [data-frame-el="04-safe-context-line-network"] {
+          position: absolute;
+          z-index: 1;
+          inset: 0;
+          pointer-events: none;
+        }
+
+        [data-frame-el="04-safe-context-wire-wrap"] {
+          position: absolute;
+          height: 1px;
+          transform-origin: 0 50%;
+        }
+
+        [data-frame-el="04-safe-context-wire-wrap"][data-wire="one"] {
+          top: 32.4cqh;
+          left: 18.9cqw;
+          width: 65.2cqw;
+          transform: rotate(-0.73deg);
+        }
+
+        [data-frame-el="04-safe-context-wire-wrap"][data-wire="two"] {
+          top: 32.4cqh;
+          left: 50cqw;
+          width: 34.1cqw;
+          transform: rotate(-1.4deg);
+        }
+
+        [data-frame-el="04-safe-context-wire-wrap"][data-wire="three"] {
+          top: 32.4cqh;
+          left: 81.1cqw;
+          width: 3cqw;
+          transform: rotate(-15.6deg);
+        }
+
+        [data-frame-el="04-safe-context-wire-stroke"] {
+          display: block;
+          width: 100%;
+          height: 1px;
+          background: rgba(8, 16, 25, 0.28);
+          transform-origin: 0 50%;
+          will-change: transform, opacity;
+        }
+
+        [data-frame-el="04-safe-context-stem-wrap"] {
+          position: absolute;
+          top: 28.7cqh;
+          left: 84.05cqw;
+          width: 1px;
+          height: 2.2cqh;
+        }
+
+        [data-frame-el="04-safe-context-stem-stroke"] {
+          display: block;
+          width: 1px;
+          height: 100%;
+          background: rgba(8, 16, 25, 0.28);
+          transform-origin: 50% 100%;
+          will-change: transform, opacity;
+        }
+
+        [data-frame-el="04-safe-context-convergence-node"] {
+          position: absolute;
+          top: 30.42cqh;
+          left: 83.82cqw;
+          display: block;
+          width: 0.55cqw;
+          height: 0.98cqh;
+          border: 1px solid rgba(8, 16, 25, 0.28);
+          border-radius: 9999px;
+          background: #e2e7eb;
+          will-change: transform, opacity;
+        }
+
+        [data-frame-el="04-safe-context-session-swap"] {
+          position: absolute;
+          z-index: 3;
+          top: 6.8cqh;
+          right: 4.2cqw;
+          width: 23.5cqw;
+          height: 22cqh;
+        }
+
+        [data-frame-el="04-safe-context-session-outgoing"],
+        [data-frame-el="04-safe-context-session-incoming"] {
+          position: absolute;
+          inset: 0;
+          width: 100%;
+          height: 100%;
+          margin: 0;
+          border: 1px solid rgba(8, 16, 25, 0.16);
+          border-radius: 8px;
+          transform-origin: 50% 50%;
+          will-change: transform, opacity;
+        }
+
+        [data-frame-el="04-safe-context-session-outgoing"] {
+          z-index: 1;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          padding: 1.7cqw;
+          background: rgba(226, 231, 235, 0.98);
+          box-shadow: 0 1px 3px rgba(8, 16, 25, 0.08), 0 4px 16px rgba(8, 16, 25, 0.04);
+        }
+
+        [data-frame-el="04-safe-context-session-label"] {
+          display: block;
+          width: 100%;
+          color: rgba(8, 16, 25, 0.6);
+          font-family: monospace;
+          font-size: 1.15cqw;
+          font-weight: 500;
+          letter-spacing: 0.12em;
+          line-height: 1;
+          text-transform: uppercase;
+        }
+
+        [data-frame-el="04-safe-context-session-title"] {
+          display: block;
+          width: 100%;
+          color: #081019;
+          font-family: sans-serif;
+          font-size: 2.4cqw;
+          font-weight: 500;
+          letter-spacing: -0.008em;
+          line-height: 1.08;
+        }
+
+        [data-frame-el="04-safe-context-session-pips"] {
+          display: grid;
+          width: 100%;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 0.7cqw;
+        }
+
+        [data-frame-el="04-safe-context-session-pips"] span {
+          display: block;
+          width: 100%;
+          height: 1px;
+          background: rgba(8, 16, 25, 0.22);
+        }
+
+        [data-frame-el="04-safe-context-session-incoming"] {
+          z-index: 2;
+          overflow: hidden;
+          background: #151817;
+          box-shadow: 0 1px 3px rgba(8, 16, 25, 0.08), 0 4px 16px rgba(8, 16, 25, 0.04);
+        }
+
+        [data-frame-el="04-safe-context-dashboard-image"] {
+          position: absolute;
+          inset: 0;
+          display: block;
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          object-position: 50% 0%;
+          filter: grayscale(0.58) saturate(0.42) contrast(0.95);
+        }
+
+        [data-frame-el="04-safe-context-dashboard-caption"] {
+          position: absolute;
+          right: 0.8cqw;
+          bottom: 1.2cqh;
+          display: block;
+          width: max-content;
+          padding: 0.7cqh 0.7cqw;
+          border: 1px solid rgba(239, 248, 248, 0.14);
+          border-radius: 6px;
+          background: rgba(27, 31, 30, 0.92);
+          color: #eff8f8;
+          font-family: monospace;
+          font-size: 1.1cqw;
+          font-weight: 500;
+          letter-spacing: 0.04em;
+          line-height: 1;
+          will-change: transform, opacity;
+        }
+
+        [data-frame-el="04-safe-context-callout"] {
+          position: absolute;
+          z-index: 4;
+          top: 70.4cqh;
+          right: 4.2cqw;
+          left: 4.2cqw;
+          display: flex;
+          width: auto;
+          height: 10cqh;
+          align-items: center;
+          justify-content: center;
+          padding: 0 2.2cqw;
+          border-radius: 8px;
+          background: #34d6b4;
+          color: #eff8f8;
+          font-family: sans-serif;
+          font-size: 2.15cqw;
+          font-weight: 500;
+          letter-spacing: -0.005em;
+          line-height: 1;
+          text-align: center;
+          will-change: transform, opacity;
+        }
+      </style>
+
+      <div
+        id="root"
+        data-composition-id="04-safe-context"
+        data-width="1920"
+        data-height="1080"
+        data-duration="16.4"
+      >
+        <div
+          id="f04-safe-context-background-layer"
+          class="clip"
+          data-frame-el="04-safe-context-background-layer"
+          data-start="0"
+          data-duration="16.4"
+          data-track-index="0"
+        >
+          <img
+            data-frame-el="04-safe-context-background-image"
+            src="assets/screenshots/dashboard.png"
+            alt=""
+          />
+          <div data-frame-el="04-safe-context-background-veil" aria-hidden="true"></div>
+        </div>
+
+        <div
+          id="f04-safe-context-content-layer"
+          class="clip"
+          data-frame-el="04-safe-context-content-layer"
+          data-start="0"
+          data-duration="16.4"
+          data-track-index="1"
+        >
+          <header data-frame-el="04-safe-context-header">
+            <div data-frame-el="04-safe-context-eyebrow">Safe context / 04</div>
+            <h1 data-frame-el="04-safe-context-heading">What EagleEye sees</h1>
+            <span data-frame-el="04-safe-context-header-rule" aria-hidden="true"></span>
+          </header>
+
+          <div data-frame-el="04-safe-context-line-network" aria-hidden="true">
+            <div data-frame-el="04-safe-context-wire-wrap" data-wire="one">
+              <span data-frame-el="04-safe-context-wire-stroke"></span>
+            </div>
+            <div data-frame-el="04-safe-context-wire-wrap" data-wire="two">
+              <span data-frame-el="04-safe-context-wire-stroke"></span>
+            </div>
+            <div data-frame-el="04-safe-context-wire-wrap" data-wire="three">
+              <span data-frame-el="04-safe-context-wire-stroke"></span>
+            </div>
+            <div data-frame-el="04-safe-context-stem-wrap">
+              <span data-frame-el="04-safe-context-stem-stroke"></span>
+            </div>
+            <span data-frame-el="04-safe-context-convergence-node"></span>
+          </div>
+
+          <section data-frame-el="04-safe-context-card-grid" aria-label="Safe session context">
+            <article data-frame-el="04-safe-context-context-card">
+              <div data-frame-el="04-safe-context-card-index">
+                <span>01</span>
+                <span data-frame-el="04-safe-context-card-mark">&lt;/&gt;</span>
+              </div>
+              <div>
+                <h2 data-frame-el="04-safe-context-card-title">DOM summary</h2>
+                <p data-frame-el="04-safe-context-card-subline">safe summary</p>
+                <span data-frame-el="04-safe-context-card-rule" aria-hidden="true"></span>
+              </div>
+            </article>
+
+            <article data-frame-el="04-safe-context-context-card">
+              <div data-frame-el="04-safe-context-card-index">
+                <span>02</span>
+                <span data-frame-el="04-safe-context-card-mark">[ ]</span>
+              </div>
+              <div>
+                <h2 data-frame-el="04-safe-context-card-title">Visible screenshot</h2>
+                <p data-frame-el="04-safe-context-card-subline">visible only</p>
+                <span data-frame-el="04-safe-context-card-rule" aria-hidden="true"></span>
+              </div>
+            </article>
+
+            <article data-frame-el="04-safe-context-context-card">
+              <div data-frame-el="04-safe-context-card-index">
+                <span>03</span>
+                <span data-frame-el="04-safe-context-card-mark">···</span>
+              </div>
+              <div>
+                <h2 data-frame-el="04-safe-context-card-title">Action history</h2>
+                <p data-frame-el="04-safe-context-card-subline">event trail</p>
+                <span data-frame-el="04-safe-context-card-rule" aria-hidden="true"></span>
+              </div>
+            </article>
+          </section>
+
+          <div data-frame-el="04-safe-context-session-swap">
+            <div data-frame-el="04-safe-context-session-outgoing">
+              <span data-frame-el="04-safe-context-session-label">Context join</span>
+              <strong data-frame-el="04-safe-context-session-title">One session</strong>
+              <div data-frame-el="04-safe-context-session-pips" aria-hidden="true">
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+            </div>
+
+            <figure data-frame-el="04-safe-context-session-incoming">
+              <img
+                data-frame-el="04-safe-context-dashboard-image"
+                src="assets/screenshots/dashboard.png"
+                alt="EagleEye dashboard"
+              />
+              <figcaption data-frame-el="04-safe-context-dashboard-caption">same session</figcaption>
+            </figure>
+          </div>
+
+          <div data-frame-el="04-safe-context-callout">
+            No input values · no secrets stored
+          </div>
+        </div>
+      </div>
+
+      <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+      <script>
+        (() => {
+          window.__timelines = window.__timelines || {};
+
+          const root = document.querySelector('[data-composition-id="04-safe-context"]');
+          const elements = {
+            "background-image": root.querySelector(
+              '[data-frame-el="04-safe-context-background-image"]',
+            ),
+            eyebrow: root.querySelector('[data-frame-el="04-safe-context-eyebrow"]'),
+            heading: root.querySelector('[data-frame-el="04-safe-context-heading"]'),
+            "header-rule": root.querySelector(
+              '[data-frame-el="04-safe-context-header-rule"]',
+            ),
+            "session-outgoing": root.querySelector(
+              '[data-frame-el="04-safe-context-session-outgoing"]',
+            ),
+            "stem-stroke": root.querySelector(
+              '[data-frame-el="04-safe-context-stem-stroke"]',
+            ),
+            "convergence-node": root.querySelector(
+              '[data-frame-el="04-safe-context-convergence-node"]',
+            ),
+            "session-incoming": root.querySelector(
+              '[data-frame-el="04-safe-context-session-incoming"]',
+            ),
+            "dashboard-caption": root.querySelector(
+              '[data-frame-el="04-safe-context-dashboard-caption"]',
+            ),
+            callout: root.querySelector('[data-frame-el="04-safe-context-callout"]'),
+          };
+          const groups = {
+            "context-card": Array.from(
+              root.querySelectorAll('[data-frame-el="04-safe-context-context-card"]'),
+            ),
+            "card-subline": Array.from(
+              root.querySelectorAll('[data-frame-el="04-safe-context-card-subline"]'),
+            ),
+            "wire-stroke": Array.from(
+              root.querySelectorAll('[data-frame-el="04-safe-context-wire-stroke"]'),
+            ),
+          };
+          const one = (name) => elements[name];
+          const all = (name) => groups[name];
+
+          const timeline = gsap.timeline({ paused: true });
+
+          timeline.fromTo(
+            one("background-image"),
+            { scale: 1.035 },
+            { scale: 1, duration: 12.2, ease: "none" },
+            0,
+          );
+
+          timeline.fromTo(
+            one("eyebrow"),
+            { y: 18, opacity: 0 },
+            { y: 0, opacity: 1, duration: 0.48, ease: "power3.out" },
+            0.08,
+          );
+
+          timeline.fromTo(
+            one("heading"),
+            { y: 34, opacity: 0 },
+            { y: 0, opacity: 1, duration: 0.82, ease: "power3.out" },
+            0.16,
+          );
+
+          timeline.fromTo(
+            one("header-rule"),
+            { scaleX: 0, opacity: 0 },
+            { scaleX: 1, opacity: 1, duration: 0.86, ease: "power2.out" },
+            0.48,
+          );
+
+          const cards = all("context-card");
+          const cardStarts = [
+            { x: 120, y: 54 },
+            { x: 0, y: 58 },
+            { x: -120, y: 54 },
+          ];
+
+          cards.forEach((card, index) => {
+            timeline.fromTo(
+              card,
+              {
+                x: cardStarts[index].x,
+                y: cardStarts[index].y,
+                scale: 0.9,
+                opacity: 0,
+              },
+              {
+                x: 0,
+                y: 0,
+                scale: 1,
+                opacity: 1,
+                duration: 1.1,
+                ease: "power3.out",
+              },
+              3.72 + index * 0.08,
+            );
+          });
+
+          const sublineTimes = [5.25, 6.65, 8.05];
+          all("card-subline").forEach((subline, index) => {
+            timeline.fromTo(
+              subline,
+              { y: 16, opacity: 0 },
+              { y: 0, opacity: 1, duration: 0.55, ease: "power3.out" },
+              sublineTimes[index],
+            );
+          });
+
+          timeline.fromTo(
+            one("session-outgoing"),
+            { scale: 0.92, opacity: 0 },
+            { scale: 1, opacity: 1, duration: 0.4, ease: "power3.out" },
+            9.62,
+          );
+
+          all("wire-stroke").forEach((wire, index) => {
+            timeline.fromTo(
+              wire,
+              { scaleX: 0, opacity: 0 },
+              { scaleX: 1, opacity: 1, duration: 0.52, ease: "power2.out" },
+              9.62 + index * 0.06,
+            );
+          });
+
+          timeline.fromTo(
+            one("stem-stroke"),
+            { scaleY: 0, opacity: 0 },
+            { scaleY: 1, opacity: 1, duration: 0.28, ease: "power2.out" },
+            9.98,
+          );
+
+          timeline.fromTo(
+            one("convergence-node"),
+            { scale: 0.55, opacity: 0 },
+            { scale: 1, opacity: 1, duration: 0.25, ease: "power2.out" },
+            10.08,
+          );
+
+          timeline.to(
+            one("session-outgoing"),
+            { scale: 0.72, opacity: 0, duration: 0.34, ease: "power2.in" },
+            10.28,
+          );
+
+          timeline.fromTo(
+            one("session-incoming"),
+            { scale: 0.72, opacity: 0 },
+            { scale: 1, opacity: 1, duration: 0.55, ease: "power3.out" },
+            10.48,
+          );
+
+          timeline.fromTo(
+            one("dashboard-caption"),
+            { y: 12, opacity: 0 },
+            { y: 0, opacity: 1, duration: 0.3, ease: "power3.out" },
+            11.08,
+          );
+
+          timeline.fromTo(
+            one("callout"),
+            { y: 34, opacity: 0 },
+            { y: 0, opacity: 1, duration: 0.68, ease: "power3.out" },
+            12.45,
+          );
+
+          window.__timelines["04-safe-context"] = timeline;
+        })();
+      </script>
+    </template>
+  </body>
+</html>

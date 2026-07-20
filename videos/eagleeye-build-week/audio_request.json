@@ -1,0 +1,51 @@
+{
+  "provider": "kokoro",
+  "voice": "af_nova",
+  "lang": "en",
+  "speed": 1.0,
+  "lines": [
+    {
+      "id": "scene-01",
+      "text": "Web testing is rarely one task. Teams must design cases, implement automation, run every path, collect evidence, and explain the result. That workflow consumes valuable engineering time."
+    },
+    {
+      "id": "scene-02",
+      "text": "EagleEye changes the starting point. Turn on the browser agent, use the site normally, and your real journey becomes the seed for observation, generation, replay, explanation, and sharing."
+    },
+    {
+      "id": "scene-03",
+      "text": "Here, the Chrome extension is explicitly on while a real local Authorized target site is used as usual. When recording is off, EagleEye captures nothing. When it is on, this session produced four observations."
+    },
+    {
+      "id": "scene-04",
+      "text": "EagleEye keeps only the context needed for quality assurance: a privacy-safe DOM summary, the visible screenshot, and the action trail. Form values, passwords, tokens, and other secret inputs are not retained."
+    },
+    {
+      "id": "scene-05",
+      "text": "GPT-5.6 through Codex App Server expands the recorded path with complementary tests. The original case stays deterministic. This run produced five cases, used no fallback, and passed quality review at one hundred."
+    },
+    {
+      "id": "scene-06",
+      "text": "Now press Replay. Playwright, not the language model, executes the same journey and checks the URL, title, and heading against the real Authorized target page. AI proposes coverage; the deterministic runner decides pass or fail."
+    },
+    {
+      "id": "scene-07",
+      "text": "This replay passed in one thousand seven hundred forty-five milliseconds. EagleEye preserved the screenshot, WebM recording, byte counts, timestamp, and SHA-256 receipts. A pass is not just a message; it is verifiable evidence."
+    },
+    {
+      "id": "scene-08",
+      "text": "EagleEye can also explain likely improvements and suggest fixes. But applying code, operating production, and approving a release remain human decisions. The agent proposes; people stay in control."
+    },
+    {
+      "id": "scene-09",
+      "text": "Finally, intent, recorded steps, AI-generated cases, replay results, improvement suggestions, and evidence are assembled into one report. The same result can be exported as a Markdown bug report and handed directly to engineering, so the QA loop ends with an artifact the whole team can use."
+    },
+    {
+      "id": "scene-10",
+      "text": "Observe reality. Generate coverage. Replay proof. EagleEye is a browser-native AI QA agent that watches approved journeys, expands them with OpenAI, verifies them with Playwright, and delivers evidence your team can share. Less testing overhead, without giving up control."
+    }
+  ],
+  "bgm": {
+    "mode": "none"
+  }
+}

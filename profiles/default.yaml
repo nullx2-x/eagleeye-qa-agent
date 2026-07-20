@@ -1,0 +1,30 @@
+version: "1.0"
+policy:
+  risk_weights:
+    business_impact: 0.30
+    data_sensitivity: 0.25
+    change_complexity: 0.15
+    user_impact: 0.20
+    recovery_difficulty: 0.10
+  thresholds:
+    development: 30
+    standard: 50
+    strict: 70
+    release_gate: 85
+  production:
+    write_operations: false
+    destructive_operations: false
+    real_payment: false
+    real_notification: false
+    max_requests_per_minute: 10
+  ai:
+    generate_cases: true
+    analyze_failures: true
+    generate_fixes: true
+    apply_fixes: approval_required
+    retest_after_fix: true
+  quality_gate:
+    critical_failures: 0
+    high_failures: 0
+    pass_rate_percent: 98
+    flaky_tests_allowed: 0

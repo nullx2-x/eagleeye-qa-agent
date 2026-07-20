@@ -1,0 +1,33 @@
+{
+  "manifest_version": 3,
+  "name": "EagleEye Browser QA",
+  "version": "1.0.0",
+  "description": "現在のタブの安全な操作要約からEagleEye QAセッションを作成します。",
+  "minimum_chrome_version": "102",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAz0sFOOspIBT4BOQztZjCJkdWsoMc3JpyYJrwgAfdg6W3EWjpl4WKhAXFBSgRpyEAq4NCvRvuuuQ54OY4OuUimcMO9YtxTLEhsE2+TqQZxqiGJtjMKegF8K8y3P3/f6YnctgjBY+nD6rWARqNGi1q658A8iq8uiA/TPUhPZ5rylqqApLT02hORYBXER7W77HHo/FnjlM5fy592W4jjmSzk3N/8VL+7OTaQks7qzgEuRuOUS80MaR1tafV0hMsRSKFKsTyjEY+Jm4W305mBCT0iXPYkkkzwR9M/ignzMAbmt8rvMSa5/DGtiU8KvW3A27IRoIbbBtZvYwVwlt+kWjUVQIDAQAB",
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "storage"
+  ],
+  "host_permissions": [
+    "http://127.0.0.1:8766/*",
+    "http://localhost:8766/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_title": "EagleEye QA",
+    "default_popup": "popup.html"
+  },
+  "commands": {
+    "_execute_action": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+Y"
+      },
+      "description": "EagleEye QAの記録パネルを開く"
+    }
+  },
+  "incognito": "not_allowed"
+}
