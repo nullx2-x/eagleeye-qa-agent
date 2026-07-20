@@ -471,19 +471,53 @@ def _suite_temp_dir(run_id: str, suite_id: str) -> Path:
 
 
 def _authorized_root(value: str) -> Path:
-    requested = Path(value).expanduser().resolve(strict=True)
-    if not requested.is_dir():
-        raise ValueError("Project root must be a directory")
     allowed = _allowed_roots()
-    if not any(requested == root or requested.is_relative_to(root) for root in allowed):
-        raise PermissionError("Project root is outside EAGLEEYE_PROJECT_ROOTS")
-    return requested
+    candidate = _normalized_absolute_path(value)
+    for declared_root, resolved_root in allowed:
+        resolved_text = os.path.normcase(os.path.normpath(str(resolved_root)))
+        for normalized_root in (declared_root, resolved_text):
+            if candidate == normalized_root:
+                return resolved_root
+            root_prefix = (
+                normalized_root if normalized_root.endswith(os.sep) else f"{normalized_root}{os.sep}"
+            )
+            if candidate.startswith(root_prefix):
+                requested = Path(candidate).resolve(strict=True)
+                if not any(
+                    requested == allowed_root or requested.is_relative_to(allowed_root)
+                    for _, allowed_root in allowed
+                ):
+                    raise PermissionError("Project root is outside EAGLEEYE_PROJECT_ROOTS")
+                if not requested.is_dir():
+                    raise ValueError("Project root must be a directory")
+                return requested
+    raise PermissionError("Project root is outside EAGLEEYE_PROJECT_ROOTS")
 
 
-def _allowed_roots() -> list[Path]:
+def _normalized_absolute_path(value: str) -> str:
+    if any(ord(character) < 32 for character in value):
+        raise ValueError("Project root contains control characters")
+    if not os.path.isabs(value):
+        raise ValueError("Project root must be an absolute path")
+    return os.path.normcase(os.path.normpath(value))
+
+
+def _allowed_roots() -> list[tuple[str, Path]]:
     configured = os.getenv("EAGLEEYE_PROJECT_ROOTS", "").strip()
     values = configured.split(os.pathsep) if configured else [str(ROOT.parents[1])]
-    return [Path(value).expanduser().resolve(strict=True) for value in values if value.strip()]
+    roots: list[tuple[str, Path]] = []
+    for value in values:
+        if not value.strip():
+            continue
+        declared = Path(value).expanduser()
+        if not declared.is_absolute():
+            declared = Path(os.path.abspath(declared))
+        declared_text = os.path.normcase(os.path.normpath(str(declared)))
+        resolved = declared.resolve(strict=True)
+        if not resolved.is_dir():
+            raise ValueError("EAGLEEYE_PROJECT_ROOTS entries must be directories")
+        roots.append((declared_text, resolved))
+    return roots
 
 
 def _project_id(root: Path) -> str:

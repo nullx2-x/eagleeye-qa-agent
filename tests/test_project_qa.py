@@ -151,13 +151,141 @@ def test_api_requires_authorization_and_returns_discovery(
 
 def test_project_root_is_confined(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
     allowed = tmp_path / "allowed"
-    outside = tmp_path / "outside"
+    outside = tmp_path / "allowed-other"
     allowed.mkdir()
     outside.mkdir()
     monkeypatch.setenv("EAGLEEYE_PROJECT_ROOTS", str(allowed))
 
     with pytest.raises(PermissionError, match="outside"):
         discover_project(str(outside))
+
+
+def test_project_root_rejects_missing_outside_path_before_resolution(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    allowed = tmp_path / "allowed"
+    outside = tmp_path / "outside-missing"
+    allowed.mkdir()
+    monkeypatch.setenv("EAGLEEYE_PROJECT_ROOTS", str(allowed))
+    original_resolve = Path.resolve
+
+    def guarded_resolve(path: Path, *args: object, **kwargs: object) -> Path:
+        if path == outside:
+            raise AssertionError("An unauthorized path was resolved before authorization")
+        return original_resolve(path, *args, **kwargs)
+
+    monkeypatch.setattr(Path, "resolve", guarded_resolve)
+
+    with pytest.raises(PermissionError, match="outside"):
+        discover_project(str(outside))
+
+
+def test_project_root_rejects_parent_traversal_before_resolution(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    allowed = tmp_path / "allowed"
+    outside = tmp_path / "outside-missing"
+    supplied = allowed / ".." / outside.name
+    allowed.mkdir()
+    monkeypatch.setenv("EAGLEEYE_PROJECT_ROOTS", str(allowed))
+    original_resolve = Path.resolve
+
+    def guarded_resolve(path: Path, *args: object, **kwargs: object) -> Path:
+        if path == outside:
+            raise AssertionError("A traversed unauthorized path was resolved before authorization")
+        return original_resolve(path, *args, **kwargs)
+
+    monkeypatch.setattr(Path, "resolve", guarded_resolve)
+
+    with pytest.raises(PermissionError, match="outside"):
+        discover_project(str(supplied))
+
+
+def test_project_root_rejects_symlink_escape(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    allowed = tmp_path / "allowed"
+    outside = tmp_path / "outside"
+    allowed.mkdir()
+    outside.mkdir()
+    linked = allowed / "linked"
+    try:
+        linked.symlink_to(outside, target_is_directory=True)
+    except OSError as error:
+        pytest.skip(f"Directory symlinks are unavailable: {error}")
+    monkeypatch.setenv("EAGLEEYE_PROJECT_ROOTS", str(allowed))
+
+    with pytest.raises(PermissionError, match="outside"):
+        discover_project(str(linked))
+
+
+def test_project_root_accepts_in_root_symlink(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    allowed = tmp_path / "allowed"
+    project = allowed / "project"
+    linked = allowed / "linked"
+    project.mkdir(parents=True)
+    try:
+        linked.symlink_to(project, target_is_directory=True)
+    except OSError as error:
+        pytest.skip(f"Directory symlinks are unavailable: {error}")
+    monkeypatch.setenv("EAGLEEYE_PROJECT_ROOTS", str(allowed))
+
+    discovered = discover_project(str(linked))
+
+    assert Path(discovered.projectRoot) == project.resolve(strict=True)
+
+
+def test_project_root_accepts_declared_symlink_root(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    allowed = tmp_path / "allowed"
+    project = allowed / "project"
+    alias = tmp_path / "allowed-alias"
+    project.mkdir(parents=True)
+    try:
+        alias.symlink_to(allowed, target_is_directory=True)
+    except OSError as error:
+        pytest.skip(f"Directory symlinks are unavailable: {error}")
+    monkeypatch.setenv("EAGLEEYE_PROJECT_ROOTS", str(alias))
+
+    discovered = discover_project(str(alias / project.name))
+
+    assert Path(discovered.projectRoot) == project.resolve(strict=True)
+
+
+def test_project_root_requires_absolute_path(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    allowed = tmp_path / "allowed"
+    allowed.mkdir()
+    monkeypatch.setenv("EAGLEEYE_PROJECT_ROOTS", str(allowed))
+
+    with pytest.raises(ValueError, match="absolute path"):
+        discover_project("allowed")
+
+
+def test_project_root_rejects_control_characters(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    monkeypatch.setenv("EAGLEEYE_PROJECT_ROOTS", str(tmp_path))
+
+    with pytest.raises(ValueError, match="control characters"):
+        discover_project(f"{tmp_path}{os.sep}project\nname")
+
+
+def test_project_root_api_does_not_disclose_outside_path_existence(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    allowed = tmp_path / "allowed"
+    outside_existing = tmp_path / "outside-existing"
+    outside_missing = tmp_path / "outside-missing"
+    allowed.mkdir()
+    outside_existing.mkdir()
+    monkeypatch.setenv("EAGLEEYE_PROJECT_ROOTS", str(allowed))
+    client = TestClient(app)
+
+    responses = [
+        client.post(
+            "/api/v1/project-qa/discover",
+            json={"projectRoot": str(path), "authorized": True},
+        )
+        for path in (outside_existing, outside_missing)
+    ]
+
+    assert [response.status_code for response in responses] == [403, 403]
+    assert responses[0].json() == responses[1].json()
 
 
 def test_python3_executable_is_allowed(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
