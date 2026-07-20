@@ -45,7 +45,7 @@ uv run playwright install chromium
 ```powershell
 .\scripts\start-eagleeye.ps1
 .\scripts\start-mcp.ps1
-.\scripts\run-project-qa.ps1 -ProjectRoot C:\WorkSpace\01_Apps\your-project -Mode development
+.\scripts\run-project-qa.ps1 -ProjectRoot <authorized-project-path> -Mode development
 ```
 
 ### Chrome拡張
@@ -66,7 +66,8 @@ Webフォーム入力値、Cookie、認証header、`FormData`は取得しませ�
 - [Architecture](docs/build-week/architecture.md)
 - [Architecture図](docs/build-week/screenshots/architecture-flow.png)
 - [2:55デモ台本](docs/build-week/demo-script.md)
-- [Devpost原稿](docs/build-week/devpost-draft.md)
+- [Devpost提出内容](docs/build-week/devpost-draft.md)
+- [Release公開監査](docs/release/1.0.0-publication-audit.md)
 - [Phase 1-9チェックリスト](docs/build-week/submission-checklist.md)
 - [公開前セキュリティ手順](docs/build-week/publication-security.md)
 - [提出スクリーンショット](docs/build-week/screenshots/)

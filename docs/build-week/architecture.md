@@ -24,7 +24,7 @@ flowchart LR
     K --> L["Human-reviewed report and explicit share"]
 ```
 
-This is the implemented local submission flow. The implementation-status table below separates current proof from release-gated public distribution.
+This is the implemented local submission flow. The implementation-status table separates verified product behavior from future multi-user or hosted capabilities.
 
 ## Why this architecture matters
 
@@ -133,4 +133,4 @@ The local proof bundle now contains:
 6. A sanitized HTML report, visible fix suggestions, and an explicit Markdown bug-report attachment.
 7. Six current product screenshots, one Architecture image, and a machine-readable E2E record under `docs/build-week/`.
 
-Still release-gated: a green remote Windows/Linux GitHub Actions run on the public commit, unauthenticated checks of the final public GitHub/video URLs, and Devpost's final submit action. These are external-state gates, not missing local product features.
+The release commit is protected by Windows/Linux CI, CodeQL for Python and JavaScript/TypeScript, extension safety checks, and public-release invariants. The public repository, captioned video, and submitted Devpost entry are linked from the README. A hosted multi-user product remains intentionally outside the current local-first scope.
