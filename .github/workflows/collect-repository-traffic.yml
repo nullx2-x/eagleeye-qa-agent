@@ -2,9 +2,15 @@ name: Collect repository traffic
 
 on:
   schedule:
-    # 00:17 UTC = 09:17 JST. The date gate below preserves a true 48-hour cadence.
+    # GitHub schedules in UTC. 00:17 UTC is 09:17 JST.
     - cron: "17 0 * * *"
   workflow_dispatch:
+    inputs:
+      force:
+        description: Ignore the 47-hour cadence gate
+        required: false
+        default: true
+        type: boolean
 
 permissions:
   contents: write
@@ -19,12 +25,51 @@ jobs:
     timeout-minutes: 10
 
     steps:
-      - name: Check every-other-day cadence
-        id: cadence
+      - name: Check out repository
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+        with:
+          python-version: "3.12"
+
+      - name: Validate traffic token
         shell: bash
         env:
-          EVENT_NAME: ${{ github.event_name }}
+          TRAFFIC_TOKEN: ${{ secrets.TRAFFIC_TOKEN }}
         run: |
-          if [[ "$EVENT_NAME" == "workflow_dispatch" ]]; then
-            echo "should_run=true" >> "$GITHUB_OUTPUT"
+          if [[ -z "$TRAFFIC_TOKEN" ]]; then
+            echo "::error::Repository secret TRAFFIC_TOKEN is not configured."
+            exit 1
+          fi
+
+      - name: Collect repository traffic
+        shell: bash
+        env:
+          TRAFFIC_TOKEN: ${{ secrets.TRAFFIC_TOKEN }}
+          FORCE_COLLECTION: ${{ github.event_name == 'workflow_dispatch' && inputs.force || false }}
+        run: |
+          args=(
+            --repository "$GITHUB_REPOSITORY"
+            --output-dir analytics/github-traffic
+            --min-hours 47
+          )
+          if [[ "$FORCE_COLLECTION" == "true" ]]; then
+            args+=(--force)
+          fi
+          python scripts/collect_github_traffic.py "${args[@]}"
+
+      - name: Commit updated analytics
+        shell: bash
+        run: |
+          git add analytics/github-traffic
+          if git diff --cached --quiet; then
+            echo "No analytics changes to commit."
             exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "chore(analytics): update GitHub traffic"
+          git push
