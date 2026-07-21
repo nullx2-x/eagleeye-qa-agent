@@ -12,7 +12,7 @@ AI can propose coverage and fixes. It cannot overwrite the recorded critical pat
 
 ![EagleEye end-to-end demo flow](docs/build-week/screenshots/eagleeye-demo-flow.gif)
 
-▶ [Watch the 2:55 English demo with burned-in captions](https://youtu.be/zLSLiG7QYr4)
+▶ [Watch the 2:55 English demo with burned-in captions](https://youtu.be/O70IfVOqZvA)
 
 The 12-second preview shows the browser observation flow. The production QA path is the Project QA runner described below; browser capture remains an optional evidence source.
 

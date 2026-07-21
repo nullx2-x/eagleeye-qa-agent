@@ -12,7 +12,7 @@ AIは候補を提案しますが、記録されたcritical path、実行結果�
 
 ![EagleEye end-to-end demo flow](docs/build-week/screenshots/eagleeye-demo-flow.gif)
 
-▶ [英語音声・焼込み字幕付き2分55秒デモ](https://youtu.be/zLSLiG7QYr4)
+▶ [英語音声・焼込み字幕付き2分55秒デモ](https://youtu.be/O70IfVOqZvA)
 
 12秒のプレビューはブラウザー観察フローを示します。正式な運用経路は、認可済みリポジトリのテストを検出・実行して証跡付き品質ゲートへ集約する Project QA です。
 
