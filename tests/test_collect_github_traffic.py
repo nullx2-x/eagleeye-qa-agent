@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import json
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
 from scripts.collect_github_traffic import merge_daily, merge_snapshots, should_collect
@@ -46,7 +46,7 @@ def test_merge_snapshots_keeps_one_row_per_utc_day() -> None:
 
 
 def test_should_collect_honors_interval_and_force(tmp_path: Path) -> None:
-    now = datetime(2026, 7, 21, 0, 17, tzinfo=timezone.utc)
+    now = datetime(2026, 7, 21, 0, 17, tzinfo=UTC)
     latest = {"collected_at": (now - timedelta(hours=24)).isoformat()}
     (tmp_path / "latest.json").write_text(json.dumps(latest), encoding="utf-8")
 
