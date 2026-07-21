@@ -1,6 +1,11 @@
 name: Collect repository traffic
 
 on:
+  push:
+    branches:
+      - main
+    paths:
+      - .github/workflows/collect-repository-traffic.yml
   schedule:
     # GitHub schedules in UTC. 00:17 UTC is 09:17 JST.
     - cron: "17 0 * * *"
@@ -25,9 +30,17 @@ jobs:
     timeout-minutes: 10
 
     steps:
-      - name: Check out repository
+      - name: Check out collector source
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
+          path: source
+          persist-credentials: false
+
+      - name: Check out analytics data branch
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          ref: analytics-data
+          path: data
           fetch-depth: 0
 
       - name: Set up Python
@@ -53,16 +66,17 @@ jobs:
         run: |
           args=(
             --repository "$GITHUB_REPOSITORY"
-            --output-dir analytics/github-traffic
+            --output-dir data/analytics/github-traffic
             --min-hours 47
           )
           if [[ "$FORCE_COLLECTION" == "true" ]]; then
             args+=(--force)
           fi
-          python scripts/collect_github_traffic.py "${args[@]}"
+          python source/scripts/collect_github_traffic.py "${args[@]}"
 
       - name: Commit updated analytics
         shell: bash
+        working-directory: data
         run: |
           git add analytics/github-traffic
           if git diff --cached --quiet; then
@@ -72,4 +86,4 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git commit -m "chore(analytics): update GitHub traffic"
-          git push
+          git push origin HEAD:analytics-data
