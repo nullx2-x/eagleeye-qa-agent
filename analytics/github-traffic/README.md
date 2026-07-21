@@ -1,6 +1,6 @@
 # GitHub repository traffic archive
 
-This directory is updated by `.github/workflows/collect-repository-traffic.yml`.
+This directory is updated by `.github/workflows/collect-repository-traffic.yml` on the dedicated `analytics-data` branch. The protected `main` branch contains the workflow and collector source but does not receive automated analytics commits.
 
 The scheduled workflow starts daily at 00:17 UTC (09:17 JST), while the collector only writes a new snapshot when at least 47 hours have elapsed. This provides an approximately every-other-day archive without relying on an invalid cross-month cron expression. A manual workflow run can bypass the cadence gate.
 
@@ -13,4 +13,4 @@ Generated files:
 
 Authentication uses the repository Actions secret `TRAFFIC_TOKEN`. Use a fine-grained personal access token limited to this repository with **Repository permissions → Administration: Read-only**. Do not commit the token or print it in workflow logs.
 
-The token expiration date must be tracked operationally. When it expires, the workflow fails closed and no analytics files are updated.
+The token expiration date must be tracked operationally. When it expires, the workflow fails closed and no analytics files are updated. Generated data is committed only to `analytics-data`, preserving all pull-request and required-check protections on `main`.

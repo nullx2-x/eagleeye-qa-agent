@@ -12,12 +12,16 @@ EagleEye archives GitHub repository traffic because GitHub exposes clone and vie
 
 ## Schedule
 
-The workflow is triggered every day at 00:17 UTC (09:17 JST). `scripts/collect_github_traffic.py` checks `analytics/github-traffic/latest.json` and skips scheduled runs until 47 hours have elapsed. Manual runs can use the `force` input.
+The workflow is triggered every day at 00:17 UTC (09:17 JST). `scripts/collect_github_traffic.py` checks `analytics/github-traffic/latest.json` on the `analytics-data` branch and skips scheduled runs until 47 hours have elapsed. Manual runs can use the `force` input.
+
+## Storage boundary
+
+The workflow definition and collector source are read from the protected `main` branch. Generated analytics files are committed only to the dedicated `analytics-data` branch, so automated collection does not bypass the pull-request and required-check policy protecting `main`.
 
 ## Authentication boundary
 
-`TRAFFIC_TOKEN` must be stored as a GitHub Actions repository secret. The fine-grained token should be restricted to `eagleeye-qa-agent` and grant only **Administration: Read-only**. The workflow's built-in `GITHUB_TOKEN` is used separately to commit generated analytics files.
+`TRAFFIC_TOKEN` must be stored as a GitHub Actions repository secret. The fine-grained token should be restricted to `eagleeye-qa-agent` and grant only **Administration: Read-only**. The workflow's built-in `GITHUB_TOKEN` is used separately to update the `analytics-data` branch.
 
 ## Failure behavior
 
-Missing, expired, or insufficiently scoped credentials stop the workflow before repository data is modified. API responses do not overwrite existing history unless the collection completes successfully.
+Missing, expired, or insufficiently scoped credentials stop the workflow before repository data is modified. API responses do not overwrite existing history unless the collection completes successfully. A rejected push to `analytics-data` also fails the workflow without weakening `main` branch protection.
