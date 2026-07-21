@@ -1,79 +1,83 @@
-# EagleEye プライバシーポリシー
+# EagleEye Privacy Policy
 
-最終更新日: 2026-07-20
+[English](PRIVACY.md) | [日本語](PRIVACY.ja.md)
 
-EagleEyeは、利用者が管理または正当な許可を得たWebサイトをテストするための、ローカルファーストなQAツールです。本書は公開ソース版の標準構成を対象とします。運用者が外部AI、リモート保存、独自認証、第三者サイトを追加した場合、その運用者が追加処理の目的・法的根拠・保存期間・通知を定める必要があります。
+> The English version is the canonical policy. The Japanese translation is provided for convenience.
 
-## 1. 標準構成で扱うデータ
+Last updated: July 22, 2026
 
-| 区分 | 内容 | 既定の保存先 |
+EagleEye is a local-first QA tool for testing websites that the user controls or is legitimately authorized to test. This policy covers the default configuration of the open-source version. If an operator adds external AI, remote storage, custom authentication, or third-party sites, that operator must define the purposes, legal basis, retention period, and notices for the additional processing.
+
+## 1. Data handled by the default configuration
+
+| Category | Data | Default storage location |
 |---|---|---|
-| セッション設定 | 利用者がEagleEye popupへ入力するセッション名、確認目的 | EagleEye実行端末 |
-| URL | HTTP(S)のURL。userinfoとfragment、秘密値らしいquery keyは除去 | EagleEye実行端末 |
-| 操作要約 | click / fill / select / checkの種別、時刻、要素の役割・名前・限定selector | EagleEye実行端末 |
-| DOM要約 | ページタイトル、見出し、ランドマーク、コントロールの件数制限付きアクセシブル要約 | EagleEye実行端末 |
-| 任意画像 | 利用者が明示的に有効化した開始時・停止時の可視領域スクリーンショット | EagleEye実行端末 |
-| Replay証跡 | 実行結果、スクリーンショット、WebM、byte数、SHA-256、時刻 | EagleEye実行端末 |
-| 拡張状態 | 現在のセッション状態。`chrome.storage.session`のみ | Chromeの現在セッション |
+| Session settings | Session name and test objective entered in the EagleEye popup | Device running EagleEye |
+| URLs | HTTP(S) URLs with userinfo, fragments, and query keys that appear to contain secrets removed | Device running EagleEye |
+| Action summaries | Action type (click / fill / select / check), timestamp, element role and name, and a constrained selector | Device running EagleEye |
+| DOM summaries | Size-limited accessible summaries of page titles, headings, landmarks, and controls | Device running EagleEye |
+| Optional images | Visible-viewport screenshots captured at start and stop only when explicitly enabled by the user | Device running EagleEye |
+| Replay evidence | Results, screenshots, WebM recordings, byte counts, SHA-256 hashes, and timestamps | Device running EagleEye |
+| Extension state | Current session state stored only in `chrome.storage.session` | Current Chrome session |
 
-Webフォームへ入力した値、選択値、Cookie、認証ヘッダー、`FormData`、パスワード、OTP、決済情報は取得・送信しません。ただし、表示中のページタイトル、見出し、コントロール名、任意スクリーンショットに個人情報や機密情報が表示されている場合、その表示内容が要約または画像へ含まれる可能性があります。
+EagleEye does not collect or transmit values entered into web forms, selected values, cookies, authentication headers, `FormData`, passwords, one-time passwords, or payment information. However, if personal or confidential information is visible in page titles, headings, control names, or optional screenshots, that visible information may be included in a summary or image.
 
-EagleEye本体には利用状況を開発者へ送る製品テレメトリーを実装していません。公開、Report Hubへの提出、GitHubへの投稿も自動では行いません。
+EagleEye does not include product telemetry that sends usage data to its developers. It does not automatically publish data, submit it to Report Hub, or post it to GitHub.
 
-## 2. AIプロバイダーへの送信
+## 2. Data sent to AI providers
 
-「AI生成」を利用者が実行した場合だけ、次の最小化した情報を設定中のAIプロバイダーへ送ります。
+Only when the user invokes **AI generation**, EagleEye sends the following minimized information to the configured AI provider:
 
-- 確認目的
-- IDらしいpath segmentとquery valueを秘匿化したURL
-- 操作種別と要素の限定要約
-- 件数制限付きDOM要約
-- 安全条件（資格情報・決済・本番書込みを要求しないこと）
+- Test objective
+- URL with ID-like path segments and query values redacted
+- Action types and constrained element summaries
+- Size-limited DOM summary
+- Safety constraints prohibiting requests for credentials, payments, or production writes
 
-Webフォーム入力値とスクリーンショットはAIプロンプトへ含めません。Codex App Server経路では、Codexが管理するローカルのChatGPTログインを利用し、EagleEyeはOAuth tokenを読み取り・保存しません。OpenAI APIを直接選んだ場合はAPIキー方式です。API利用とChatGPT/Codex利用では適用される契約・保存方針が異なるため、運用者は選択したプロバイダーの最新方針を確認してください。
+Web-form values and screenshots are not included in AI prompts. The Codex App Server path uses the local ChatGPT login managed by Codex; EagleEye does not read or store OAuth tokens. When the OpenAI API is selected directly, authentication uses an API key. API use and ChatGPT/Codex use are governed by different agreements and retention policies, so operators should review the current policies for the provider and product they select.
 
-## 3. 利用目的
+## 3. Purposes of processing
 
-データは、利用者が指定したサイトのテストケース生成、Replay、品質判定、障害解析、証跡レポート作成、明示的なエクスポートのためだけに処理します。広告、人物プロファイリング、信用判断、データ販売には使用しません。
+Data is processed only to generate test cases for sites designated by the user, replay tests, assess quality, analyze failures, create evidence reports, and perform explicit exports. EagleEye does not use data for advertising, personal profiling, credit decisions, or data sales.
 
-## 4. 同意と正当な権限
+## 4. Consent and valid authorization
 
-Chrome拡張は、記録内容、AI送信、任意スクリーンショットの注意を開始前に表示し、利用者が「対象サイトの許可」と「記録内容への同意」を確認するまで開始ボタンを有効にしません。対象サイトの所有者、管理者、従業員、顧客その他のデータ主体へ必要な通知を行い、適切な法的根拠を確保する責任は運用者にあります。
+Before recording begins, the Chrome extension displays prominent notices about recorded data, AI transmission, and optional screenshots. The start button remains disabled until the user confirms both authorization to test the target site and consent to the recording. The operator is responsible for giving required notices to site owners, administrators, employees, customers, and other data subjects, and for establishing an appropriate legal basis.
 
-許可のないサイト、第三者のアカウント、医療・金融・雇用・児童に関する高感度画面、認証情報や決済情報が表示される画面では記録を開始しないでください。
+Do not begin recording on unauthorized sites, third-party accounts, highly sensitive medical, financial, employment, or child-related screens, or screens displaying credentials or payment information.
 
-## 5. 保存期間と削除
+## 5. Retention and deletion
 
-標準構成は自動保存期限を設定せず、端末上のデータを利用者が管理します。不要になったらpopupの「このセッションを端末から削除」または `DELETE /api/v1/browser-agent/sessions/{session_id}` を使って、セッション、DOM要約、スクリーンショット、Replay動画、生成spec/YAML、run結果を削除できます。拡張状態はChromeのセッション終了、拡張の再読み込み・無効化・更新でも消去されます。
+The default configuration does not impose an automatic retention period; users control data stored on their devices. When data is no longer needed, use **Delete this session from this device** in the popup or `DELETE /api/v1/browser-agent/sessions/{session_id}` to delete the session, DOM summaries, screenshots, replay videos, generated specs/YAML, and run results. Extension state is also cleared when the Chrome session ends or the extension is reloaded, disabled, or updated.
 
-バックアップ、Report Hub、GitHub、チャット、チケット等へ利用者が複製したデータは、それぞれの保存先でも削除してください。
+If a user copies data to backups, Report Hub, GitHub, chat systems, ticketing systems, or other destinations, the user must delete those copies from each destination separately.
 
-## 6. 安全管理
+## 6. Security measures
 
-- APIの標準bind先とReplay対象はloopbackです。
-- Host、Origin、CORSをexact allowlistで検証し、認証情報付きCORSを無効化します。
-- Replay中のHTTP(S) redirectとsubresourceも許可境界外なら遮断します。
-- 任意スクリーンショットは3 MiB上限、DOM要約とAPI応答は件数・長さ上限を持ちます。
-- HTMLは出力エスケープし、security headerとCSPを付与します。
-- APIキー等はOSキーチェーンへ保存し、API応答へ再表示しません。
-- レポート内の絶対パスはプロジェクト相対表現または秘匿表示へ変換します。
+- The API binds to loopback by default, and replay targets are loopback by default.
+- Host, Origin, and CORS values are validated against exact allowlists, and credentialed CORS is disabled.
+- HTTP(S) redirects and subresources that leave the permitted boundary are blocked during replay.
+- Optional screenshots are limited to 3 MiB; DOM summaries and API responses have count and length limits.
+- HTML output is escaped, and security headers and a Content Security Policy are applied.
+- API keys and similar secrets are stored in the operating-system keychain and are not returned in API responses.
+- Absolute paths in reports are converted to project-relative or redacted representations.
 
-詳細は [SECURITY.md](SECURITY.md) を参照してください。
+See [SECURITY.md](SECURITY.md) for details.
 
-## 7. 第三者提供、国外移転、委託
+## 7. Third-party disclosure, international transfers, and subprocessors
 
-標準構成は開発者運営サーバーへデータを送信しません。利用者がクラウドAI、外部Report Hub、GitHub等を選んだ場合、その送信は利用者の指示によるものです。提供先の所在、再委託先、保持、学習利用、越境移転、削除手段を事前に確認してください。
+The default configuration does not send data to servers operated by the developers. If a user selects cloud AI, an external Report Hub, GitHub, or another service, the transmission occurs at the user's direction. Before use, review the recipient's location, subprocessors, retention, training use, cross-border transfers, and deletion options.
 
-## 8. APPI・GDPR等への対応範囲
+## 8. Scope of APPI, GDPR, and similar compliance
 
-本プロジェクトは、利用目的の明示、データ最小化、privacy by default、アクセス制限、安全管理、削除手段、侵害時の連絡導線を技術設計へ反映しています。ただし、特定の組織・地域・データに対する法令準拠を自動的に保証または認証するものではありません。個人情報取扱事業者、controller、processor等の役割、法的根拠、DPIA、処理記録、委託契約、保存期間、本人通知・権利対応、監督機関への報告は実際の運用者が判断してください。
+The project incorporates purpose disclosure, data minimization, privacy by default, access restrictions, security measures, deletion mechanisms, and a security-incident contact path into its technical design. It does not automatically guarantee or certify compliance for any specific organization, jurisdiction, or dataset. The actual operator must determine roles such as personal information handling business operator, controller, or processor, as well as legal basis, DPIAs, processing records, processor agreements, retention periods, data-subject notices and rights handling, and supervisory-authority reporting.
 
-技術と運用の対応表は [COMPLIANCE.md](COMPLIANCE.md) に記載しています。
+See [COMPLIANCE.md](COMPLIANCE.md) for the technical and operational control matrix.
 
-## 9. 問い合わせと事故連絡
+## 9. Contact and incident reporting
 
-公開ソース版の保守者は、標準構成で利用者データを受領しません。脆弱性または誤公開を見つけた場合は、個人情報を公開Issueへ書かず、GitHubのPrivate Vulnerability Reportingを使用してください。一般的な改善要望は、個人情報・秘密情報を除いた最小限の内容でIssueへ投稿してください。
+Maintainers of the open-source version do not receive user data in the default configuration. If you discover a vulnerability or accidental disclosure, do not include personal data in a public issue. Use GitHub Private Vulnerability Reporting. For general improvement requests, open an issue containing only the minimum necessary information and excluding personal or confidential data.
 
-## 10. 変更
+## 10. Changes to this policy
 
-収集項目、送信先、目的を実質的に変更する場合は、本書と拡張内の目立つ説明を先に更新し、必要に応じて再同意を求めます。
+Before materially changing collected data, destinations, or purposes, the project will update this policy and the extension's prominent disclosure and will request renewed consent when appropriate.

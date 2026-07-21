@@ -1,45 +1,49 @@
 # EagleEye Security Policy
 
+[English](SECURITY.md) | [日本語](SECURITY.ja.md)
+
+> The English version is the canonical policy. The Japanese translation is provided for convenience.
+
 ## Supported versions
 
-セキュリティ修正は最新の`1.x`系列を対象とします。公開Releaseの最新版で再現を確認してください。
+Security fixes target the latest `1.x` release line. Confirm that the issue reproduces on the latest public release.
 
-## 脆弱性の報告
+## Reporting a vulnerability
 
-個人情報、秘密情報、exploit、未公開の脆弱性を公開Issueへ投稿しないでください。GitHubリポジトリの **Security → Report a vulnerability** からPrivate Vulnerability Reportingを利用してください。
+Do not post personal data, confidential information, exploits, or undisclosed vulnerabilities in a public issue. Use **Security → Report a vulnerability** in the GitHub repository to submit a report through Private Vulnerability Reporting.
 
-報告には次を含め、実データの代わりに合成値を使ってください。
+Include the following information and use synthetic values instead of real data:
 
-- 影響するversionまたはcommit
-- 再現条件と最小の手順
-- 期待結果と実際の結果
-- 影響範囲
-- 秘密情報を除いたlog、動画、proof of concept
+- Affected version or commit
+- Preconditions and minimal reproduction steps
+- Expected and actual results
+- Scope of impact
+- Logs, video, or proof of concept with secrets removed
 
-保守者は受領確認、triage、修正、公開時期を同じprivate advisory内で調整します。本プロジェクトはbug bountyを約束するものではありません。
+Maintainers will coordinate acknowledgment, triage, remediation, and disclosure timing in the same private advisory. This project does not promise a bug bounty.
 
-## 既定の安全境界
+## Default security boundaries
 
-- API、MCP、Report機能はloopback優先で、Hostとbrowser Originを制限します。
-- Replayは標準でloopback HTTP(S)だけを許可し、redirectとsubresourceにも同じ制限を適用します。
-- Chrome拡張は`activeTab`、`scripting`、session-only storage、2つのloopback host permissionだけを要求します。
-- フォーム値、Cookie、認証ヘッダー、`FormData`は記録しません。
-- スクリーンショットはopt-inで、AIプロンプトへは含めません。
-- provider tokenとAPIキーはレスポンスへ返さず、対応環境ではOSキーチェーンへ保存します。
-- Codex turnはread-only、ephemeral、approval拒否、JSON Schema固定です。
-- 自動修正はlocal・非本番・clean Git・fresh one-use attestation・変更上限・固定検証を全て要求し、失敗時はrollbackします。
-- 外部commandや任意pathをAPI入力から実行せず、固定registryとallowlistを使用します。
+- API, MCP, and reporting features prefer loopback and restrict Host values and browser origins.
+- Replay permits only loopback HTTP(S) by default and applies the same boundary to redirects and subresources.
+- The Chrome extension requests only `activeTab`, `scripting`, session-only storage, and two loopback host permissions.
+- Form values, cookies, authentication headers, and `FormData` are not recorded.
+- Screenshots are opt-in and are not included in AI prompts.
+- Provider tokens and API keys are not returned in responses and are stored in the operating-system keychain where supported.
+- Codex turns are read-only and ephemeral, reject approval requests, and require a fixed JSON Schema.
+- Automated fixes require a local non-production target, a clean Git worktree, a fresh one-use attestation, change limits, and fixed validation; failures are rolled back.
+- API input cannot execute external commands or arbitrary paths; fixed registries and allowlists are used.
 
-## 運用上の制限
+## Operational limitations
 
-EagleEyeは認証・認可製品、DLP、WAF、EDR、法令認証の代替ではありません。loopback上の別プロセス、OS管理者、悪意あるブラウザー拡張からの完全な隔離は保証しません。共有端末ではOSアカウント分離、ディスク暗号化、短い保存期間を使用してください。
+EagleEye is not a substitute for an authentication or authorization product, DLP, WAF, EDR, or regulatory certification. It does not guarantee complete isolation from other loopback processes, operating-system administrators, or malicious browser extensions. On shared devices, use separate operating-system accounts, disk encryption, and short retention periods.
 
-`EAGLEEYE_ALLOW_REMOTE=1`、外部bind、reverse proxy、クラウドAI、リモートReport Hubを有効にする場合は、TLS、強い認証、最小権限、network allowlist、rate limit、監査log、backup暗号化、削除手順を運用者が追加してください。標準のloopback用APIを認証なしでインターネットへ公開してはいけません。
+If you enable `EAGLEEYE_ALLOW_REMOTE=1`, external binding, a reverse proxy, cloud AI, or a remote Report Hub, the operator must add TLS, strong authentication, least privilege, network allowlists, rate limits, audit logging, encrypted backups, and deletion procedures. Never expose the default loopback API to the internet without authentication.
 
-## 許可されたテストだけを行う
+## Authorized testing only
 
-所有または明示的な許可を得た対象だけをテストしてください。資格情報の窃取、rate-limit回避、破壊的payload、可用性攻撃、第三者データの取得を禁止します。productionでの書込み、決済、本人確認、法的同意、公開・送信の最終操作は人間の承認境界に残してください。
+Test only targets you own or are explicitly authorized to test. Credential theft, rate-limit bypass, destructive payloads, availability attacks, and acquisition of third-party data are prohibited. Production writes, payments, identity verification, legal consent, publication, and final submission actions must remain human approval boundaries.
 
 ## Release security gate
 
-公開Releaseは最低限、全pytest、Ruff、extension verifier、ESLint、dependency audit、Gitleaks、公開候補の個人情報・絶対パスscan、CIを通し、結果をレポートへ残します。
+At minimum, each public release must pass the complete pytest suite, Ruff, the extension verifier, ESLint, dependency audits, Gitleaks, scans of the publication candidate for personal information and absolute paths, and CI. Results must be retained in a report.

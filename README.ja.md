@@ -8,7 +8,7 @@ Chrome拡張をONにすると、EagleEyeは入力値を保存せずにDOM要約�
 
 AIは候補を提案しますが、記録されたcritical path、実行結果、リリース判断、修正適用を上書きできません。
 
-> **利用条件:** 所有または明示的な許可を得たサイトだけをテストしてください。収集項目、AI送信、保存・削除は [Privacy](PRIVACY.md)、安全境界は [Security](SECURITY.md)、法令・Store方針との対応範囲は [Compliance](COMPLIANCE.md) を確認してください。
+> **利用条件:** 所有または明示的な許可を得たサイトだけをテストしてください。収集項目、AI送信、保存・削除は [Privacy](PRIVACY.ja.md)、安全境界は [Security](SECURITY.ja.md)、法令・Store方針との対応範囲は [Compliance](COMPLIANCE.ja.md) を確認してください。
 
 ![EagleEye end-to-end demo flow](docs/build-week/screenshots/eagleeye-demo-flow.gif)
 
@@ -71,7 +71,7 @@ Webフォーム入力値、Cookie、認証header、`FormData`は取得しませ�
 - [Phase 1-9チェックリスト](docs/build-week/submission-checklist.md)
 - [公開前セキュリティ手順](docs/build-week/publication-security.md)
 - [提出スクリーンショット](docs/build-week/screenshots/)
-- [Privacy](PRIVACY.md) / [Security](SECURITY.md) / [Compliance](COMPLIANCE.md)
+- [Privacy](PRIVACY.ja.md) / [Security](SECURITY.ja.md) / [Compliance](COMPLIANCE.ja.md)
 
 License: [MIT](LICENSE)
 
