@@ -14,7 +14,7 @@
       "author": {
         "name": "nullx2-x"
       },
-      "source": ".",
+      "source": "./",
       "category": "development",
       "homepage": "https://github.com/nullx2-x/eagleeye-qa-agent"
     }
