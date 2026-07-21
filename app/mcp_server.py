@@ -1,4 +1,5 @@
 import json
+import os
 from pathlib import Path
 
 from mcp.server.fastmcp import FastMCP
@@ -20,6 +21,20 @@ from .strategy import generate_profile
 from .strategy_models import ProfileRequest, QualityGateRequest
 from .test_case_checker import check_test_cases
 from .test_case_models import TestCaseCheckRequest
+from .url_audit import load_url_audit, run_url_audit
+from .url_audit_models import UrlAuditRequest
+
+
+def _mcp_port() -> int:
+    try:
+        port = int(os.getenv("EAGLEEYE_MCP_PORT", "8768"))
+    except ValueError:
+        return 8768
+    return port if 1024 <= port <= 65535 else 8768
+
+
+MCP_PORT = _mcp_port()
+
 
 mcp = FastMCP(
     "EagleEye AI QA",
@@ -30,7 +45,7 @@ mcp = FastMCP(
     stateless_http=True,
     json_response=True,
     host="127.0.0.1",
-    port=8768,
+    port=MCP_PORT,
 )
 
 
@@ -85,6 +100,33 @@ def run_project_qa(
 def project_qa_run_status(run_id: str) -> dict:
     """Read a completed Project QA run and its evidence-backed quality gate."""
     return load_project_run(run_id).model_dump(mode="json")
+
+
+@mcp.tool()
+def audit_authorized_url(
+    target_url: str,
+    authorized: bool = False,
+    allow_localhost: bool = False,
+    project_name: str | None = None,
+) -> dict:
+    """Observe one authorized URL and create a bounded QA project seed plus hashed report."""
+    if not authorized:
+        raise PermissionError("Explicit URL audit authorization is required")
+    request = UrlAuditRequest.model_validate(
+        {
+            "targetUrl": target_url,
+            "authorized": True,
+            "allowLocalhost": allow_localhost,
+            "projectName": project_name,
+        }
+    )
+    return run_url_audit(request).model_dump(mode="json")
+
+
+@mcp.tool()
+def url_audit_status(audit_id: str) -> dict:
+    """Read a completed URL audit, initial test cases, and evidence paths."""
+    return load_url_audit(audit_id).model_dump(mode="json")
 
 
 @mcp.tool()

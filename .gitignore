@@ -30,6 +30,7 @@ data/guided/*.sqlite3-*
 data/browser-agent/
 artifacts/browser-agent/
 artifacts/project-qa/
+artifacts/url-audits/
 artifacts/guided-runs/*
 *.zip
 videos/**/.hyperframes/

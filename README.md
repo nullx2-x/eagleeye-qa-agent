@@ -31,6 +31,20 @@ EagleEye connects both sides:
 7. Export a report with screenshots, WebM evidence, byte counts, timestamps, and SHA-256 receipts.
 8. Review suggested fixes and create a developer-ready bug report with one explicit action.
 
+## URL to QA Project
+
+When all you have is an authorized URL, EagleEye can begin with an observation-only URL Audit. It
+checks HTTPS, baseline security headers, a safe CORS preflight, robots.txt, sitemap.xml,
+security.txt, three fixed OpenAPI locations, favicon and login hints, and bounded technology
+signals. The result is a JSON/Markdown evidence report plus quality-checked initial test cases and
+a Browser Agent start URL.
+
+URL Audit never performs injection, brute force, port scanning, directory enumeration, credential
+submission, or destructive writes. A shared budget limits each audit to 10 network requests, 4 MiB
+of response data, and 30 seconds. Public HTTP(S) is the default; localhost requires both
+`allowLocalhost=true` and `EAGLEEYE_URL_AUDIT_ALLOW_LOCALHOST=1`. LAN, link-local, metadata,
+multicast, unspecified, and reserved addresses remain blocked.
+
 ## Operational Project QA
 
 Project QA supports Node.js, Python, Go, Rust, .NET, Gradle, and Maven projects. Repository owners can also add `.eagleeye/qa.json` with allowlisted command arrays. Every run requires explicit authorization, stays within `EAGLEEYE_PROJECT_ROOTS`, uses `shell=False`, applies timeouts and secret redaction, and feeds normalized results into EagleEye's deterministic quality gate.
@@ -54,6 +68,12 @@ Start the REST dashboard and MCP service, then run QA against an authorized repo
 .\scripts\start-eagleeye.ps1
 .\scripts\start-mcp.ps1
 .\scripts\run-project-qa.ps1 -ProjectRoot <authorized-project-path> -Mode development
+```
+
+Or create a QA project seed from an authorized public URL:
+
+```powershell
+.\scripts\run-url-audit.ps1 -Url https://example.com
 ```
 
 Use `POST /api/v1/project-qa/discover` to review detected suites before execution. `POST /api/v1/project-qa/runs` requires `authorized=true` and returns the gate plus evidence paths and hashes.
@@ -125,6 +145,7 @@ Local sessions can be deleted through the extension UI or API. Remote or multi-u
 ## Core Capabilities
 
 - Browser observation with explicit consent and privacy redaction
+- Observation-only URL Audit with a persisted QA project seed and Markdown report
 - Natural-language test intent
 - GPT-5.6 test generation through Codex App Server
 - Deterministic pre-execution case quality checks
@@ -153,13 +174,20 @@ Local sessions can be deleted through the extension UI or API. Remote or multi-u
 |---|---|
 | Dashboard and API | `http://127.0.0.1:8766` |
 | MCP | `http://127.0.0.1:8768/mcp` |
-| Guided QA fixture | `http://127.0.0.1:8767` |
+| Optional isolated hackathon fixture | `http://127.0.0.1:8767` |
 
 Project QA endpoints:
 
 - `POST /api/v1/project-qa/discover`
 - `POST /api/v1/project-qa/runs`
 - `GET /api/v1/project-qa/runs/{runId}`
+
+URL Audit endpoints:
+
+- `POST /api/v1/url-audits`
+- `GET /api/v1/url-audits/{auditId}`
+- `GET /api/v1/url-audits/{auditId}/report`
+- `DELETE /api/v1/url-audits/{auditId}`
 
 `POST /api/v1/quality-gates/evaluate` activates emulator compatibility tests only when both
 `serviceType=emulator` and `compatibilityLevel` are explicit. A compatibility level on a
@@ -191,6 +219,8 @@ Credentials are never returned in API responses. Supported credentials are store
 - Fixed desktop-target registry; no arbitrary command or path execution
 - `shell=False`, minimal subprocess environment, root confinement, and process-tree timeout termination
 - Secret redaction for bearer tokens, API keys, JWTs, GitHub tokens, AWS access keys, and URL credentials
+- Pinned-IP URL Audit transport with same-host redirects, semantic-only headers, redacted query values,
+  a global request/body/time budget, and a two-audit concurrency limit
 - Fail-closed self-repair requiring a local non-production target, clean Git state, fresh one-use attestation, strict file/line limits, fixed verification, and rollback
 - Explicit human approval for repair application, destructive actions, and release decisions
 
@@ -200,8 +230,12 @@ See [SECURITY.md](SECURITY.md) for reporting and operational details.
 
 ```powershell
 uv run ruff check .
+uv run ruff format --check .
 uv run pytest -q
 ```
+
+Hackathon evaluator code is isolated under [`demos/hackathon`](demos/hackathon/README.md) and is
+not imported or mounted by the production runtime.
 
 Latest release review:
 

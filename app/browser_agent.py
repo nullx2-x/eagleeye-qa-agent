@@ -7,13 +7,11 @@ import json
 import os
 import re
 import shutil
-import socket
 from datetime import UTC, datetime
 from pathlib import Path
 from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 from uuid import uuid4
 
-import httpx
 from pydantic import HttpUrl
 
 from . import storage
@@ -21,7 +19,6 @@ from .browser_agent_models import (
     BrowserAgentSession,
     BrowserAgentStatus,
     BrowserAIResult,
-    BrowserDomSnapshot,
     BrowserObservation,
     BrowserSessionCreate,
     BrowserSessionList,
@@ -33,7 +30,6 @@ from .models import EagleEyeBundle, GeneratedArtifacts, QAEvent, QASession, RunR
 from .providers import broker
 from .quality import evaluate_quality_gate
 from .runner import run_bundle
-from .security import is_run_url_allowed
 from .storage import load_bundle, save_bundle, save_run
 from .strategy_models import QualityGateRequest
 from .test_case_checker import check_test_cases
@@ -43,7 +39,7 @@ ROOT = Path(__file__).resolve().parents[1]
 BROWSER_SESSIONS = ROOT / "data" / "browser-agent"
 BROWSER_CAPTURES = ROOT / "artifacts" / "browser-agent"
 CODEX_BROWSER_CWD = ROOT / ".runtime" / "browser-ai-cwd"
-DEMO_EXTENSION_STATUS = "exact origin configured (value withheld)"
+EXTENSION_STATUS = "exact origin configured (value withheld)"
 _SECRET_QUERY_KEYS = re.compile(r"(?i)(token|secret|password|passwd|api[_-]?key|auth|code|session)")
 _EMAIL = re.compile(r"(?i)\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b")
 _PHONE = re.compile(r"(?<!\d)(?:\+?\d[\d ()-]{7,}\d)(?!\d)")
@@ -271,65 +267,6 @@ def run_session(session_id: str) -> BrowserAgentSession:
     return session
 
 
-def create_local_sample() -> BrowserAgentSession:
-    target = os.getenv("EAGLEEYE_SAMPLE_TARGET", "http://127.0.0.1:8766/demo-site/")
-    if not is_run_url_allowed(target):
-        raise ValueError("The sample target must be a loopback HTTP(S) URL.")
-    try:
-        with httpx.Client(trust_env=False, follow_redirects=False) as client:
-            response = client.get(target, timeout=_demo_timeout_seconds())
-            response.raise_for_status()
-    except httpx.HTTPError as exc:
-        raise RuntimeError("The authorized local sample target is unavailable.") from exc
-    sample_target = _with_query_value(target, "page_id", "2")
-    session = create_session(
-        BrowserSessionCreate(
-            name="Authorized local sample journey",
-            goal="普段の閲覧操作から回帰テストを生成し、公開ページの主要導線を検証する",
-            startUrl=target,
-            locale="ja",
-        )
-    )
-    append_observation(
-        session.id,
-        BrowserObservation(
-            id="demo-goto",
-            timestamp=1,
-            action="goto",
-            url=target,
-            redacted=False,
-            dom=BrowserDomSnapshot(
-                pageTitle="EagleEye Local QA Lab",
-                headings=["EagleEye Local QA Lab"],
-                landmarks=["banner", "navigation", "main", "contentinfo"],
-                controls=[],
-            ),
-        ),
-    )
-    append_observation(
-        session.id,
-        BrowserObservation(
-            id="demo-click",
-            timestamp=2,
-            action="click",
-            url=target,
-            target={"role": "link", "name": "Sample Page", "tagName": "a"},
-            redacted=False,
-        ),
-    )
-    append_observation(
-        session.id,
-        BrowserObservation(
-            id="demo-snapshot",
-            timestamp=3,
-            action="snapshot",
-            url=sample_target,
-            redacted=False,
-        ),
-    )
-    return generate_session(session.id)
-
-
 def load_session(session_id: str) -> BrowserAgentSession:
     path = _session_path(session_id)
     if not path.is_file():
@@ -390,23 +327,11 @@ def agent_status() -> BrowserAgentStatus:
             if connected
             else "OpenAI APIキーをOS資格情報ストアへ登録してください。.envへ直書きしません。"
         )
-    target = os.getenv("EAGLEEYE_SAMPLE_TARGET", "http://127.0.0.1:8766/demo-site/")
-    reachable = False
-    if is_run_url_allowed(target):
-        try:
-            parsed = urlsplit(target)
-            port = parsed.port or (443 if parsed.scheme == "https" else 80)
-            with socket.create_connection((parsed.hostname or "127.0.0.1", port), timeout=1):
-                reachable = True
-        except OSError:
-            reachable = False
     return BrowserAgentStatus(
-        extensionOrigin=DEMO_EXTENSION_STATUS,
+        extensionOrigin=EXTENSION_STATUS,
         selectedProvider=provider,
         providerConnected=connected,
         setupGuidance=guidance,
-        sampleTarget=target,
-        sampleTargetReachable=reachable,
         capabilities=[
             "browser-events",
             "safe-dom-summary",
@@ -863,13 +788,6 @@ def _sanitize_url(value: str) -> str:
     return urlunsplit((parsed.scheme, parsed.netloc, parsed.path or "/", query, ""))
 
 
-def _with_query_value(value: str, key: str, item: str) -> str:
-    parsed = urlsplit(value)
-    query_items = [(name, current) for name, current in parse_qsl(parsed.query) if name != key]
-    query_items.append((key, item))
-    return urlunsplit((parsed.scheme, parsed.netloc, parsed.path or "/", urlencode(query_items), ""))
-
-
 def _same_origin(left: str, right: str) -> bool:
     first = urlsplit(left)
     second = urlsplit(right)
@@ -1029,14 +947,6 @@ def _ai_timeout_seconds() -> int:
     except ValueError:
         value = 60
     return max(10, min(value, 120))
-
-
-def _demo_timeout_seconds() -> int:
-    try:
-        value = int(os.getenv("EAGLEEYE_DEMO_TIMEOUT_SECONDS", "15"))
-    except ValueError:
-        value = 15
-    return max(3, min(value, 60))
 
 
 def _now() -> str:
