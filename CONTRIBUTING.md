@@ -15,6 +15,6 @@ npx --yes eslint@9 background.js content.js popup.js tests/verify-extension.mjs
 Pop-Location
 ```
 
-コード変更には関連テストを追加し、権限追加、収集データ追加、外部送信先追加、保存期間変更、remote access変更では `PRIVACY.md`、`SECURITY.md`、`COMPLIANCE.md` も更新してください。
+コード変更には関連テストを追加し、権限追加、収集データ追加、外部送信先追加、保存期間変更、remote access変更では英語正本の `PRIVACY.md`、`SECURITY.md`、`COMPLIANCE.md` と日本語訳も更新してください。
 
-セキュリティ問題は公開Issueではなく [SECURITY.md](SECURITY.md) のprivate reporting手順を使ってください。
+セキュリティ問題は公開Issueではなく [SECURITY.ja.md](SECURITY.ja.md) のprivate reporting手順を使ってください。

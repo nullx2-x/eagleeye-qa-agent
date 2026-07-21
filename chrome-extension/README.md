@@ -44,7 +44,7 @@ Manifest V3 の unpacked 拡張です。ユーザーがツールバーから明�
 - API 通信先はコードでも `http://127.0.0.1:8766` と `http://localhost:8766` に固定しています。認証情報や Cookie は送信しません。
 - API 応答は未信頼データとして扱い、popup では `textContent` と `createElement` だけで描画します。`innerHTML`、`eval`、リモートコードは使用しません。
 - 「AI生成」で外部AIを使う場合も、秘匿化URL、操作種別、限定DOM要約だけを送り、フォーム入力値とスクリーンショットは送りません。
-- 完全な方針はリポジトリ直下の `PRIVACY.md`、`SECURITY.md`、`COMPLIANCE.md` を参照してください。
+- 完全な方針はリポジトリ直下の `PRIVACY.ja.md`、`SECURITY.ja.md`、`COMPLIANCE.ja.md` を参照してください。
 
 ## エラー案内
 
