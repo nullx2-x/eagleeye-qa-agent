@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-marketplace.json",
+  "name": "eagleeye-qa-agent",
+  "version": "1.0.0",
+  "description": "Claude Code plugin marketplace for EagleEye QA Agent.",
+  "owner": {
+    "name": "nullx2-x"
+  },
+  "plugins": [
+    {
+      "name": "eagleeye-qa-agent",
+      "version": "1.0.0",
+      "description": "Connect Claude Code to EagleEye's local, evidence-backed QA and quality-gate MCP service.",
+      "author": {
+        "name": "nullx2-x"
+      },
+      "source": ".",
+      "category": "development",
+      "homepage": "https://github.com/nullx2-x/eagleeye-qa-agent"
+    }
+  ]
+}
