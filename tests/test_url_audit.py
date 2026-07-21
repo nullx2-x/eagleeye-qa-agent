@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import http.client
 import socket
+import ssl
 import time
 from pathlib import Path
 from threading import BoundedSemaphore, Thread
@@ -11,7 +12,13 @@ import pytest
 from fastapi.testclient import TestClient
 
 from app.main import app
-from app.url_audit import AuditBudget, PinnedHttpTransport, TransportResponse, run_url_audit
+from app.url_audit import (
+    AuditBudget,
+    PinnedHttpTransport,
+    TransportResponse,
+    _secure_tls_context,
+    run_url_audit,
+)
 from app.url_audit_models import UrlAuditRequest
 from demos.hackathon.target_app import app as hackathon_app
 
@@ -301,6 +308,10 @@ def test_pinned_transport_enforces_absolute_deadline_against_slow_response() -> 
     server.join(timeout=1)
 
     assert elapsed < 0.75
+
+
+def test_url_audit_tls_context_requires_tls_1_2_or_newer() -> None:
+    assert _secure_tls_context().minimum_version >= ssl.TLSVersion.TLSv1_2
 
 
 def test_incomplete_observations_cannot_receive_pass(

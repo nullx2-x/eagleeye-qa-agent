@@ -155,7 +155,7 @@ class PinnedHttpTransport:
         tls_version = None
         try:
             if parsed.scheme == "https":
-                context = ssl.create_default_context()
+                context = _secure_tls_context()
                 raw_socket.settimeout(self._remaining_timeout(deadline))
                 connection = context.wrap_socket(raw_socket, server_hostname=host)
                 connection_box[0] = connection
@@ -181,6 +181,15 @@ class PinnedHttpTransport:
             response.begin()
             connection.settimeout(self._remaining_timeout(deadline))
             body = b"" if method == "HEAD" else response.read(max_bytes + 1)
+            if time.monotonic() >= deadline:
+                raise TimeoutError("URL audit wall-clock budget exhausted")
+            if (
+                method != "HEAD"
+                and response.length is not None
+                and response.length > 0
+                and len(body) < max_bytes + 1
+            ):
+                raise http.client.IncompleteRead(body, len(body) + response.length)
             truncated = len(body) > max_bytes
             body = body[:max_bytes]
             safe_headers = _safe_headers(response.getheaders())
@@ -651,6 +660,12 @@ def _explicit_loopback_host(host: str) -> bool:
         return ip_address(normalized).is_loopback
     except ValueError:
         return False
+
+
+def _secure_tls_context() -> ssl.SSLContext:
+    context = ssl.create_default_context()
+    context.minimum_version = ssl.TLSVersion.TLSv1_2
+    return context
 
 
 def _normalize_url(value: str) -> str:
