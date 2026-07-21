@@ -1,0 +1,18 @@
+{
+  "name": "eagleeye-qa-agent",
+  "version": "1.0.1",
+  "description": "Connect Claude Code to EagleEye's local, evidence-backed QA and quality-gate MCP service.",
+  "author": {
+    "name": "nullx2-x"
+  },
+  "homepage": "https://github.com/nullx2-x/eagleeye-qa-agent",
+  "repository": "https://github.com/nullx2-x/eagleeye-qa-agent",
+  "license": "MIT",
+  "keywords": [
+    "qa",
+    "testing",
+    "playwright",
+    "mcp",
+    "quality-gates"
+  ]
+}
