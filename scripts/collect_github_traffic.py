@@ -101,11 +101,7 @@ def merge_daily(existing: list[dict], clones: list[dict], views: list[dict]) -> 
 
 
 def merge_snapshots(existing: list[dict], snapshot: dict) -> list[dict]:
-    by_date = {
-        str(row["collected_at"])[:10]: dict(row)
-        for row in existing
-        if row.get("collected_at")
-    }
+    by_date = {str(row["collected_at"])[:10]: dict(row) for row in existing if row.get("collected_at")}
     by_date[str(snapshot["collected_at"])[:10]] = snapshot
     return [by_date[date] for date in sorted(by_date)]
 
@@ -141,11 +137,7 @@ def should_collect(output: Path, now: datetime, min_hours: float, force: bool) -
 def top_items(payload, fields: tuple[str, ...]) -> list[dict]:
     if not isinstance(payload, list):
         return []
-    return [
-        {field: item.get(field) for field in fields}
-        for item in payload
-        if isinstance(item, dict)
-    ]
+    return [{field: item.get(field) for field in fields} for item in payload if isinstance(item, dict)]
 
 
 def collect(repository: str, token: str, collected_at: datetime) -> dict:
