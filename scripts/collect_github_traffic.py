@@ -9,7 +9,7 @@ import json
 import os
 import re
 import sys
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from urllib.error import HTTPError, URLError
 from urllib.parse import urlencode
@@ -38,12 +38,12 @@ class CollectionError(RuntimeError):
 
 
 def now_utc() -> datetime:
-    return datetime.now(timezone.utc).replace(microsecond=0)
+    return datetime.now(UTC).replace(microsecond=0)
 
 
 def api_get(path: str, token: str, **query):
     suffix = f"?{urlencode(query)}" if query else ""
-    request = Request(
+    request = Request(  # noqa: S310 - fixed GitHub HTTPS API root
         f"{API}{path}{suffix}",
         headers={
             "Accept": "application/vnd.github+json",
@@ -53,7 +53,7 @@ def api_get(path: str, token: str, **query):
         },
     )
     try:
-        with urlopen(request, timeout=30) as response:  # noqa: S310 - fixed HTTPS API
+        with urlopen(request, timeout=30) as response:  # noqa: S310 - fixed GitHub HTTPS API
             return json.load(response)
     except HTTPError as exc:
         if exc.code in {401, 403}:
@@ -131,7 +131,7 @@ def should_collect(output: Path, now: datetime, min_hours: float, force: bool) -
         previous = datetime.fromisoformat(str(latest["collected_at"]).replace("Z", "+00:00"))
     except (KeyError, TypeError, ValueError, json.JSONDecodeError):
         return True
-    return now - previous.astimezone(timezone.utc) >= timedelta(hours=min_hours)
+    return now - previous.astimezone(UTC) >= timedelta(hours=min_hours)
 
 
 def top_items(payload, fields: tuple[str, ...]) -> list[dict]:
