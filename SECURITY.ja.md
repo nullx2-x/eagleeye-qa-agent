@@ -26,6 +26,8 @@
 
 - API、MCP、Report機能はloopback優先で、Hostとbrowser Originを制限します。
 - Replayは標準でloopback HTTP(S)だけを許可し、redirectとsubresourceにも同じ制限を適用します。
+- URL Auditは対象の明示認可を要求し、DNS検証済みIPへ固定接続し、same-hostの安全なredirectと固定観察requestだけを使います。上限は10 request、4 MiB、30秒、同時2件です。
+- URL Auditの標準対象はglobal addressです。localhostはrequest flagと環境変数の二重opt-inが必要で、LAN、link-local、metadata、multicast、unspecified、reserved addressは常に拒否します。
 - Chrome拡張は`activeTab`、`scripting`、session-only storage、2つのloopback host permissionだけを要求します。
 - フォーム値、Cookie、認証ヘッダー、`FormData`は記録しません。
 - スクリーンショットはopt-inで、AIプロンプトへは含めません。
@@ -43,6 +45,8 @@ EagleEyeは認証・認可製品、DLP、WAF、EDR、法令認証の代替では
 ## 許可されたテストだけを行う
 
 所有または明示的な許可を得た対象だけをテストしてください。資格情報の窃取、rate-limit回避、破壊的payload、可用性攻撃、第三者データの取得を禁止します。productionでの書込み、決済、本人確認、法的同意、公開・送信の最終操作は人間の承認境界に残してください。
+
+URL Auditはpenetration testではありません。固定requestへexploit payload、port scan、directory brute-force、資格情報試行、状態変更requestを追加してはいけません。
 
 ## Release security gate
 

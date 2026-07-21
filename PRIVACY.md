@@ -14,6 +14,7 @@ EagleEye is a local-first QA tool for testing websites that the user controls or
 |---|---|---|
 | Session settings | Session name and test objective entered in the EagleEye popup | Device running EagleEye |
 | URLs | HTTP(S) URLs with userinfo, fragments, and query keys that appear to contain secrets removed | Device running EagleEye |
+| URL Audit | Query values redacted; semantic header presence, status codes, byte counts, hashes, fixed discovery hints, and generated test cases | Device running EagleEye |
 | Action summaries | Action type (click / fill / select / check), timestamp, element role and name, and a constrained selector | Device running EagleEye |
 | DOM summaries | Size-limited accessible summaries of page titles, headings, landmarks, and controls | Device running EagleEye |
 | Optional images | Visible-viewport screenshots captured at start and stop only when explicitly enabled by the user | Device running EagleEye |
@@ -21,6 +22,10 @@ EagleEye is a local-first QA tool for testing websites that the user controls or
 | Extension state | Current session state stored only in `chrome.storage.session` | Current Chrome session |
 
 EagleEye does not collect or transmit values entered into web forms, selected values, cookies, authentication headers, `FormData`, passwords, one-time passwords, or payment information. However, if personal or confidential information is visible in page titles, headings, control names, or optional screenshots, that visible information may be included in a summary or image.
+
+URL Audit processes bounded response bodies in memory to identify fixed QA hints. It does not retain
+the bodies or raw response headers; persisted reports contain semantic header facts, response sizes,
+SHA-256 hashes, redacted URLs, and bounded discovery summaries.
 
 EagleEye does not include product telemetry that sends usage data to its developers. It does not automatically publish data, submit it to Report Hub, or post it to GitHub.
 
@@ -48,7 +53,7 @@ Do not begin recording on unauthorized sites, third-party accounts, highly sensi
 
 ## 5. Retention and deletion
 
-The default configuration does not impose an automatic retention period; users control data stored on their devices. When data is no longer needed, use **Delete this session from this device** in the popup or `DELETE /api/v1/browser-agent/sessions/{session_id}` to delete the session, DOM summaries, screenshots, replay videos, generated specs/YAML, and run results. Extension state is also cleared when the Chrome session ends or the extension is reloaded, disabled, or updated.
+The default configuration does not impose an automatic retention period; users control data stored on their devices. When data is no longer needed, use **Delete this session from this device** in the popup or `DELETE /api/v1/browser-agent/sessions/{session_id}` to delete the session, DOM summaries, screenshots, replay videos, generated specs/YAML, and run results. Delete a URL Audit JSON/Markdown evidence pair with `DELETE /api/v1/url-audits/{audit_id}`. Extension state is also cleared when the Chrome session ends or the extension is reloaded, disabled, or updated.
 
 If a user copies data to backups, Report Hub, GitHub, chat systems, ticketing systems, or other destinations, the user must delete those copies from each destination separately.
 

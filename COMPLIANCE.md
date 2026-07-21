@@ -18,6 +18,7 @@ The result is a **CONDITIONAL PASS**. The default configuration of the open-sour
 | Screenshots | Off by default, separate checkbox, visible viewport only, not sent to AI | PASS | Visually inspect and mask PII in images |
 | Retention and deletion | Local storage, session-only extension state, one-click deletion API/UI | PASS | Delete backups and copies shared externally |
 | Security controls | Host/CORS/Origin/CSP, `no-store`, path confinement, and redirect guard | PASS | Add TLS, authentication, and rate limits for remote deployment |
+| URL Audit | Explicit authorization, observation-only methods, pinned IP, SSRF deny rules, fixed request/body/time/concurrency budgets, and local reports | PASS | Confirm ownership/authorization and delete local reports under the operator's retention policy |
 | Third-party disclosure | Sends a minimized prompt to the selected provider only during AI generation | PASS | Provider contracts, international transfers, DPA/DPIA |
 | Data-subject rights | View and export local data; delete individual sessions | PASS | Request intake, identity verification, and deadlines in organizational deployments |
 | Breach response | Private security reporting and incident contact policy | PARTIAL | Organizational response procedures and regulator/data-subject notification |

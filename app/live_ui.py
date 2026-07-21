@@ -102,14 +102,23 @@ def live_html() -> str:
               </li>
             </ol>
 
-            <div class="hero-actions">
-              <button id="local-sample" class="button button-primary" type="button"
-                      aria-describedby="demo-help" disabled>
-                <span id="local-sample-label">ローカルサンプルを作成</span>
-              </button>
-              <a class="button button-secondary" href="#extension-setup">拡張導入ガイド</a>
-            </div>
-            <p id="demo-help" class="action-help">接続状態を確認しています。</p>
+            <form id="url-audit-form" class="url-audit-form">
+              <label for="url-audit-url">認可済みURLからQAを開始</label>
+              <div class="hero-actions">
+                <input id="url-audit-url" name="targetUrl" type="url"
+                       placeholder="https://example.com" required autocomplete="url"
+                       aria-describedby="url-audit-help">
+                <button id="url-audit-submit" class="button button-primary" type="submit" disabled>
+                  <span id="url-audit-submit-label">URL Audit</span>
+                </button>
+                <a class="button button-secondary" href="#extension-setup">拡張導入ガイド</a>
+              </div>
+              <label class="authorization-check">
+                <input id="url-audit-authorized" type="checkbox" required>
+                このサイトを監査する権限があり、観察専用リクエストに同意します
+              </label>
+            </form>
+            <p id="url-audit-help" class="action-help">接続状態を確認しています。</p>
           </section>
 
           <aside class="readiness-card" aria-labelledby="readiness-title">
@@ -126,8 +135,8 @@ def live_html() -> str:
                 <dd id="provider-state">読み込み中</dd>
               </div>
               <div>
-                <dt>Authorized sample target</dt>
-                <dd id="target-state">読み込み中</dd>
+                <dt>URL Audit</dt>
+                <dd id="audit-state">読み込み中</dd>
               </div>
               <div>
                 <dt>Browser extension</dt>
@@ -727,6 +736,35 @@ a {
   align-items: center;
   flex-wrap: wrap;
   gap: 8px;
+}
+
+.url-audit-form {
+  display: grid;
+  gap: 8px;
+}
+
+.url-audit-form > label:first-child {
+  color: var(--text-soft);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.url-audit-form input[type="url"] {
+  min-width: min(100%, 340px);
+  min-height: 36px;
+  padding: 0 11px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-small);
+  background: var(--surface-raised);
+  color: var(--text);
+}
+
+.authorization-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  color: var(--muted);
+  font-size: 10px;
 }
 
 .button,
@@ -1461,7 +1499,9 @@ def live_js() -> str:
   const ENDPOINTS = Object.freeze({
     status: "/api/v1/browser-agent/status",
     sessions: "/api/v1/browser-agent/sessions",
-    localSample: "/api/v1/browser-agent/sample/local",
+    urlAudits: "/api/v1/url-audits",
+    urlAuditReport: (auditId) =>
+      `/api/v1/url-audits/${encodeURIComponent(auditId)}/report`,
     run: (sessionId) =>
       `/api/v1/browser-agent/sessions/${encodeURIComponent(sessionId)}/run`,
     report: (sessionId) =>
@@ -1484,7 +1524,7 @@ def live_js() -> str:
     refreshing: false,
     statusError: "",
     sessionsError: "",
-    demoBusy: false,
+    auditBusy: false,
     busyRuns: new Set(),
     actionNotice: null,
     toastTimer: null,
@@ -1498,7 +1538,8 @@ def live_js() -> str:
     cacheNodes();
     setupTheme();
     setupTabs();
-    nodes.demo.addEventListener("click", startLocalSample);
+    nodes.auditForm.addEventListener("submit", startUrlAudit);
+    nodes.auditAuthorized.addEventListener("change", renderAuditControls);
     nodes.refresh.addEventListener("click", () => refreshSessions(true));
     document.querySelectorAll("[data-open-tab]").forEach((button) => {
       button.addEventListener("click", () => activateTab(button.dataset.openTab, true));
@@ -1512,12 +1553,15 @@ def live_js() -> str:
     nodes.service = byId("service-indicator");
     nodes.serviceLabel = byId("service-label");
     nodes.theme = byId("theme-toggle");
-    nodes.demo = byId("local-sample");
-    nodes.demoLabel = byId("local-sample-label");
-    nodes.demoHelp = byId("demo-help");
+    nodes.auditForm = byId("url-audit-form");
+    nodes.auditUrl = byId("url-audit-url");
+    nodes.auditAuthorized = byId("url-audit-authorized");
+    nodes.auditSubmit = byId("url-audit-submit");
+    nodes.auditSubmitLabel = byId("url-audit-submit-label");
+    nodes.auditHelp = byId("url-audit-help");
     nodes.readinessBadge = byId("readiness-badge");
     nodes.providerState = byId("provider-state");
-    nodes.targetState = byId("target-state");
+    nodes.auditState = byId("audit-state");
     nodes.extensionState = byId("extension-state");
     nodes.providerGuidance = byId("provider-guidance");
     nodes.extensionOrigin = byId("extension-origin");
@@ -1690,37 +1734,54 @@ def live_js() -> str:
     }
   }
 
-  async function startLocalSample() {
-    if (nodes.demo.disabled || state.demoBusy) {
+  async function startUrlAudit(event) {
+    event.preventDefault();
+    if (nodes.auditSubmit.disabled || state.auditBusy) {
       return;
     }
-    state.demoBusy = true;
+    state.auditBusy = true;
     state.actionNotice = {
       kind: "loading",
-      title: "ローカルサンプルを準備中",
-      detail: "公開導線を観察し、安全なテストケースへ変換しています。",
+      title: "URLを観察中",
+      detail: "固定された非侵襲リクエストでQAプロジェクトseedを生成しています。",
     };
     renderAll();
     try {
-      const session = normalizeSession(await requestJson(ENDPOINTS.localSample, { method: "POST" }));
-      upsertSession(session);
+      const audit = await requestJson(ENDPOINTS.urlAudits, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          targetUrl: nodes.auditUrl.value.trim(),
+          authorized: true,
+          allowLocalhost: false,
+        }),
+      });
+      const warningCount = Array.isArray(audit.findings)
+        ? audit.findings.filter((item) => item && item.status === "WARN").length
+        : 0;
+      const projectId = audit.project && typeof audit.project.id === "string"
+        ? audit.project.id
+        : "未生成";
       state.actionNotice = {
-        kind: "success",
-        title: "ローカルサンプルを生成しました",
-        detail: "Test一覧から Replay を実行すると、判定とレポートまで確認できます。",
+        kind: audit.decision === "BLOCKED" ? "warning" : "success",
+        title: audit.decision === "BLOCKED" ? "URL AuditはBLOCKEDです" : "QAプロジェクトを生成しました",
+        detail: `Project ${projectId} · warning ${warningCount}件 · 判定 ${audit.decision}`,
+        action: {
+          label: "Markdownレポート",
+          href: ENDPOINTS.urlAuditReport(audit.auditId),
+        },
       };
-      activateTab("tests", true);
-      showToast("ローカルサンプルを Test一覧へ追加しました。", "success");
+      showToast("URL Auditレポートを生成しました。", "success");
     } catch (error) {
       const message = messageFromError(error);
       state.actionNotice = {
         kind: "error",
-        title: "ローカルサンプルを開始できませんでした",
+        title: "URL Auditを開始できませんでした",
         detail: message,
       };
       showToast(message, "error");
     } finally {
-      state.demoBusy = false;
+      state.auditBusy = false;
       renderAll();
     }
   }
@@ -1827,8 +1888,6 @@ def live_js() -> str:
       selectedProvider: textValue(source.selectedProvider, "未選択"),
       providerConnected: source.providerConnected === true,
       setupGuidance: textValue(source.setupGuidance, "接続案内を取得できません。"),
-      sampleTarget: textValue(source.sampleTarget, "未設定"),
-      sampleTargetReachable: source.sampleTargetReachable === true,
     };
   }
 
@@ -1885,7 +1944,7 @@ def live_js() -> str:
       nodes.readinessBadge.className = "badge badge-loading";
       nodes.readinessBadge.textContent = "確認中";
       nodes.providerState.textContent = "読み込み中";
-      nodes.targetState.textContent = "読み込み中";
+      nodes.auditState.textContent = "読み込み中";
       nodes.extensionState.textContent = "読み込み中";
       nodes.providerGuidance.textContent = "provider 状態を取得しています。";
       nodes.extensionOrigin.textContent = "取得中";
@@ -1895,13 +1954,13 @@ def live_js() -> str:
       nodes.readinessBadge.className = "badge badge-error";
       nodes.readinessBadge.textContent = "OFFLINE";
       nodes.providerState.textContent = "確認できません";
-      nodes.targetState.textContent = "確認できません";
+      nodes.auditState.textContent = "確認できません";
       nodes.extensionState.textContent = "確認できません";
       nodes.providerGuidance.textContent = state.statusError;
       nodes.extensionOrigin.textContent = "API接続後に表示します";
     } else {
       const agent = state.agent;
-      const fullyReady = agent.providerConnected && agent.sampleTargetReachable;
+      const fullyReady = agent.providerConnected;
       nodes.service.dataset.state = "success";
       nodes.serviceLabel.textContent = "Browser Agent ready";
       nodes.readinessBadge.className = `badge ${fullyReady ? "badge-success" : "badge-warning"}`;
@@ -1909,28 +1968,25 @@ def live_js() -> str:
       nodes.providerState.textContent = agent.providerConnected
         ? `${agent.selectedProvider} · 接続済み`
         : `${agent.selectedProvider} · fallback`;
-      nodes.targetState.textContent = agent.sampleTargetReachable
-        ? `${agent.sampleTarget} · 到達可`
-        : `${agent.sampleTarget} · 停止中`;
+      nodes.auditState.textContent = "観察専用 · 認可必須";
       nodes.extensionState.textContent = agent.extensionOrigin === "未登録" ? "未登録" : "origin 登録済み";
       nodes.providerGuidance.textContent = agent.setupGuidance;
       nodes.extensionOrigin.textContent = agent.extensionOrigin;
     }
 
-    const targetUnavailable = !state.agent || !state.agent.sampleTargetReachable;
-    nodes.demo.disabled =
-      state.statusLoading || Boolean(state.statusError) || state.demoBusy || targetUnavailable;
-    nodes.demoLabel.textContent = state.demoBusy ? "サンプル準備中…" : "ローカルサンプルを作成";
-    if (state.demoBusy) {
-      nodes.demoHelp.textContent = "観察データとテストケースを生成しています。";
-    } else if (state.statusLoading) {
-      nodes.demoHelp.textContent = "接続状態を確認しています。";
-    } else if (state.statusError) {
-      nodes.demoHelp.textContent = "APIへの接続後に利用できます。";
-    } else if (targetUnavailable) {
-      nodes.demoHelp.textContent = "認可済みローカルサンプルの起動後に利用できます。";
+    renderAuditControls();
+  }
+
+  function renderAuditControls() {
+    const unavailable = state.statusLoading || Boolean(state.statusError);
+    nodes.auditSubmit.disabled = unavailable || state.auditBusy || !nodes.auditAuthorized.checked;
+    nodes.auditSubmitLabel.textContent = state.auditBusy ? "監査中…" : "URL Audit";
+    if (state.auditBusy) {
+      nodes.auditHelp.textContent = "最大10リクエスト・30秒の観察予算で実行しています。";
+    } else if (unavailable) {
+      nodes.auditHelp.textContent = "APIへの接続後に利用できます。";
     } else {
-      nodes.demoHelp.textContent = "公開ページだけを使い、約30秒で生成します。";
+      nodes.auditHelp.textContent = "攻撃・総当たり・ポート走査を行わず、公開HTTP(S)だけを観察します。";
     }
   }
 
@@ -2031,7 +2087,7 @@ def live_js() -> str:
         nodes.dashboardRecent,
         "empty",
         "まだテストはありません",
-        "ローカルサンプルまたはブラウザー拡張から最初の操作を記録してください。",
+        "URL AuditでQA計画を作るか、ブラウザー拡張から最初の操作を記録してください。",
         null,
         true,
       );
@@ -2094,7 +2150,7 @@ def live_js() -> str:
         nodes.testsState,
         "empty",
         "テストはまだありません",
-        "Dashboard のローカルサンプル、またはブラウザー拡張から作成できます。",
+        "Dashboard のURL Audit、またはブラウザー拡張から作成できます。",
       );
       return;
     }
@@ -2297,11 +2353,20 @@ def live_js() -> str:
     }
     box.append(symbol, copy);
     if (action) {
-      const button = textElement("button", action.label);
-      button.type = "button";
-      button.className = "button button-secondary button-small";
-      button.addEventListener("click", action.action);
-      box.append(button);
+      if (action.href) {
+        const link = textElement("a", action.label);
+        link.className = "button button-secondary button-small";
+        link.href = action.href;
+        link.target = "_blank";
+        link.rel = "noopener noreferrer";
+        box.append(link);
+      } else {
+        const button = textElement("button", action.label);
+        button.type = "button";
+        button.className = "button button-secondary button-small";
+        button.addEventListener("click", action.action);
+        box.append(button);
+      }
     }
     host.replaceChildren(box);
   }

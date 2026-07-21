@@ -5,7 +5,6 @@ from .browser_agent import (
     agent_status,
     append_observation,
     bug_report_markdown,
-    create_local_sample,
     create_session,
     delete_session,
     generate_session,
@@ -88,16 +87,6 @@ def run(session_id: str) -> BrowserAgentSession:
         raise HTTPException(status_code=403, detail=str(exc)) from exc
     except ValueError as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
-
-
-@router.post("/sample/local", response_model=BrowserAgentSession)
-def local_sample() -> BrowserAgentSession:
-    try:
-        return create_local_sample()
-    except ValueError as exc:
-        raise HTTPException(status_code=422, detail=str(exc)) from exc
-    except RuntimeError as exc:
-        raise HTTPException(status_code=503, detail=str(exc)) from exc
 
 
 @router.get("/sessions/{session_id}/report", response_class=HTMLResponse)

@@ -26,6 +26,11 @@ Maintainers will coordinate acknowledgment, triage, remediation, and disclosure 
 
 - API, MCP, and reporting features prefer loopback and restrict Host values and browser origins.
 - Replay permits only loopback HTTP(S) by default and applies the same boundary to redirects and subresources.
+- URL Audit requires explicit target authorization, pins each connection to a validated DNS result,
+  follows only same-host safe redirects, and uses only fixed observation requests. It is capped at
+  10 requests, 4 MiB, 30 seconds, and two concurrent audits.
+- URL Audit defaults to global addresses. Localhost needs a request flag and environment opt-in;
+  LAN, link-local, metadata, multicast, unspecified, and reserved addresses are always denied.
 - The Chrome extension requests only `activeTab`, `scripting`, session-only storage, and two loopback host permissions.
 - Form values, cookies, authentication headers, and `FormData` are not recorded.
 - Screenshots are opt-in and are not included in AI prompts.
@@ -43,6 +48,9 @@ If you enable `EAGLEEYE_ALLOW_REMOTE=1`, external binding, a reverse proxy, clou
 ## Authorized testing only
 
 Test only targets you own or are explicitly authorized to test. Credential theft, rate-limit bypass, destructive payloads, availability attacks, and acquisition of third-party data are prohibited. Production writes, payments, identity verification, legal consent, publication, and final submission actions must remain human approval boundaries.
+
+URL Audit is not a penetration test. Do not extend its fixed request set with exploit payloads, port
+scans, directory brute force, credential attempts, or state-changing requests.
 
 ## Release security gate
 

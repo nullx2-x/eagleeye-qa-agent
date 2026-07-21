@@ -10,6 +10,7 @@ from __future__ import annotations
 import base64
 import hashlib
 import json
+import os
 import re
 import time
 import urllib.request
@@ -19,9 +20,9 @@ from uuid import uuid4
 
 from playwright.sync_api import Page, expect, sync_playwright
 
-ROOT = Path(__file__).resolve().parents[1]
-API_BASE = "http://127.0.0.1:8766"
-TARGET_URL = "http://127.0.0.1:8766/demo-site/"
+ROOT = Path(__file__).resolve().parents[2]
+API_BASE = os.getenv("EAGLEEYE_DEMO_API_BASE", "http://127.0.0.1:8766")
+TARGET_URL = os.getenv("EAGLEEYE_DEMO_TARGET_URL", "http://127.0.0.1:8767/")
 
 
 def packaged_extension_id() -> str:

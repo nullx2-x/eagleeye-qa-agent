@@ -123,6 +123,4 @@ class BrowserAgentStatus(BaseModel):
     selectedProvider: str
     providerConnected: bool
     setupGuidance: str
-    sampleTarget: str
-    sampleTargetReachable: bool
     capabilities: list[str]

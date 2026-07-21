@@ -18,6 +18,7 @@
 | screenshot | 初期OFF、別checkbox、可視領域のみ、AI送信なし | PASS | 画像内PIIの目視確認・mask |
 | 保存・削除 | local保存、session-only extension state、1-click削除API/UI | PASS | backup・外部共有先の削除 |
 | 安全管理 | Host/CORS/Origin/CSP、no-store、path confinement、redirect guard | PASS | remote公開時のTLS・認証・rate limit |
+| URL Audit | 明示認可、観察専用method、IP固定、SSRF拒否、固定request/body/time/concurrency予算、local report | PASS | 所有・許可の確認と運用保存期間に沿ったlocal report削除 |
 | 第三者提供 | AI生成時だけ最小化promptを選択providerへ送信 | PASS | provider契約、国外移転、DPA/DPIA |
 | 本人の権利 | localデータの閲覧・export・セッション単位削除 | PASS | 組織運用での請求受付・本人確認・期限管理 |
 | 漏えい対応 | private security reportingと事故連絡方針 | PARTIAL | 組織の報告手順・監督機関/本人通知 |

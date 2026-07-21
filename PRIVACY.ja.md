@@ -14,6 +14,7 @@ EagleEyeは、利用者が管理または正当な許可を得たWebサイトを
 |---|---|---|
 | セッション設定 | 利用者がEagleEye popupへ入力するセッション名、確認目的 | EagleEye実行端末 |
 | URL | HTTP(S)のURL。userinfoとfragment、秘密値らしいquery keyは除去 | EagleEye実行端末 |
+| URL Audit | query valueを秘匿し、semantic header、status、byte数、hash、固定discovery hint、生成テストケースを保存 | EagleEye実行端末 |
 | 操作要約 | click / fill / select / checkの種別、時刻、要素の役割・名前・限定selector | EagleEye実行端末 |
 | DOM要約 | ページタイトル、見出し、ランドマーク、コントロールの件数制限付きアクセシブル要約 | EagleEye実行端末 |
 | 任意画像 | 利用者が明示的に有効化した開始時・停止時の可視領域スクリーンショット | EagleEye実行端末 |
@@ -21,6 +22,8 @@ EagleEyeは、利用者が管理または正当な許可を得たWebサイトを
 | 拡張状態 | 現在のセッション状態。`chrome.storage.session`のみ | Chromeの現在セッション |
 
 Webフォームへ入力した値、選択値、Cookie、認証ヘッダー、`FormData`、パスワード、OTP、決済情報は取得・送信しません。ただし、表示中のページタイトル、見出し、コントロール名、任意スクリーンショットに個人情報や機密情報が表示されている場合、その表示内容が要約または画像へ含まれる可能性があります。
+
+URL Auditは固定QA hintを抽出するため、上限付きresponse bodyをmemory上で処理します。bodyとraw response headerは保存せず、semantic header、response size、SHA-256、秘匿済みURL、件数制限付きdiscovery要約だけをレポートへ残します。
 
 EagleEye本体には利用状況を開発者へ送る製品テレメトリーを実装していません。公開、Report Hubへの提出、GitHubへの投稿も自動では行いません。
 
@@ -48,7 +51,7 @@ Chrome拡張は、記録内容、AI送信、任意スクリーンショットの
 
 ## 5. 保存期間と削除
 
-標準構成は自動保存期限を設定せず、端末上のデータを利用者が管理します。不要になったらpopupの「このセッションを端末から削除」または `DELETE /api/v1/browser-agent/sessions/{session_id}` を使って、セッション、DOM要約、スクリーンショット、Replay動画、生成spec/YAML、run結果を削除できます。拡張状態はChromeのセッション終了、拡張の再読み込み・無効化・更新でも消去されます。
+標準構成は自動保存期限を設定せず、端末上のデータを利用者が管理します。不要になったらpopupの「このセッションを端末から削除」または `DELETE /api/v1/browser-agent/sessions/{session_id}` を使って、セッション、DOM要約、スクリーンショット、Replay動画、生成spec/YAML、run結果を削除できます。URL AuditのJSON/Markdown証跡は `DELETE /api/v1/url-audits/{audit_id}` で削除できます。拡張状態はChromeのセッション終了、拡張の再読み込み・無効化・更新でも消去されます。
 
 バックアップ、Report Hub、GitHub、チャット、チケット等へ利用者が複製したデータは、それぞれの保存先でも削除してください。
 

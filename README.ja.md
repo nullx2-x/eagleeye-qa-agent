@@ -27,9 +27,13 @@ AIは候補を提案しますが、記録されたcritical path、実行結果�
 
 Project QA は Node.js、Python、Go、Rust、.NET、Gradle、Maven を検出します。`.eagleeye/qa.json` で許可済みコマンド配列を追加でき、明示認可、ルート制限、タイムアウト、秘密情報マスキング、ログ上限、SHA-256証跡を必須にします。
 
+URLだけを受け取った場合は、観察専用のURL Auditを入口にできます。HTTPS、security header、安全なCORS preflight、robots.txt、sitemap.xml、security.txt、固定3候補のOpenAPI、favicon、login導線、technology hintを確認し、JSON/Markdown証跡、品質検査済み初期テストケース、Browser Agent開始URLを持つQA project seedを生成します。
+
+SQL Injection、XSS、総当たり、port scan、directory brute-force、資格情報送信、破壊的writeは実行しません。1監査を10 request、4 MiB、30秒、同時2件に制限します。標準はpublic HTTP(S)だけで、localhostは`allowLocalhost=true`と`EAGLEEYE_URL_AUDIT_ALLOW_LOCALHOST=1`の二重opt-inが必要です。LAN、link-local、metadata、multicast、unspecified、reserved addressは常に拒否します。
+
 ## Quick Start
 
-必要環境はPython 3.12、[uv](https://docs.astral.sh/uv/)、Chromiumです。ログイン不要の同梱デモで最後まで試せます。
+必要環境はPython 3.12、[uv](https://docs.astral.sh/uv/)、Chromiumです。任意のハッカソン用fixtureはproduction runtimeから分離して`demos/hackathon`に置いています。
 
 ```powershell
 git clone https://github.com/nullx2-x/eagleeye-qa-agent.git
@@ -46,6 +50,12 @@ uv run playwright install chromium
 .\scripts\start-eagleeye.ps1
 .\scripts\start-mcp.ps1
 .\scripts\run-project-qa.ps1 -ProjectRoot <authorized-project-path> -Mode development
+```
+
+認可済みpublic URLから始める場合:
+
+```powershell
+.\scripts\run-url-audit.ps1 -Url https://example.com
 ```
 
 ### Chrome拡張
@@ -119,7 +129,7 @@ uv run playwright install chromium
 
 - ダッシュボード/API: `http://127.0.0.1:8766`
 - MCP: `http://127.0.0.1:8768/mcp`
-- 動作確認フォーム: `scripts\start-demo.ps1` で `http://127.0.0.1:8767`
+- 任意のハッカソン用fixture: `demos\hackathon\start.ps1` で `http://127.0.0.1:8767`
 
 この環境の起動スクリプトは、未指定時に`EAGLEEYE_AI_PROVIDER=codex-agent`、`EAGLEEYE_CODEX_TRANSPORT=app-server`、`EAGLEEYE_SELF_REPAIR_ENABLED=1`を設定します。自己修復のfeature flagだけでは書込みを許可しません。モデル・環境・Git状態・fresh attestation・変更上限・固定検証の全条件を満たさない場合はfail closedします。Ollamaへ戻す場合は起動前に`EAGLEEYE_AI_PROVIDER=ollama`を設定してください。
 
@@ -142,6 +152,10 @@ OpenAI APIそのものにはEagleEye独自のエンドユーザーOAuthを仮装
 
 ## REST API
 
+- `POST /api/v1/url-audits`: 認可済みURLを非侵襲で観察し、QA project seedと証跡を生成
+- `GET /api/v1/url-audits/{id}`: 保存済みURL Auditを取得
+- `GET /api/v1/url-audits/{id}/report`: Markdownレポートを取得
+- `DELETE /api/v1/url-audits/{id}`: 保存済みJSON/Markdown証跡を削除
 - `POST /api/v1/test-profiles/generate`: リスク適応プロファイル生成
 - `GET /api/v1/test-profiles/{id}`: 保存済みプロファイル
 - `POST /api/v1/quality-gates/evaluate`: PASS / WARNING / REVIEW / FAIL / BLOCKED判定
@@ -217,6 +231,7 @@ AIはセッション作成と案内を行えますが、ユーザーの承認や
 - 未マスク入力、password/token/secret型、危険なセッションIDを受信時に拒否
 - PKCE S256、state照合、OAuthフロー期限、HTTPS認可/トークンURLを強制
 - Codex App Serverのauth URLはHTTPSかつ固定host・標準portだけを許可し、credential・fragment・紛らわしいsuffix hostを拒否
+- URL AuditはIPを検証後に固定接続し、same-host redirect、semantic headerだけの保存、query value秘匿、10 request / 4 MiB / 30秒 / 同時2件を強制
 - desktop adapterは固定target ID、`shell=False`、最小環境変数、project root confinement、timeout時process tree終了を強制
 - desktop logはBearer/API keyに加え、JWT、GitHub token、AWS access key、URL queryの認証値を保存前にマスク
 - self-repairは`codex-agent/gpt-5.6-sol`のexact allowlist、local・非本番、clean exact Git root、one-use fresh attestationを要求

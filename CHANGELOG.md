@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+- Issue #17をURLからQA projectを始める観察専用入口として実装。HTTPS、security header、CORS、robots、sitemap、security.txt、OpenAPI、favicon、login/technology hintをJSON/Markdown証跡へ保存。
+- URL AuditへIP固定、same-host redirect、localhost二重opt-in、LAN/metadata拒否、10 request・4 MiB・30秒・同時2件の安全予算、query value秘匿、semantic header保存を追加。
+- 品質検査済みの初期security/API/E2EケースとBrowser Agent開始URLを持つQA project seed、REST/MCP/CLI、Dashboard入力導線を追加。
+- ハッカソンfixture、session seed、extension evidence helperを`demos/hackathon`へ分離し、productionの`/demo-site/`と`/browser-agent/sample/local`を廃止。
+
 ## 1.0.0 - 2026-07-17
 
 - Chrome拡張を明示的にONにし、通常操作から安全なDOM要約、可視スクリーンショット、操作履歴を同一セッションへ記録するBuild Week導線を追加。

@@ -13,7 +13,6 @@ from .ai_advisor import advisor
 from .browser_agent_api import router as browser_agent_router
 from .configuration import configuration
 from .dashboard import dashboard_html
-from .demo_site import demo_site_html
 from .desktop_adapter import (
     DesktopTargetValidationError,
     UnknownDesktopTargetError,
@@ -43,9 +42,19 @@ from .strategy import generate_profile, load_profile, save_profile
 from .strategy_models import ProfileRequest, ProfileResponse, QualityGateRequest, QualityGateResponse
 from .test_case_checker import check_test_cases
 from .test_case_models import TestCaseCheckRequest, TestCaseCheckResponse
+from .url_audit_api import router as url_audit_router
 
 ROOT = Path(__file__).resolve().parents[1]
 PROFILES = ROOT / "data" / "profiles"
+
+
+def _configured_mcp_port() -> int:
+    try:
+        port = int(os.getenv("EAGLEEYE_MCP_PORT", "8768"))
+    except ValueError:
+        return 8768
+    return port if 1024 <= port <= 65535 else 8768
+
 
 api_docs_enabled = os.getenv("EAGLEEYE_ENABLE_API_DOCS", "0") == "1"
 app = FastAPI(
@@ -70,6 +79,7 @@ app.add_middleware(
 app.include_router(guided_router)
 app.include_router(browser_agent_router)
 app.include_router(project_qa_router)
+app.include_router(url_audit_router)
 
 
 @app.middleware("http")
@@ -102,21 +112,9 @@ def health() -> dict:
         "status": "ok",
         "service": "eagleeye-qa-agent",
         "version": "1.0.0",
-        "mcp": "http://127.0.0.1:8768/mcp",
+        "mcp": f"http://127.0.0.1:{_configured_mcp_port()}/mcp",
         "aiFirst": True,
     }
-
-
-@app.get("/demo-site/", response_class=HTMLResponse)
-def bundled_demo_site(page_id: int | None = Query(default=None, ge=1, le=99)) -> HTMLResponse:
-    policy = (
-        "default-src 'none'; style-src 'unsafe-inline'; frame-ancestors 'none'; "
-        "base-uri 'none'; form-action 'none'"
-    )
-    return HTMLResponse(
-        demo_site_html(sample_page=page_id == 2),
-        headers={"Content-Security-Policy": policy, "Cache-Control": "no-store"},
-    )
 
 
 @app.get("/api/v1/configuration")
