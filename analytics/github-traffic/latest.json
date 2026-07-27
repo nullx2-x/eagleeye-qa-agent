@@ -1,23 +1,13 @@
 {
   "schema_version": 1,
   "repository": "nullx2-x/eagleeye-qa-agent",
-  "collected_at": "2026-07-24T09:13:10Z",
+  "collected_at": "2026-07-27T04:02:37Z",
   "traffic_window_days": 14,
   "traffic": {
     "clones": {
-      "count": 1074,
-      "uniques": 104,
+      "count": 1172,
+      "uniques": 108,
       "daily": [
-        {
-          "timestamp": "2026-07-10T00:00:00Z",
-          "count": 0,
-          "uniques": 0
-        },
-        {
-          "timestamp": "2026-07-11T00:00:00Z",
-          "count": 0,
-          "uniques": 0
-        },
         {
           "timestamp": "2026-07-12T00:00:00Z",
           "count": 0,
@@ -77,23 +67,23 @@
           "timestamp": "2026-07-23T00:00:00Z",
           "count": 74,
           "uniques": 4
+        },
+        {
+          "timestamp": "2026-07-24T00:00:00Z",
+          "count": 94,
+          "uniques": 7
+        },
+        {
+          "timestamp": "2026-07-25T00:00:00Z",
+          "count": 4,
+          "uniques": 3
         }
       ]
     },
     "views": {
-      "count": 221,
-      "uniques": 3,
+      "count": 222,
+      "uniques": 4,
       "daily": [
-        {
-          "timestamp": "2026-07-10T00:00:00Z",
-          "count": 0,
-          "uniques": 0
-        },
-        {
-          "timestamp": "2026-07-11T00:00:00Z",
-          "count": 0,
-          "uniques": 0
-        },
         {
           "timestamp": "2026-07-12T00:00:00Z",
           "count": 0,
@@ -153,6 +143,16 @@
           "timestamp": "2026-07-23T00:00:00Z",
           "count": 10,
           "uniques": 1
+        },
+        {
+          "timestamp": "2026-07-24T00:00:00Z",
+          "count": 1,
+          "uniques": 1
+        },
+        {
+          "timestamp": "2026-07-25T00:00:00Z",
+          "count": 0,
+          "uniques": 0
         }
       ]
     }
@@ -161,7 +161,7 @@
     "stars": 0,
     "forks": 0,
     "watchers": 0,
-    "open_issues": 0
+    "open_issues": 8
   },
   "release_downloads": 0,
   "popular_referrers": [
@@ -177,8 +177,8 @@
     },
     {
       "referrer": "t.co",
-      "count": 1,
-      "uniques": 1
+      "count": 2,
+      "uniques": 2
     }
   ],
   "popular_paths": [
@@ -189,16 +189,16 @@
       "uniques": 2
     },
     {
+      "path": "/nullx2-x/eagleeye-qa-agent/blob/main/README.ja.md",
+      "title": "/blob/main/README.ja.md",
+      "count": 11,
+      "uniques": 3
+    },
+    {
       "path": "/nullx2-x/eagleeye-qa-agent/actions",
       "title": "/actions",
       "count": 11,
       "uniques": 1
-    },
-    {
-      "path": "/nullx2-x/eagleeye-qa-agent/blob/main/README.ja.md",
-      "title": "/blob/main/README.ja.md",
-      "count": 10,
-      "uniques": 2
     },
     {
       "path": "/nullx2-x/eagleeye-qa-agent/actions/workflows/collect-repository-traffic.yml",
