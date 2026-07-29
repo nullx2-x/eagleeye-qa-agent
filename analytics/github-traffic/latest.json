@@ -1,23 +1,13 @@
 {
   "schema_version": 1,
   "repository": "nullx2-x/eagleeye-qa-agent",
-  "collected_at": "2026-07-27T04:02:37Z",
+  "collected_at": "2026-07-29T03:40:51Z",
   "traffic_window_days": 14,
   "traffic": {
     "clones": {
-      "count": 1172,
-      "uniques": 108,
+      "count": 1185,
+      "uniques": 116,
       "daily": [
-        {
-          "timestamp": "2026-07-12T00:00:00Z",
-          "count": 0,
-          "uniques": 0
-        },
-        {
-          "timestamp": "2026-07-13T00:00:00Z",
-          "count": 0,
-          "uniques": 0
-        },
         {
           "timestamp": "2026-07-14T00:00:00Z",
           "count": 0,
@@ -77,23 +67,23 @@
           "timestamp": "2026-07-25T00:00:00Z",
           "count": 4,
           "uniques": 3
+        },
+        {
+          "timestamp": "2026-07-26T00:00:00Z",
+          "count": 11,
+          "uniques": 10
+        },
+        {
+          "timestamp": "2026-07-27T00:00:00Z",
+          "count": 2,
+          "uniques": 1
         }
       ]
     },
     "views": {
-      "count": 222,
+      "count": 223,
       "uniques": 4,
       "daily": [
-        {
-          "timestamp": "2026-07-12T00:00:00Z",
-          "count": 0,
-          "uniques": 0
-        },
-        {
-          "timestamp": "2026-07-13T00:00:00Z",
-          "count": 0,
-          "uniques": 0
-        },
         {
           "timestamp": "2026-07-14T00:00:00Z",
           "count": 0,
@@ -153,6 +143,16 @@
           "timestamp": "2026-07-25T00:00:00Z",
           "count": 0,
           "uniques": 0
+        },
+        {
+          "timestamp": "2026-07-26T00:00:00Z",
+          "count": 0,
+          "uniques": 0
+        },
+        {
+          "timestamp": "2026-07-27T00:00:00Z",
+          "count": 1,
+          "uniques": 1
         }
       ]
     }
@@ -167,7 +167,7 @@
   "popular_referrers": [
     {
       "referrer": "github.com",
-      "count": 42,
+      "count": 43,
       "uniques": 1
     },
     {
@@ -185,7 +185,7 @@
     {
       "path": "/nullx2-x/eagleeye-qa-agent",
       "title": "Overview",
-      "count": 42,
+      "count": 43,
       "uniques": 2
     },
     {
