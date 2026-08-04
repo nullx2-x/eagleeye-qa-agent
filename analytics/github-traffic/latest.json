@@ -1,18 +1,13 @@
 {
   "schema_version": 1,
   "repository": "nullx2-x/eagleeye-qa-agent",
-  "collected_at": "2026-08-02T03:53:28Z",
+  "collected_at": "2026-08-04T03:37:22Z",
   "traffic_window_days": 14,
   "traffic": {
     "clones": {
-      "count": 1169,
-      "uniques": 125,
+      "count": 977,
+      "uniques": 126,
       "daily": [
-        {
-          "timestamp": "2026-07-18T00:00:00Z",
-          "count": 197,
-          "uniques": 3
-        },
         {
           "timestamp": "2026-07-19T00:00:00Z",
           "count": 242,
@@ -77,18 +72,18 @@
           "timestamp": "2026-07-31T00:00:00Z",
           "count": 28,
           "uniques": 5
+        },
+        {
+          "timestamp": "2026-08-01T00:00:00Z",
+          "count": 5,
+          "uniques": 3
         }
       ]
     },
     "views": {
-      "count": 256,
+      "count": 254,
       "uniques": 6,
       "daily": [
-        {
-          "timestamp": "2026-07-18T00:00:00Z",
-          "count": 2,
-          "uniques": 1
-        },
         {
           "timestamp": "2026-07-19T00:00:00Z",
           "count": 16,
@@ -151,6 +146,11 @@
         },
         {
           "timestamp": "2026-07-31T00:00:00Z",
+          "count": 0,
+          "uniques": 0
+        },
+        {
+          "timestamp": "2026-08-01T00:00:00Z",
           "count": 0,
           "uniques": 0
         }
