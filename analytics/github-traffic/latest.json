@@ -1,28 +1,13 @@
 {
   "schema_version": 1,
   "repository": "nullx2-x/eagleeye-qa-agent",
-  "collected_at": "2026-08-04T03:37:22Z",
+  "collected_at": "2026-08-06T03:37:52Z",
   "traffic_window_days": 14,
   "traffic": {
     "clones": {
-      "count": 977,
-      "uniques": 126,
+      "count": 254,
+      "uniques": 41,
       "daily": [
-        {
-          "timestamp": "2026-07-19T00:00:00Z",
-          "count": 242,
-          "uniques": 3
-        },
-        {
-          "timestamp": "2026-07-20T00:00:00Z",
-          "count": 136,
-          "uniques": 29
-        },
-        {
-          "timestamp": "2026-07-21T00:00:00Z",
-          "count": 354,
-          "uniques": 69
-        },
         {
           "timestamp": "2026-07-22T00:00:00Z",
           "count": 13,
@@ -77,28 +62,28 @@
           "timestamp": "2026-08-01T00:00:00Z",
           "count": 5,
           "uniques": 3
+        },
+        {
+          "timestamp": "2026-08-02T00:00:00Z",
+          "count": 2,
+          "uniques": 1
+        },
+        {
+          "timestamp": "2026-08-03T00:00:00Z",
+          "count": 3,
+          "uniques": 2
+        },
+        {
+          "timestamp": "2026-08-04T00:00:00Z",
+          "count": 4,
+          "uniques": 3
         }
       ]
     },
     "views": {
-      "count": 254,
-      "uniques": 6,
+      "count": 63,
+      "uniques": 5,
       "daily": [
-        {
-          "timestamp": "2026-07-19T00:00:00Z",
-          "count": 16,
-          "uniques": 1
-        },
-        {
-          "timestamp": "2026-07-20T00:00:00Z",
-          "count": 38,
-          "uniques": 1
-        },
-        {
-          "timestamp": "2026-07-21T00:00:00Z",
-          "count": 137,
-          "uniques": 2
-        },
         {
           "timestamp": "2026-07-22T00:00:00Z",
           "count": 7,
@@ -153,6 +138,21 @@
           "timestamp": "2026-08-01T00:00:00Z",
           "count": 0,
           "uniques": 0
+        },
+        {
+          "timestamp": "2026-08-02T00:00:00Z",
+          "count": 0,
+          "uniques": 0
+        },
+        {
+          "timestamp": "2026-08-03T00:00:00Z",
+          "count": 0,
+          "uniques": 0
+        },
+        {
+          "timestamp": "2026-08-04T00:00:00Z",
+          "count": 0,
+          "uniques": 0
         }
       ]
     }
@@ -161,66 +161,42 @@
     "stars": 1,
     "forks": 0,
     "watchers": 0,
-    "open_issues": 9
+    "open_issues": 10
   },
   "release_downloads": 0,
   "popular_referrers": [
     {
       "referrer": "github.com",
-      "count": 50,
+      "count": 19,
+      "uniques": 2
+    },
+    {
+      "referrer": "t.co",
+      "count": 5,
       "uniques": 2
     },
     {
       "referrer": "devpost.com",
-      "count": 9,
+      "count": 1,
       "uniques": 1
-    },
-    {
-      "referrer": "t.co",
-      "count": 6,
-      "uniques": 3
     }
   ],
   "popular_paths": [
     {
       "path": "/nullx2-x/eagleeye-qa-agent",
       "title": "Overview",
-      "count": 46,
+      "count": 12,
       "uniques": 4
     },
     {
       "path": "/nullx2-x/eagleeye-qa-agent/blob/main/README.ja.md",
       "title": "/blob/main/README.ja.md",
-      "count": 14,
-      "uniques": 4
-    },
-    {
-      "path": "/nullx2-x/eagleeye-qa-agent/actions",
-      "title": "/actions",
-      "count": 11,
-      "uniques": 1
-    },
-    {
-      "path": "/nullx2-x/eagleeye-qa-agent/actions/workflows/collect-repository-traffic.yml",
-      "title": "/actions/workflows/collect-repository-traffic.yml",
-      "count": 10,
-      "uniques": 1
-    },
-    {
-      "path": "/nullx2-x/eagleeye-qa-agent/blob/analytics-data/analytics/github-traffic/REPORT.md",
-      "title": "/blob/analytics-data/analytics/github-traffic/REPORT.md",
-      "count": 6,
-      "uniques": 1
+      "count": 4,
+      "uniques": 3
     },
     {
       "path": "/nullx2-x/eagleeye-qa-agent/security",
       "title": "/security",
-      "count": 5,
-      "uniques": 1
-    },
-    {
-      "path": "/nullx2-x/eagleeye-qa-agent/pulls",
-      "title": "/pulls",
       "count": 4,
       "uniques": 1
     },
@@ -231,15 +207,39 @@
       "uniques": 1
     },
     {
+      "path": "/nullx2-x/eagleeye-qa-agent/pulls",
+      "title": "/pulls",
+      "count": 3,
+      "uniques": 1
+    },
+    {
+      "path": "/nullx2-x/eagleeye-qa-agent/security/dependabot/3",
+      "title": "/security/dependabot/3",
+      "count": 3,
+      "uniques": 1
+    },
+    {
+      "path": "/nullx2-x/eagleeye-qa-agent/tree/analytics-data",
+      "title": "/tree/analytics-data",
+      "count": 3,
+      "uniques": 1
+    },
+    {
       "path": "/nullx2-x/eagleeye-qa-agent/issues",
       "title": "/issues",
-      "count": 3,
+      "count": 2,
       "uniques": 2
     },
     {
-      "path": "/nullx2-x/eagleeye-qa-agent/issues/17",
-      "title": "/issues/17",
-      "count": 3,
+      "path": "/nullx2-x/eagleeye-qa-agent/branches",
+      "title": "/branches",
+      "count": 2,
+      "uniques": 1
+    },
+    {
+      "path": "/nullx2-x/eagleeye-qa-agent/security/dependabot/2",
+      "title": "/security/dependabot/2",
+      "count": 2,
       "uniques": 1
     }
   ]
