@@ -1,28 +1,13 @@
 {
   "schema_version": 1,
   "repository": "nullx2-x/eagleeye-qa-agent",
-  "collected_at": "2026-08-06T03:37:52Z",
+  "collected_at": "2026-08-09T02:28:57Z",
   "traffic_window_days": 14,
   "traffic": {
     "clones": {
-      "count": 254,
-      "uniques": 41,
+      "count": 114,
+      "uniques": 33,
       "daily": [
-        {
-          "timestamp": "2026-07-22T00:00:00Z",
-          "count": 13,
-          "uniques": 8
-        },
-        {
-          "timestamp": "2026-07-23T00:00:00Z",
-          "count": 74,
-          "uniques": 4
-        },
-        {
-          "timestamp": "2026-07-24T00:00:00Z",
-          "count": 94,
-          "uniques": 7
-        },
         {
           "timestamp": "2026-07-25T00:00:00Z",
           "count": 4,
@@ -77,28 +62,28 @@
           "timestamp": "2026-08-04T00:00:00Z",
           "count": 4,
           "uniques": 3
+        },
+        {
+          "timestamp": "2026-08-05T00:00:00Z",
+          "count": 14,
+          "uniques": 3
+        },
+        {
+          "timestamp": "2026-08-06T00:00:00Z",
+          "count": 9,
+          "uniques": 5
+        },
+        {
+          "timestamp": "2026-08-07T00:00:00Z",
+          "count": 18,
+          "uniques": 4
         }
       ]
     },
     "views": {
-      "count": 63,
-      "uniques": 5,
+      "count": 45,
+      "uniques": 3,
       "daily": [
-        {
-          "timestamp": "2026-07-22T00:00:00Z",
-          "count": 7,
-          "uniques": 2
-        },
-        {
-          "timestamp": "2026-07-23T00:00:00Z",
-          "count": 10,
-          "uniques": 1
-        },
-        {
-          "timestamp": "2026-07-24T00:00:00Z",
-          "count": 1,
-          "uniques": 1
-        },
         {
           "timestamp": "2026-07-25T00:00:00Z",
           "count": 0,
@@ -153,6 +138,21 @@
           "timestamp": "2026-08-04T00:00:00Z",
           "count": 0,
           "uniques": 0
+        },
+        {
+          "timestamp": "2026-08-05T00:00:00Z",
+          "count": 0,
+          "uniques": 0
+        },
+        {
+          "timestamp": "2026-08-06T00:00:00Z",
+          "count": 0,
+          "uniques": 0
+        },
+        {
+          "timestamp": "2026-08-07T00:00:00Z",
+          "count": 0,
+          "uniques": 0
         }
       ]
     }
@@ -167,17 +167,12 @@
   "popular_referrers": [
     {
       "referrer": "github.com",
-      "count": 19,
+      "count": 10,
       "uniques": 2
     },
     {
       "referrer": "t.co",
-      "count": 5,
-      "uniques": 2
-    },
-    {
-      "referrer": "devpost.com",
-      "count": 1,
+      "count": 4,
       "uniques": 1
     }
   ],
@@ -185,20 +180,8 @@
     {
       "path": "/nullx2-x/eagleeye-qa-agent",
       "title": "Overview",
-      "count": 12,
-      "uniques": 4
-    },
-    {
-      "path": "/nullx2-x/eagleeye-qa-agent/blob/main/README.ja.md",
-      "title": "/blob/main/README.ja.md",
-      "count": 4,
+      "count": 7,
       "uniques": 3
-    },
-    {
-      "path": "/nullx2-x/eagleeye-qa-agent/security",
-      "title": "/security",
-      "count": 4,
-      "uniques": 1
     },
     {
       "path": "/nullx2-x/eagleeye-qa-agent/security/dependabot",
@@ -207,8 +190,14 @@
       "uniques": 1
     },
     {
-      "path": "/nullx2-x/eagleeye-qa-agent/pulls",
-      "title": "/pulls",
+      "path": "/nullx2-x/eagleeye-qa-agent/blob/main/README.ja.md",
+      "title": "/blob/main/README.ja.md",
+      "count": 3,
+      "uniques": 2
+    },
+    {
+      "path": "/nullx2-x/eagleeye-qa-agent/security",
+      "title": "/security",
       "count": 3,
       "uniques": 1
     },
@@ -225,14 +214,8 @@
       "uniques": 1
     },
     {
-      "path": "/nullx2-x/eagleeye-qa-agent/issues",
-      "title": "/issues",
-      "count": 2,
-      "uniques": 2
-    },
-    {
-      "path": "/nullx2-x/eagleeye-qa-agent/branches",
-      "title": "/branches",
+      "path": "/nullx2-x/eagleeye-qa-agent/pulls",
+      "title": "/pulls",
       "count": 2,
       "uniques": 1
     },
@@ -240,6 +223,18 @@
       "path": "/nullx2-x/eagleeye-qa-agent/security/dependabot/2",
       "title": "/security/dependabot/2",
       "count": 2,
+      "uniques": 1
+    },
+    {
+      "path": "/nullx2-x/eagleeye-qa-agent/branches",
+      "title": "/branches",
+      "count": 1,
+      "uniques": 1
+    },
+    {
+      "path": "/nullx2-x/eagleeye-qa-agent/branches/active",
+      "title": "/branches/active",
+      "count": 1,
       "uniques": 1
     }
   ]
