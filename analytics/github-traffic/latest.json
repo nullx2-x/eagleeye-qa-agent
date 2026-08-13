@@ -1,23 +1,13 @@
 {
   "schema_version": 1,
   "repository": "nullx2-x/eagleeye-qa-agent",
-  "collected_at": "2026-08-11T02:28:05Z",
+  "collected_at": "2026-08-13T02:47:42Z",
   "traffic_window_days": 14,
   "traffic": {
     "clones": {
-      "count": 122,
+      "count": 126,
       "uniques": 28,
       "daily": [
-        {
-          "timestamp": "2026-07-27T00:00:00Z",
-          "count": 2,
-          "uniques": 1
-        },
-        {
-          "timestamp": "2026-07-28T00:00:00Z",
-          "count": 7,
-          "uniques": 6
-        },
         {
           "timestamp": "2026-07-29T00:00:00Z",
           "count": 3,
@@ -77,23 +67,23 @@
           "timestamp": "2026-08-09T00:00:00Z",
           "count": 18,
           "uniques": 4
+        },
+        {
+          "timestamp": "2026-08-10T00:00:00Z",
+          "count": 2,
+          "uniques": 1
+        },
+        {
+          "timestamp": "2026-08-11T00:00:00Z",
+          "count": 11,
+          "uniques": 6
         }
       ]
     },
     "views": {
-      "count": 45,
+      "count": 84,
       "uniques": 3,
       "daily": [
-        {
-          "timestamp": "2026-07-27T00:00:00Z",
-          "count": 1,
-          "uniques": 1
-        },
-        {
-          "timestamp": "2026-07-28T00:00:00Z",
-          "count": 4,
-          "uniques": 1
-        },
         {
           "timestamp": "2026-07-29T00:00:00Z",
           "count": 40,
@@ -153,6 +143,16 @@
           "timestamp": "2026-08-09T00:00:00Z",
           "count": 0,
           "uniques": 0
+        },
+        {
+          "timestamp": "2026-08-10T00:00:00Z",
+          "count": 43,
+          "uniques": 1
+        },
+        {
+          "timestamp": "2026-08-11T00:00:00Z",
+          "count": 1,
+          "uniques": 1
         }
       ]
     }
@@ -161,18 +161,18 @@
     "stars": 1,
     "forks": 0,
     "watchers": 0,
-    "open_issues": 11
+    "open_issues": 12
   },
   "release_downloads": 0,
   "popular_referrers": [
     {
       "referrer": "github.com",
-      "count": 10,
+      "count": 9,
       "uniques": 2
     },
     {
-      "referrer": "t.co",
-      "count": 4,
+      "referrer": "devpost.com",
+      "count": 1,
       "uniques": 1
     }
   ],
@@ -180,8 +180,14 @@
     {
       "path": "/nullx2-x/eagleeye-qa-agent",
       "title": "Overview",
-      "count": 7,
+      "count": 8,
       "uniques": 3
+    },
+    {
+      "path": "/nullx2-x/eagleeye-qa-agent/pulls",
+      "title": "/pulls",
+      "count": 5,
+      "uniques": 1
     },
     {
       "path": "/nullx2-x/eagleeye-qa-agent/security/dependabot",
@@ -190,14 +196,14 @@
       "uniques": 1
     },
     {
-      "path": "/nullx2-x/eagleeye-qa-agent/blob/main/README.ja.md",
-      "title": "/blob/main/README.ja.md",
-      "count": 3,
-      "uniques": 2
-    },
-    {
       "path": "/nullx2-x/eagleeye-qa-agent/security",
       "title": "/security",
+      "count": 3,
+      "uniques": 1
+    },
+    {
+      "path": "/nullx2-x/eagleeye-qa-agent/security/dependabot/2",
+      "title": "/security/dependabot/2",
       "count": 3,
       "uniques": 1
     },
@@ -214,27 +220,21 @@
       "uniques": 1
     },
     {
-      "path": "/nullx2-x/eagleeye-qa-agent/pulls",
-      "title": "/pulls",
+      "path": "/nullx2-x/eagleeye-qa-agent/blob/main/README.ja.md",
+      "title": "/blob/main/README.ja.md",
       "count": 2,
       "uniques": 1
     },
     {
-      "path": "/nullx2-x/eagleeye-qa-agent/security/dependabot/2",
-      "title": "/security/dependabot/2",
+      "path": "/nullx2-x/eagleeye-qa-agent/blob/main/tests/test_browser_agent.py",
+      "title": "/blob/main/tests/test_browser_agent.py",
       "count": 2,
       "uniques": 1
     },
     {
-      "path": "/nullx2-x/eagleeye-qa-agent/branches",
-      "title": "/branches",
-      "count": 1,
-      "uniques": 1
-    },
-    {
-      "path": "/nullx2-x/eagleeye-qa-agent/branches/active",
-      "title": "/branches/active",
-      "count": 1,
+      "path": "/nullx2-x/eagleeye-qa-agent/blob/main/tests/test_guided_qa.py",
+      "title": "/blob/main/tests/test_guided_qa.py",
+      "count": 2,
       "uniques": 1
     }
   ]
