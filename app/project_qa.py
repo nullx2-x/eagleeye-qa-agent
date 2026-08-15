@@ -491,7 +491,7 @@ def _authorized_root(value: str) -> Path:
 
 def _allowed_roots() -> list[Path]:
     configured = os.getenv("EAGLEEYE_PROJECT_ROOTS", "").strip()
-    values = configured.split(os.pathsep) if configured else [str(ROOT.parents[1])]
+    values = configured.split(os.pathsep) if configured else [str(ROOT)]
     return [Path(value).expanduser().resolve(strict=True) for value in values if value.strip()]
 
 
