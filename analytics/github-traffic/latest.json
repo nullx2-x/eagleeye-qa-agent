@@ -1,23 +1,13 @@
 {
   "schema_version": 1,
   "repository": "nullx2-x/eagleeye-qa-agent",
-  "collected_at": "2026-08-13T02:47:42Z",
+  "collected_at": "2026-08-15T01:49:36Z",
   "traffic_window_days": 14,
   "traffic": {
     "clones": {
-      "count": 126,
-      "uniques": 28,
+      "count": 157,
+      "uniques": 32,
       "daily": [
-        {
-          "timestamp": "2026-07-29T00:00:00Z",
-          "count": 3,
-          "uniques": 2
-        },
-        {
-          "timestamp": "2026-07-30T00:00:00Z",
-          "count": 4,
-          "uniques": 1
-        },
         {
           "timestamp": "2026-07-31T00:00:00Z",
           "count": 28,
@@ -77,23 +67,23 @@
           "timestamp": "2026-08-11T00:00:00Z",
           "count": 11,
           "uniques": 6
+        },
+        {
+          "timestamp": "2026-08-12T00:00:00Z",
+          "count": 26,
+          "uniques": 4
+        },
+        {
+          "timestamp": "2026-08-13T00:00:00Z",
+          "count": 12,
+          "uniques": 5
         }
       ]
     },
     "views": {
-      "count": 84,
-      "uniques": 3,
+      "count": 44,
+      "uniques": 2,
       "daily": [
-        {
-          "timestamp": "2026-07-29T00:00:00Z",
-          "count": 40,
-          "uniques": 2
-        },
-        {
-          "timestamp": "2026-07-30T00:00:00Z",
-          "count": 0,
-          "uniques": 0
-        },
         {
           "timestamp": "2026-07-31T00:00:00Z",
           "count": 0,
@@ -153,6 +143,16 @@
           "timestamp": "2026-08-11T00:00:00Z",
           "count": 1,
           "uniques": 1
+        },
+        {
+          "timestamp": "2026-08-12T00:00:00Z",
+          "count": 0,
+          "uniques": 0
+        },
+        {
+          "timestamp": "2026-08-13T00:00:00Z",
+          "count": 0,
+          "uniques": 0
         }
       ]
     }
@@ -166,11 +166,6 @@
   "release_downloads": 0,
   "popular_referrers": [
     {
-      "referrer": "github.com",
-      "count": 9,
-      "uniques": 2
-    },
-    {
       "referrer": "devpost.com",
       "count": 1,
       "uniques": 1
@@ -180,49 +175,13 @@
     {
       "path": "/nullx2-x/eagleeye-qa-agent",
       "title": "Overview",
-      "count": 8,
-      "uniques": 3
+      "count": 3,
+      "uniques": 2
     },
     {
       "path": "/nullx2-x/eagleeye-qa-agent/pulls",
       "title": "/pulls",
-      "count": 5,
-      "uniques": 1
-    },
-    {
-      "path": "/nullx2-x/eagleeye-qa-agent/security/dependabot",
-      "title": "/security/dependabot",
-      "count": 4,
-      "uniques": 1
-    },
-    {
-      "path": "/nullx2-x/eagleeye-qa-agent/security",
-      "title": "/security",
       "count": 3,
-      "uniques": 1
-    },
-    {
-      "path": "/nullx2-x/eagleeye-qa-agent/security/dependabot/2",
-      "title": "/security/dependabot/2",
-      "count": 3,
-      "uniques": 1
-    },
-    {
-      "path": "/nullx2-x/eagleeye-qa-agent/security/dependabot/3",
-      "title": "/security/dependabot/3",
-      "count": 3,
-      "uniques": 1
-    },
-    {
-      "path": "/nullx2-x/eagleeye-qa-agent/tree/analytics-data",
-      "title": "/tree/analytics-data",
-      "count": 3,
-      "uniques": 1
-    },
-    {
-      "path": "/nullx2-x/eagleeye-qa-agent/blob/main/README.ja.md",
-      "title": "/blob/main/README.ja.md",
-      "count": 2,
       "uniques": 1
     },
     {
@@ -235,6 +194,42 @@
       "path": "/nullx2-x/eagleeye-qa-agent/blob/main/tests/test_guided_qa.py",
       "title": "/blob/main/tests/test_guided_qa.py",
       "count": 2,
+      "uniques": 1
+    },
+    {
+      "path": "/nullx2-x/eagleeye-qa-agent/blob/main/tests/test_providers.py",
+      "title": "/blob/main/tests/test_providers.py",
+      "count": 2,
+      "uniques": 1
+    },
+    {
+      "path": "/nullx2-x/eagleeye-qa-agent/blob/main/tests/test_runner_evidence.py",
+      "title": "/blob/main/tests/test_runner_evidence.py",
+      "count": 2,
+      "uniques": 1
+    },
+    {
+      "path": "/nullx2-x/eagleeye-qa-agent/blob/main/tests/test_strategy.py",
+      "title": "/blob/main/tests/test_strategy.py",
+      "count": 2,
+      "uniques": 1
+    },
+    {
+      "path": "/nullx2-x/eagleeye-qa-agent/tree/main/tests",
+      "title": "/tree/main/tests",
+      "count": 2,
+      "uniques": 1
+    },
+    {
+      "path": "/nullx2-x/eagleeye-qa-agent/blob/main/.env.example",
+      "title": "/blob/main/.env.example",
+      "count": 1,
+      "uniques": 1
+    },
+    {
+      "path": "/nullx2-x/eagleeye-qa-agent/blob/main/.gitignore",
+      "title": "/blob/main/.gitignore",
+      "count": 1,
       "uniques": 1
     }
   ]
