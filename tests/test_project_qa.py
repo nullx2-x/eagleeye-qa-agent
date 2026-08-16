@@ -160,6 +160,20 @@ def test_project_root_is_confined(monkeypatch: pytest.MonkeyPatch, tmp_path: Pat
         discover_project(str(outside))
 
 
+def test_project_root_defaults_to_repository_root(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    repository = tmp_path / "repository"
+    project = repository / "project"
+    outside = tmp_path / "outside"
+    project.mkdir(parents=True)
+    outside.mkdir()
+    monkeypatch.delenv("EAGLEEYE_PROJECT_ROOTS", raising=False)
+    monkeypatch.setattr(project_qa, "ROOT", repository)
+
+    assert discover_project(str(project)).projectRoot == str(project)
+    with pytest.raises(PermissionError, match="outside"):
+        discover_project(str(outside))
+
+
 def test_project_root_rejects_allowed_prefix_sibling(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
     allowed = tmp_path / "project"
     prefix_sibling = tmp_path / "project-private"
