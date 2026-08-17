@@ -9,7 +9,7 @@
     "publish": "npx --yes hyperframes@0.7.61 publish"
   },
   "devDependencies": {
-    "hyperframes": "0.7.61"
+    "hyperframes": "0.7.108"
   },
   "overrides": {
     "adm-zip": "0.6.0"
