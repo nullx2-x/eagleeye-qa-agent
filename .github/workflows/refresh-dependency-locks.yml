@@ -1,0 +1,60 @@
+name: Refresh dependency locks
+
+on:
+  push:
+    branches:
+      - agent/refresh-dependencies
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out branch
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          ref: agent/refresh-dependencies
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@11f9893b081a58869d3b5fccaea48c9e9e46f990 # v8.3.2
+
+      - name: Refresh Python lock
+        run: uv lock --upgrade-package pydantic --upgrade-package uvicorn --upgrade-package ruff
+
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: "24"
+
+      - name: Refresh demo lock
+        working-directory: videos/eagleeye-build-week
+        run: npm install --package-lock-only --ignore-scripts
+
+      - name: Audit demo dependencies
+        working-directory: videos/eagleeye-build-week
+        run: npm audit --audit-level=high
+
+      - name: Commit refreshed locks
+        shell: bash
+        run: |
+          set -euo pipefail
+          git add uv.lock videos/eagleeye-build-week/package-lock.json
+          if git diff --cached --quiet; then
+            echo "Lockfiles already current."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "chore: refresh dependency locks"
+          git push origin HEAD:agent/refresh-dependencies
