@@ -93,6 +93,43 @@ jobs:
             throw "CI commands changed the repository."
           }
 
+  build-week:
+    name: Build Week dependency safety
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: "24"
+
+      - name: Install locked demo dependencies
+        working-directory: videos/eagleeye-build-week
+        run: npm ci
+
+      - name: Audit demo dependencies
+        working-directory: videos/eagleeye-build-week
+        run: npm audit --audit-level=high
+
+      - name: Validate HyperFrames project
+        working-directory: videos/eagleeye-build-week
+        run: npm run check
+
+      - name: Ensure repository remains clean
+        shell: pwsh
+        run: |
+          $status = git status --porcelain
+          if ($status) {
+            $status
+            throw "Build Week checks changed the repository."
+          }
+
   publication:
     name: Public release invariants
     runs-on: ubuntu-latest
