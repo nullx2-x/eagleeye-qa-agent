@@ -1,23 +1,13 @@
 {
   "schema_version": 1,
   "repository": "nullx2-x/eagleeye-qa-agent",
-  "collected_at": "2026-08-17T01:55:15Z",
+  "collected_at": "2026-08-19T01:53:03Z",
   "traffic_window_days": 14,
   "traffic": {
     "clones": {
-      "count": 301,
-      "uniques": 181,
+      "count": 1105,
+      "uniques": 481,
       "daily": [
-        {
-          "timestamp": "2026-08-02T00:00:00Z",
-          "count": 2,
-          "uniques": 1
-        },
-        {
-          "timestamp": "2026-08-03T00:00:00Z",
-          "count": 3,
-          "uniques": 2
-        },
         {
           "timestamp": "2026-08-04T00:00:00Z",
           "count": 4,
@@ -77,23 +67,23 @@
           "timestamp": "2026-08-15T00:00:00Z",
           "count": 174,
           "uniques": 154
+        },
+        {
+          "timestamp": "2026-08-16T00:00:00Z",
+          "count": 258,
+          "uniques": 144
+        },
+        {
+          "timestamp": "2026-08-17T00:00:00Z",
+          "count": 551,
+          "uniques": 208
         }
       ]
     },
     "views": {
-      "count": 45,
+      "count": 63,
       "uniques": 2,
       "daily": [
-        {
-          "timestamp": "2026-08-02T00:00:00Z",
-          "count": 0,
-          "uniques": 0
-        },
-        {
-          "timestamp": "2026-08-03T00:00:00Z",
-          "count": 0,
-          "uniques": 0
-        },
         {
           "timestamp": "2026-08-04T00:00:00Z",
           "count": 0,
@@ -153,6 +143,16 @@
           "timestamp": "2026-08-15T00:00:00Z",
           "count": 0,
           "uniques": 0
+        },
+        {
+          "timestamp": "2026-08-16T00:00:00Z",
+          "count": 13,
+          "uniques": 1
+        },
+        {
+          "timestamp": "2026-08-17T00:00:00Z",
+          "count": 5,
+          "uniques": 1
         }
       ]
     }
@@ -166,12 +166,12 @@
   "release_downloads": 0,
   "popular_referrers": [
     {
-      "referrer": "devpost.com",
-      "count": 1,
+      "referrer": "github.com",
+      "count": 3,
       "uniques": 1
     },
     {
-      "referrer": "github.com",
+      "referrer": "devpost.com",
       "count": 1,
       "uniques": 1
     }
@@ -180,12 +180,18 @@
     {
       "path": "/nullx2-x/eagleeye-qa-agent",
       "title": "Overview",
-      "count": 4,
+      "count": 11,
       "uniques": 2
     },
     {
       "path": "/nullx2-x/eagleeye-qa-agent/pulls",
       "title": "/pulls",
+      "count": 8,
+      "uniques": 1
+    },
+    {
+      "path": "/nullx2-x/eagleeye-qa-agent/commit/7c75163756dec50521cecf05868822af6a13b90e",
+      "title": "/commit/7c75163756dec50521cecf05868822af6a13b90e",
       "count": 3,
       "uniques": 1
     },
@@ -228,12 +234,6 @@
     {
       "path": "/nullx2-x/eagleeye-qa-agent/blob/main/.env.example",
       "title": "/blob/main/.env.example",
-      "count": 1,
-      "uniques": 1
-    },
-    {
-      "path": "/nullx2-x/eagleeye-qa-agent/blob/main/.gitignore",
-      "title": "/blob/main/.gitignore",
       "count": 1,
       "uniques": 1
     }
