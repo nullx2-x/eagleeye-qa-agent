@@ -14,7 +14,7 @@ from concurrent.futures import TimeoutError as FutureTimeoutError
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from html.parser import HTMLParser
-from ipaddress import ip_address
+from ipaddress import IPv4Address, IPv6Address, ip_address, ip_network
 from pathlib import Path
 from threading import BoundedSemaphore, Timer
 from typing import Protocol
@@ -65,6 +65,10 @@ _SAFE_RESPONSE_HEADERS = {
 }
 _AUDIT_SLOTS = BoundedSemaphore(value=2)
 _DNS_EXECUTOR = ThreadPoolExecutor(max_workers=4, thread_name_prefix="eagleeye-url-audit-dns")
+_IPV6_TRANSLATION_NETWORKS = (
+    ip_network("64:ff9b::/96"),
+    ip_network("64:ff9b:1::/48"),
+)
 
 
 @dataclass(frozen=True)
@@ -639,10 +643,17 @@ def _resolve_url(url: str, allow_localhost: bool, deadline: float) -> str:
     if not addresses:
         raise ValueError("Target hostname returned no usable address")
     parsed_addresses = [ip_address(value) for value in addresses]
-    non_global = [address for address in parsed_addresses if not address.is_global]
     explicit_loopback = _explicit_loopback_host(host)
-    if non_global and not explicit_loopback:
-        raise PermissionError("LAN, link-local, metadata, and DNS-derived loopback targets are never audited")
+    forbidden = [
+        address
+        for address in parsed_addresses
+        if _is_forbidden_address(address) and not (explicit_loopback and address.is_loopback)
+    ]
+    if forbidden:
+        raise PermissionError(
+            "LAN, link-local, metadata, multicast, reserved, and DNS-derived loopback targets "
+            "are never audited"
+        )
     if explicit_loopback and any(not address.is_loopback for address in parsed_addresses):
         raise PermissionError("An explicit localhost target must resolve only to loopback addresses")
     if explicit_loopback and not allow_localhost:
@@ -650,6 +661,22 @@ def _resolve_url(url: str, allow_localhost: bool, deadline: float) -> str:
     if explicit_loopback and os.getenv("EAGLEEYE_URL_AUDIT_ALLOW_LOCALHOST", "0") != "1":
         raise PermissionError("Loopback audits also require EAGLEEYE_URL_AUDIT_ALLOW_LOCALHOST=1")
     return addresses[0]
+
+
+def _is_forbidden_address(address: IPv4Address | IPv6Address) -> bool:
+    return (
+        not address.is_global
+        or address.is_private
+        or address.is_link_local
+        or address.is_loopback
+        or address.is_multicast
+        or address.is_reserved
+        or address.is_unspecified
+        or (
+            isinstance(address, IPv6Address)
+            and any(address in network for network in _IPV6_TRANSLATION_NETWORKS)
+        )
+    )
 
 
 def _explicit_loopback_host(host: str) -> bool:
