@@ -160,9 +160,17 @@ def test_url_audit_creates_masked_report_and_quality_checked_project(
 
 @pytest.mark.parametrize(
     "address",
-    ["192.168.1.10", "169.254.169.254", ".".join(("0", "0", "0", "0"))],
+    [
+        "192.168.1.10",
+        "169.254.169.254",
+        ".".join(("0", "0", "0", "0")),
+        "224.0.0.1",
+        "64:ff9b::a9fe:a9fe",
+        "64:ff9b::c0a8:101",
+        "64:ff9b:1::c0a8:101",
+    ],
 )
-def test_url_audit_never_reaches_lan_metadata_or_unspecified_targets(
+def test_url_audit_never_reaches_special_use_targets(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
     address: str,
