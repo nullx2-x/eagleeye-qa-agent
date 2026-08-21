@@ -1,23 +1,13 @@
 {
   "schema_version": 1,
   "repository": "nullx2-x/eagleeye-qa-agent",
-  "collected_at": "2026-08-19T01:53:03Z",
+  "collected_at": "2026-08-21T01:57:37Z",
   "traffic_window_days": 14,
   "traffic": {
     "clones": {
-      "count": 1105,
-      "uniques": 481,
+      "count": 1367,
+      "uniques": 650,
       "daily": [
-        {
-          "timestamp": "2026-08-04T00:00:00Z",
-          "count": 4,
-          "uniques": 3
-        },
-        {
-          "timestamp": "2026-08-05T00:00:00Z",
-          "count": 14,
-          "uniques": 3
-        },
         {
           "timestamp": "2026-08-06T00:00:00Z",
           "count": 9,
@@ -77,23 +67,23 @@
           "timestamp": "2026-08-17T00:00:00Z",
           "count": 551,
           "uniques": 208
+        },
+        {
+          "timestamp": "2026-08-18T00:00:00Z",
+          "count": 138,
+          "uniques": 130
+        },
+        {
+          "timestamp": "2026-08-19T00:00:00Z",
+          "count": 142,
+          "uniques": 132
         }
       ]
     },
     "views": {
-      "count": 63,
+      "count": 64,
       "uniques": 2,
       "daily": [
-        {
-          "timestamp": "2026-08-04T00:00:00Z",
-          "count": 0,
-          "uniques": 0
-        },
-        {
-          "timestamp": "2026-08-05T00:00:00Z",
-          "count": 0,
-          "uniques": 0
-        },
         {
           "timestamp": "2026-08-06T00:00:00Z",
           "count": 0,
@@ -153,6 +143,16 @@
           "timestamp": "2026-08-17T00:00:00Z",
           "count": 5,
           "uniques": 1
+        },
+        {
+          "timestamp": "2026-08-18T00:00:00Z",
+          "count": 0,
+          "uniques": 0
+        },
+        {
+          "timestamp": "2026-08-19T00:00:00Z",
+          "count": 1,
+          "uniques": 1
         }
       ]
     }
@@ -180,7 +180,7 @@
     {
       "path": "/nullx2-x/eagleeye-qa-agent",
       "title": "Overview",
-      "count": 11,
+      "count": 12,
       "uniques": 2
     },
     {
