@@ -31,6 +31,7 @@ data/browser-agent/
 artifacts/browser-agent/
 artifacts/project-qa/
 artifacts/url-audits/
+artifacts/verifications/
 artifacts/guided-runs/*
 *.zip
 videos/**/.hyperframes/

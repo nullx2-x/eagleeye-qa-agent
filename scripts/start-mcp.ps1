@@ -6,4 +6,4 @@ $python = Join-Path $root '.venv\Scripts\python.exe'
 if (-not (Test-Path -LiteralPath $python)) {
     throw "EagleEye virtual environment was not found: $python"
 }
-& $python -m app.mcp_server
+& $python -m app.mcp_entrypoint
