@@ -4,8 +4,12 @@ import argparse
 import sys
 from pathlib import Path
 
-from app.verification_models import VerificationRequest
-from app.verification_service import run_verification
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from app.verification_models import VerificationRequest  # noqa: E402
+from app.verification_service import run_verification  # noqa: E402
 
 EXIT_CODES = {
     "PASS": 0,
