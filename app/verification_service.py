@@ -117,9 +117,7 @@ def run_verification(request: VerificationRequest) -> VerificationReport:
     status = _verification_status(quality_gate.decision)
     evidence = _collect_evidence(evidence_dir, project_report, browser_runs)
     reverification = (
-        _reverification_link(request.previousVerificationId)
-        if request.previousVerificationId
-        else None
+        _reverification_link(request.previousVerificationId) if request.previousVerificationId else None
     )
     completed_at = _now()
     policy_sha = _sha256_json(profile.model_dump(mode="json"))

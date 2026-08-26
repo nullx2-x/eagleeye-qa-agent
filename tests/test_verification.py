@@ -90,9 +90,7 @@ def test_git_context_binds_base_head_and_diff(monkeypatch: pytest.MonkeyPatch, t
     assert len(context.diffSha256) == 64
 
 
-def test_git_context_rejects_dirty_tree_by_default(
-    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
-) -> None:
+def test_git_context_rejects_dirty_tree_by_default(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
     project, base, head = _repository(tmp_path)
     monkeypatch.setenv("EAGLEEYE_PROJECT_ROOTS", str(tmp_path))
     (project / "dirty.txt").write_text("uncommitted", encoding="utf-8")
