@@ -1,18 +1,13 @@
 {
   "schema_version": 1,
   "repository": "nullx2-x/eagleeye-qa-agent",
-  "collected_at": "2026-08-27T09:49:51Z",
+  "collected_at": "2026-08-30T05:24:58Z",
   "traffic_window_days": 14,
   "traffic": {
     "clones": {
-      "count": 1531,
-      "uniques": 665,
+      "count": 1524,
+      "uniques": 664,
       "daily": [
-        {
-          "timestamp": "2026-08-13T00:00:00Z",
-          "count": 12,
-          "uniques": 5
-        },
         {
           "timestamp": "2026-08-14T00:00:00Z",
           "count": 3,
@@ -77,6 +72,11 @@
           "timestamp": "2026-08-26T00:00:00Z",
           "count": 79,
           "uniques": 19
+        },
+        {
+          "timestamp": "2026-08-27T00:00:00Z",
+          "count": 5,
+          "uniques": 4
         }
       ]
     },
@@ -84,11 +84,6 @@
       "count": 27,
       "uniques": 5,
       "daily": [
-        {
-          "timestamp": "2026-08-13T00:00:00Z",
-          "count": 0,
-          "uniques": 0
-        },
         {
           "timestamp": "2026-08-14T00:00:00Z",
           "count": 1,
@@ -153,6 +148,11 @@
           "timestamp": "2026-08-26T00:00:00Z",
           "count": 0,
           "uniques": 0
+        },
+        {
+          "timestamp": "2026-08-27T00:00:00Z",
+          "count": 0,
+          "uniques": 0
         }
       ]
     }
@@ -161,7 +161,7 @@
     "stars": 1,
     "forks": 1,
     "watchers": 0,
-    "open_issues": 8
+    "open_issues": 9
   },
   "release_downloads": 0,
   "popular_referrers": [
