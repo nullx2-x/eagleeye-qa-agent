@@ -1,23 +1,13 @@
 {
   "schema_version": 1,
   "repository": "nullx2-x/eagleeye-qa-agent",
-  "collected_at": "2026-09-01T05:09:25Z",
+  "collected_at": "2026-09-03T04:34:07Z",
   "traffic_window_days": 14,
   "traffic": {
     "clones": {
-      "count": 1154,
-      "uniques": 459,
+      "count": 504,
+      "uniques": 211,
       "daily": [
-        {
-          "timestamp": "2026-08-17T00:00:00Z",
-          "count": 551,
-          "uniques": 208
-        },
-        {
-          "timestamp": "2026-08-18T00:00:00Z",
-          "count": 138,
-          "uniques": 130
-        },
         {
           "timestamp": "2026-08-19T00:00:00Z",
           "count": 142,
@@ -77,23 +67,23 @@
           "timestamp": "2026-08-30T00:00:00Z",
           "count": 4,
           "uniques": 3
+        },
+        {
+          "timestamp": "2026-08-31T00:00:00Z",
+          "count": 33,
+          "uniques": 31
+        },
+        {
+          "timestamp": "2026-09-01T00:00:00Z",
+          "count": 6,
+          "uniques": 4
         }
       ]
     },
     "views": {
-      "count": 13,
+      "count": 8,
       "uniques": 5,
       "daily": [
-        {
-          "timestamp": "2026-08-17T00:00:00Z",
-          "count": 5,
-          "uniques": 1
-        },
-        {
-          "timestamp": "2026-08-18T00:00:00Z",
-          "count": 0,
-          "uniques": 0
-        },
         {
           "timestamp": "2026-08-19T00:00:00Z",
           "count": 1,
@@ -153,6 +143,16 @@
           "timestamp": "2026-08-30T00:00:00Z",
           "count": 0,
           "uniques": 0
+        },
+        {
+          "timestamp": "2026-08-31T00:00:00Z",
+          "count": 0,
+          "uniques": 0
+        },
+        {
+          "timestamp": "2026-09-01T00:00:00Z",
+          "count": 0,
+          "uniques": 0
         }
       ]
     }
@@ -167,7 +167,7 @@
   "popular_referrers": [
     {
       "referrer": "github.com",
-      "count": 3,
+      "count": 2,
       "uniques": 2
     },
     {
@@ -180,7 +180,7 @@
     {
       "path": "/nullx2-x/eagleeye-qa-agent",
       "title": "Overview",
-      "count": 10,
+      "count": 6,
       "uniques": 4
     },
     {
@@ -192,12 +192,6 @@
     {
       "path": "/nullx2-x/eagleeye-qa-agent/fork",
       "title": "/fork",
-      "count": 1,
-      "uniques": 1
-    },
-    {
-      "path": "/nullx2-x/eagleeye-qa-agent/pulls",
-      "title": "/pulls",
       "count": 1,
       "uniques": 1
     }
