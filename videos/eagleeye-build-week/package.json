@@ -9,7 +9,7 @@
     "publish": "hyperframes publish"
   },
   "devDependencies": {
-    "hyperframes": "^0.7.109"
+    "hyperframes": "^0.8.23"
   },
   "overrides": {
     "adm-zip": "0.6.0"
