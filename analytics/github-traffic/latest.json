@@ -1,23 +1,13 @@
 {
   "schema_version": 1,
   "repository": "nullx2-x/eagleeye-qa-agent",
-  "collected_at": "2026-09-15T04:55:56Z",
+  "collected_at": "2026-09-17T04:53:55Z",
   "traffic_window_days": 14,
   "traffic": {
     "clones": {
-      "count": 169,
-      "uniques": 78,
+      "count": 142,
+      "uniques": 52,
       "daily": [
-        {
-          "timestamp": "2026-08-31T00:00:00Z",
-          "count": 33,
-          "uniques": 31
-        },
-        {
-          "timestamp": "2026-09-01T00:00:00Z",
-          "count": 6,
-          "uniques": 4
-        },
         {
           "timestamp": "2026-09-02T00:00:00Z",
           "count": 4,
@@ -77,6 +67,16 @@
           "timestamp": "2026-09-13T00:00:00Z",
           "count": 11,
           "uniques": 7
+        },
+        {
+          "timestamp": "2026-09-14T00:00:00Z",
+          "count": 4,
+          "uniques": 3
+        },
+        {
+          "timestamp": "2026-09-15T00:00:00Z",
+          "count": 8,
+          "uniques": 6
         }
       ]
     },
@@ -84,16 +84,6 @@
       "count": 2,
       "uniques": 1,
       "daily": [
-        {
-          "timestamp": "2026-08-31T00:00:00Z",
-          "count": 0,
-          "uniques": 0
-        },
-        {
-          "timestamp": "2026-09-01T00:00:00Z",
-          "count": 0,
-          "uniques": 0
-        },
         {
           "timestamp": "2026-09-02T00:00:00Z",
           "count": 0,
@@ -151,6 +141,16 @@
         },
         {
           "timestamp": "2026-09-13T00:00:00Z",
+          "count": 0,
+          "uniques": 0
+        },
+        {
+          "timestamp": "2026-09-14T00:00:00Z",
+          "count": 0,
+          "uniques": 0
+        },
+        {
+          "timestamp": "2026-09-15T00:00:00Z",
           "count": 0,
           "uniques": 0
         }
