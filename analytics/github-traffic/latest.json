@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "repository": "nullx2-x/eagleeye-qa-agent",
-  "collected_at": "2026-09-25T04:58:36Z",
+  "collected_at": "2026-09-27T05:19:36Z",
   "traffic_window_days": 14,
   "traffic": {
     "clones": {
