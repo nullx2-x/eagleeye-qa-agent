@@ -1,43 +1,13 @@
 {
   "schema_version": 1,
   "repository": "nullx2-x/eagleeye-qa-agent",
-  "collected_at": "2026-09-29T05:44:48Z",
+  "collected_at": "2026-10-01T05:55:19Z",
   "traffic_window_days": 14,
   "traffic": {
     "clones": {
-      "count": 128,
-      "uniques": 49,
+      "count": 80,
+      "uniques": 33,
       "daily": [
-        {
-          "timestamp": "2026-09-10T00:00:00Z",
-          "count": 25,
-          "uniques": 6
-        },
-        {
-          "timestamp": "2026-09-11T00:00:00Z",
-          "count": 32,
-          "uniques": 14
-        },
-        {
-          "timestamp": "2026-09-12T00:00:00Z",
-          "count": 5,
-          "uniques": 4
-        },
-        {
-          "timestamp": "2026-09-13T00:00:00Z",
-          "count": 11,
-          "uniques": 7
-        },
-        {
-          "timestamp": "2026-09-14T00:00:00Z",
-          "count": 4,
-          "uniques": 3
-        },
-        {
-          "timestamp": "2026-09-15T00:00:00Z",
-          "count": 8,
-          "uniques": 6
-        },
         {
           "timestamp": "2026-09-16T00:00:00Z",
           "count": 2,
@@ -77,43 +47,43 @@
           "timestamp": "2026-09-23T00:00:00Z",
           "count": 12,
           "uniques": 7
+        },
+        {
+          "timestamp": "2026-09-24T00:00:00Z",
+          "count": 5,
+          "uniques": 2
+        },
+        {
+          "timestamp": "2026-09-25T00:00:00Z",
+          "count": 3,
+          "uniques": 2
+        },
+        {
+          "timestamp": "2026-09-26T00:00:00Z",
+          "count": 4,
+          "uniques": 3
+        },
+        {
+          "timestamp": "2026-09-27T00:00:00Z",
+          "count": 18,
+          "uniques": 12
+        },
+        {
+          "timestamp": "2026-09-28T00:00:00Z",
+          "count": 3,
+          "uniques": 2
+        },
+        {
+          "timestamp": "2026-09-29T00:00:00Z",
+          "count": 4,
+          "uniques": 2
         }
       ]
     },
     "views": {
-      "count": 2,
-      "uniques": 1,
+      "count": 0,
+      "uniques": 0,
       "daily": [
-        {
-          "timestamp": "2026-09-10T00:00:00Z",
-          "count": 0,
-          "uniques": 0
-        },
-        {
-          "timestamp": "2026-09-11T00:00:00Z",
-          "count": 0,
-          "uniques": 0
-        },
-        {
-          "timestamp": "2026-09-12T00:00:00Z",
-          "count": 2,
-          "uniques": 1
-        },
-        {
-          "timestamp": "2026-09-13T00:00:00Z",
-          "count": 0,
-          "uniques": 0
-        },
-        {
-          "timestamp": "2026-09-14T00:00:00Z",
-          "count": 0,
-          "uniques": 0
-        },
-        {
-          "timestamp": "2026-09-15T00:00:00Z",
-          "count": 0,
-          "uniques": 0
-        },
         {
           "timestamp": "2026-09-16T00:00:00Z",
           "count": 0,
@@ -153,6 +123,36 @@
           "timestamp": "2026-09-23T00:00:00Z",
           "count": 0,
           "uniques": 0
+        },
+        {
+          "timestamp": "2026-09-24T00:00:00Z",
+          "count": 0,
+          "uniques": 0
+        },
+        {
+          "timestamp": "2026-09-25T00:00:00Z",
+          "count": 0,
+          "uniques": 0
+        },
+        {
+          "timestamp": "2026-09-26T00:00:00Z",
+          "count": 0,
+          "uniques": 0
+        },
+        {
+          "timestamp": "2026-09-27T00:00:00Z",
+          "count": 0,
+          "uniques": 0
+        },
+        {
+          "timestamp": "2026-09-28T00:00:00Z",
+          "count": 0,
+          "uniques": 0
+        },
+        {
+          "timestamp": "2026-09-29T00:00:00Z",
+          "count": 0,
+          "uniques": 0
         }
       ]
     }
@@ -164,25 +164,6 @@
     "open_issues": 11
   },
   "release_downloads": 0,
-  "popular_referrers": [
-    {
-      "referrer": "t.co",
-      "count": 2,
-      "uniques": 1
-    }
-  ],
-  "popular_paths": [
-    {
-      "path": "/nullx2-x/eagleeye-qa-agent",
-      "title": "Overview",
-      "count": 1,
-      "uniques": 1
-    },
-    {
-      "path": "/nullx2-x/eagleeye-qa-agent/blob/main/README.ja.md",
-      "title": "/blob/main/README.ja.md",
-      "count": 1,
-      "uniques": 1
-    }
-  ]
+  "popular_referrers": [],
+  "popular_paths": []
 }
