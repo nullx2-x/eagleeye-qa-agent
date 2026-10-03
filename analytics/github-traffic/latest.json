@@ -1,23 +1,13 @@
 {
   "schema_version": 1,
   "repository": "nullx2-x/eagleeye-qa-agent",
-  "collected_at": "2026-10-01T05:55:19Z",
+  "collected_at": "2026-10-03T05:19:31Z",
   "traffic_window_days": 14,
   "traffic": {
     "clones": {
-      "count": 80,
-      "uniques": 33,
+      "count": 106,
+      "uniques": 41,
       "daily": [
-        {
-          "timestamp": "2026-09-16T00:00:00Z",
-          "count": 2,
-          "uniques": 1
-        },
-        {
-          "timestamp": "2026-09-17T00:00:00Z",
-          "count": 4,
-          "uniques": 1
-        },
         {
           "timestamp": "2026-09-18T00:00:00Z",
           "count": 2,
@@ -77,6 +67,16 @@
           "timestamp": "2026-09-29T00:00:00Z",
           "count": 4,
           "uniques": 2
+        },
+        {
+          "timestamp": "2026-09-30T00:00:00Z",
+          "count": 3,
+          "uniques": 2
+        },
+        {
+          "timestamp": "2026-10-01T00:00:00Z",
+          "count": 29,
+          "uniques": 9
         }
       ]
     },
@@ -84,16 +84,6 @@
       "count": 0,
       "uniques": 0,
       "daily": [
-        {
-          "timestamp": "2026-09-16T00:00:00Z",
-          "count": 0,
-          "uniques": 0
-        },
-        {
-          "timestamp": "2026-09-17T00:00:00Z",
-          "count": 0,
-          "uniques": 0
-        },
         {
           "timestamp": "2026-09-18T00:00:00Z",
           "count": 0,
@@ -153,6 +143,16 @@
           "timestamp": "2026-09-29T00:00:00Z",
           "count": 0,
           "uniques": 0
+        },
+        {
+          "timestamp": "2026-09-30T00:00:00Z",
+          "count": 0,
+          "uniques": 0
+        },
+        {
+          "timestamp": "2026-10-01T00:00:00Z",
+          "count": 0,
+          "uniques": 0
         }
       ]
     }
@@ -161,7 +161,7 @@
     "stars": 1,
     "forks": 1,
     "watchers": 0,
-    "open_issues": 11
+    "open_issues": 12
   },
   "release_downloads": 0,
   "popular_referrers": [],
