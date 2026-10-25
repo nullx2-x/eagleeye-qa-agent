@@ -25,3 +25,17 @@ Workflow定義と収集スクリプトは、保護された`main`ブランチか
 ## 失敗時の挙動
 
 Secret未設定、期限切れ、権限不足の場合はFail closedし、既存の履歴ファイルを更新しません。`analytics-data`へのPushが拒否された場合もWorkflowを失敗させ、`main`の保護設定は変更しません。トークン文字列はコード、README、Issue、Actionsログへ出力しないでください。
+
+## 認証エラーからの復旧
+
+2026-10-13以降の定期実行では、収集ステップが `TRAFFIC_TOKEN was rejected` と表示して失敗しています。Secretの存在確認は成功しているため、未設定ではなくAPI側の拒否です。旧実装はHTTP 401/403をまとめて扱うため、失効・権限不足・レート制限のどれかは旧ログから確定できません。
+
+1. GitHubの Settings → Developer settings → Personal access tokens → Fine-grained tokens で既存トークンの期限、状態、アクセス先を確認します。
+2. 必要なら新しいFine-grained PATを作成します。Resource ownerを `nullx2-x`、Repository accessを `Only select repositories` → `eagleeye-qa-agent`、Repository permissionsを `Administration: Read-only` に設定します。必要な承認があれば完了させます。
+3. リポジトリの Settings → Secrets and variables → Actions → Repository secrets → `TRAFFIC_TOKEN` を更新します。トークンの文字列をIssue、PR、ログ、チャットに貼らないでください。
+4. Actions → Collect repository traffic → Run workflow を選択し、`main` と `force=true` で実行します。修正PRをマージする前は旧エラーメッセージのままです。
+5. 収集と `analytics-data` へのコミットが成功したことを確認します。データが変化しない場合、Commitステップがスキップ相当になるのは正常です。
+
+401はトークンの失効・無効化を、403は権限・ポリシー・二次レート制限を、403かつ残り回数0または429はレート制限を優先して確認してください。新しい診断メッセージはHTTPコードと失敗したAPIパスだけを出し、認証情報は出しません。
+
+GitHubのトラフィックAPIは過去データの取得期間が限定されます。復旧後に取得できない過去の日別データを推測で補完せず、履歴に欠測期間が残ることを許容してください。
