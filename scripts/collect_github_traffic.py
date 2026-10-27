@@ -56,13 +56,23 @@ def api_get(path: str, token: str, **query):
         with urlopen(request, timeout=30) as response:  # noqa: S310 - fixed GitHub HTTPS API
             return json.load(response)
     except HTTPError as exc:
-        if exc.code in {401, 403}:
+        if exc.code == 401:
             message = (
-                "TRAFFIC_TOKEN was rejected. Check expiration, repository selection, and "
-                "Administration: Read-only permission."
+                f"GitHub API HTTP 401 for {path}: TRAFFIC_TOKEN is invalid, expired, or revoked. "
+                "Create a new fine-grained PAT and replace the TRAFFIC_TOKEN repository secret."
+            )
+        elif exc.code == 429 or (
+            exc.code == 403 and exc.headers and exc.headers.get("X-RateLimit-Remaining") == "0"
+        ):
+            message = f"GitHub API HTTP {exc.code} for {path}: rate limited. Retry after the limit resets."
+        elif exc.code == 403:
+            message = (
+                f"GitHub API HTTP 403 for {path}: TRAFFIC_TOKEN cannot access this endpoint "
+                "(or a secondary rate limit is active). Check repository selection, "
+                "Administration: Read-only, token approval, and GitHub policies."
             )
         else:
-            message = f"GitHub API returned HTTP {exc.code} for {path}."
+            message = f"GitHub API HTTP {exc.code} for {path}."
         raise CollectionError(message) from exc
     except (URLError, TimeoutError) as exc:
         raise CollectionError(f"GitHub API request failed for {path}: {exc}") from exc
@@ -268,7 +278,21 @@ def main(argv: list[str] | None = None) -> int:
         latest = collect(args.repository, token, collected_at)
         persist(args.output_dir, latest)
     except CollectionError as exc:
-        print(str(exc), file=sys.stderr)
+        message = str(exc)
+        if os.getenv("GITHUB_ACTIONS") == "true":
+            print(f"::error title=GitHub traffic collection::{message}", file=sys.stderr)
+        else:
+            print(message, file=sys.stderr)
+        summary_path = os.getenv("GITHUB_STEP_SUMMARY")
+        if summary_path:
+            try:
+                with Path(summary_path).open("a", encoding="utf-8") as summary:
+                    summary.write(
+                        f"### GitHub traffic collection failed\n\n{message}\n\n"
+                        "See docs/github-traffic-analytics.ja.md for recovery steps.\n"
+                    )
+            except OSError:
+                pass  # Reporting must not hide the original collection failure.
         return 1
     print(f"Collected GitHub traffic for {args.repository}.")
     return 0
