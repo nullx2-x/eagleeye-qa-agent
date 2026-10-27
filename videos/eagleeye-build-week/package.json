@@ -12,6 +12,6 @@
     "hyperframes": "^0.7.109"
   },
   "overrides": {
-    "adm-zip": "0.6.0"
+    "adm-zip": "0.6.1"
   }
 }
