@@ -1,14 +1,8 @@
 name: Collect repository traffic
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - .github/workflows/collect-repository-traffic.yml
-  schedule:
-    # GitHub schedules in UTC. 00:17 UTC is 09:17 JST.
-    - cron: "17 0 * * *"
+  # Automatic collection is paused while TRAFFIC_TOKEN authentication is failing.
+  # Keep manual runs available for validating a replacement token.
   workflow_dispatch:
     inputs:
       force:
